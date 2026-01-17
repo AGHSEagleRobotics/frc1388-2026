@@ -13,9 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Dashboard extends SubsystemBase {
   /** Creates a new Dashboard. */
-  public Dashboard() {
     
-class Dashboard extends SubsystemBase {
   private final ShuffleboardTab m_shuffleboardTab;
     private final static String SHUFFLEBOARD_TAB_NAME = "Competition";
 
@@ -33,5 +31,4 @@ class Dashboard extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 }
-  }
-}
+  
