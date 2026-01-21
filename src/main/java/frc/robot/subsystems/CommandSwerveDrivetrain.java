@@ -13,9 +13,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -220,6 +224,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return m_sysIdRoutineToApply.dynamic(direction);
     }
 
+    //Suppliers for 3d positional data (Advantage Scope)
+    //From https://docs.advantagescope.org/tab-reference/3d-field/
+    Pose3d poseA = new Pose3d();
+    Pose3d poseB = new Pose3d();
+
+    StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault()
+    .getStructTopic("MyPose", Pose3d.struct).publish();
+    StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault()
+    .getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
+
     @Override
     public void periodic() {
         /*
@@ -239,6 +253,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        //Supply positional data for advantage scope simulation compatability
+
+        poseA = new Pose3d(this.getState().Pose);
+
+        //From https://docs.advantagescope.org/tab-reference/3d-field/
+        publisher.set(poseA);
+        arrayPublisher.set(new Pose3d[] {poseA, poseB});
+
     }
 
     private void startSimThread() {
