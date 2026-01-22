@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
+import java.util.Currency;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -10,6 +12,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.fasterxml.jackson.core.util.JsonRecyclerPools.ConcurrentDequePool;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,8 +26,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.vision.LimelightHelpers;
+import frc.robot.vision.VisionAcceptor;
+import frc.robot.vision.LimelightHelpers.PoseEstimate;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -49,6 +54,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+
+    VisionAcceptor visionAcceptorMegaTag2Front = new VisionAcceptor(true);
+    VisionAcceptor visionAcceptorMegaTag2Back = new VisionAcceptor(true);
+
+    Pose2d previousPosition = new Pose2d(0, 0, new Rotation2d(0));
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -239,6 +249,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        if (getState().Pose != null) {
+            if(acceptVision(visionAcceptorMegaTag2Front, "limelight-front")) {
+                updateVision("limelight-front");
+            }
+            if(acceptVision(visionAcceptorMegaTag2Back, "limelight-back")) {
+                updateVision("limelight-back");
+            }
+        }
     }
 
     private void startSimThread() {
@@ -299,5 +318,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    // _______________________________________ Vision Code _______________________________________
+
+    public boolean acceptVision(VisionAcceptor acceptor, String name) {
+        boolean acceptVisionMeasurement = false;
+        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+
+        acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPosition, getState().Speeds);
+        previousPosition = currentPose.pose;
+        return acceptVisionMeasurement;
+    }
+
+    public void updateVision(String name) {
+        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+        if(currentPose != null) {
+        addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
+        }
     }
 }
