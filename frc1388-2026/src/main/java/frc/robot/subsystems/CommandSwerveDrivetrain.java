@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.util.Currency;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -12,9 +12,9 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.fasterxml.jackson.core.util.JsonRecyclerPools.ConcurrentDequePool;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -26,10 +26,12 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Robot;
+import frc.robot.Constants.FieldLayout;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.vision.LimelightHelpers;
-import frc.robot.vision.VisionAcceptor;
 import frc.robot.vision.LimelightHelpers.PoseEstimate;
+import frc.robot.vision.VisionAcceptor;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -58,7 +60,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     VisionAcceptor visionAcceptorMegaTag2Front = new VisionAcceptor(true);
     VisionAcceptor visionAcceptorMegaTag2Back = new VisionAcceptor(true);
 
-    Pose2d previousPosition = new Pose2d(0, 0, new Rotation2d(0));
+    HashMap<String,Pose2d> previousPositions = new HashMap<>();
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -250,7 +252,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        if (getState().Pose != null) {
+        if (getPose() != null) {
             if(acceptVision(visionAcceptorMegaTag2Front, "limelight-front")) {
                 updateVision("limelight-front");
             }
@@ -320,21 +322,70 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
+    public Pose2d getPose() {
+        return getState().Pose;
+    }
+
+    public double getAngle() {
+        return getState().Pose.getRotation().getDegrees();
+    }
     // _______________________________________ Vision Code _______________________________________
 
     public boolean acceptVision(VisionAcceptor acceptor, String name) {
         boolean acceptVisionMeasurement = false;
         PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
 
-        acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPosition, getState().Speeds);
-        previousPosition = currentPose.pose;
+        acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
+        previousPositions.put(name, currentPose.pose);
         return acceptVisionMeasurement;
     }
 
     public void updateVision(String name) {
         PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-        if(currentPose != null) {
-        addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
+        if (currentPose != null) {
+            addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
         }
+    }
+
+    public double getTurnToSpeakerSpeed(PIDController turnPidController) {
+        double angleFromSpeaker = getAbsoluteAngleFromSpeaker();
+        double rz = getAngle();
+        rz = rz < 0 ? rz + 360 : rz;
+        double speed = -(turnPidController.calculate(angleFromSpeaker - rz));
+        return speed;
+    }
+
+    public double getAbsoluteAngleFromSpeaker() {
+        // double[] botPose = getBotPose();
+        // double rX = getBotPoseValue(botPose, 0);
+        // double rY = getBotPoseValue(botPose, 1);
+        double rX = getPose().getX();
+        double rY = getPose().getY();
+
+        if (Robot.getAllianceColor() == DriverStation.Alliance.Blue) {
+            return Math.toDegrees(
+                    Math.atan2(rY - FieldLayout.CENTER_OF_HUB_BLUE.getY(), rX - FieldLayout.CENTER_OF_HUB_BLUE.getX()))
+                    + 180;
+        } else {
+            return Math.toDegrees(
+                    Math.atan2(rY - FieldLayout.CENTER_OF_HUB_RED.getY(), rX - FieldLayout.CENTER_OF_HUB_RED.getX()))
+                    + 180;
+        }
+    }
+
+    public double getAbsouluteDistanceFromSpeaker() {
+        double rX = getPose().getX();
+        double tX;
+        double tAngle = getAbsoluteAngleFromSpeaker();
+        if (Robot.getAllianceColor() == Alliance.Blue) {
+            tX = FieldLayout.CENTER_OF_HUB_BLUE.getX();
+        } else {
+            tX = FieldLayout.CENTER_OF_HUB_RED.getX();
+        }
+        double adjacent = rX - tX;
+        double distanceFromSpeaker = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
+                                                                                     // cos(angle)
+
+        return distanceFromSpeaker;
     }
 }

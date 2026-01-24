@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -28,5 +30,8 @@ public final class Constants {
    public static class FieldLayout {
       public static double FIELD_LENGTH = Units.inchesToMeters(651.22);
       public static double FIELD_WIDTH = Units.inchesToMeters(317.69);
+
+      public static Translation2d CENTER_OF_HUB_BLUE = new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
+      public static Translation2d CENTER_OF_HUB_RED = new Translation2d(Units.inchesToMeters(534.72), Units.inchesToMeters(158.84));
     }
 }
