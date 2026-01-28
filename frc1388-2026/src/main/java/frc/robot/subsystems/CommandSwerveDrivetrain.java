@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -17,6 +18,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
 import frc.robot.Constants.FieldLayout;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.shotlib.ChassisAccelerations;
 import frc.robot.vision.LimelightHelpers;
 import frc.robot.vision.LimelightHelpers.PoseEstimate;
 import frc.robot.vision.VisionAcceptor;
@@ -45,6 +48,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+    public ChassisSpeeds m_previousSpeed = new ChassisSpeeds(0, 0, 0);
+
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -57,8 +62,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    VisionAcceptor visionAcceptorMegaTag2Front = new VisionAcceptor(true);
-    VisionAcceptor visionAcceptorMegaTag2Back = new VisionAcceptor(true);
+    VisionAcceptor visionAcceptorLeft = new VisionAcceptor(true);
+    VisionAcceptor visionAcceptorRight = new VisionAcceptor(true);
+    VisionAcceptor visionAcceptorShooter = new VisionAcceptor(false);
 
     HashMap<String,Pose2d> previousPositions = new HashMap<>();
 
@@ -241,6 +247,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          * Otherwise, only check and apply the operator perspective if the DS is disabled.
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
+
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -251,13 +258,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-
+        
         if (getPose() != null) {
-            if(acceptVision(visionAcceptorMegaTag2Front, "limelight-front")) {
-                updateVision("limelight-front");
+            if(acceptVision(visionAcceptorShooter, "limelight-shooter")) {
+                updateVision("limelight-shooter");
+                if(acceptGyro(visionAcceptorShooter, "limelight-shooter")) {
+                    resetGyro("limelight-shooter");
+                }
             }
-            if(acceptVision(visionAcceptorMegaTag2Back, "limelight-back")) {
-                updateVision("limelight-back");
+            if(acceptVision(visionAcceptorLeft, "limelight-left")) {
+                updateVision("limelight-left");
+                if(acceptGyro(visionAcceptorLeft, "limelight-left")) {
+                    resetGyro("limelight-left");
+                }
+            }
+            if(acceptVision(visionAcceptorRight, "limelight-right")) {
+                updateVision("limelight-right");
+                if(acceptGyro(visionAcceptorRight, "limelight-right")); {
+                    resetGyro("limrlight-right");
+                }
             }
         }
     }
@@ -329,6 +348,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public double getAngle() {
         return getState().Pose.getRotation().getDegrees();
     }
+
+    public double getRadians() {
+        return getState().Pose.getRotation().getRadians();
+    }
+
+    public ChassisAccelerations getAccelerations() {
+        ChassisAccelerations chassisAccelerations = new ChassisAccelerations(getState().Speeds, m_previousSpeed, 0.02);
+        m_previousSpeed = getState().Speeds;
+        return chassisAccelerations;
+    }
+
     // _______________________________________ Vision Code _______________________________________
 
     public boolean acceptVision(VisionAcceptor acceptor, String name) {
@@ -346,6 +376,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
         }
     }
+
+    public boolean acceptGyro(VisionAcceptor acceptor, String name) {
+        boolean acceptGyro = acceptor.shouldResetGyro();
+        if ((acceptGyro == true) && 
+        (LimelightHelpers.getTV(name) == true)) {
+            return true;
+        } 
+        return false;
+    }
+
+    public void resetGyro(String name) {
+        Rotation2d limelightAngle = LimelightHelpers.getBotPose2d_wpiBlue(name).getRotation();
+        Rotation2d correctedAngleOffset = new Rotation2d(limelightAngle.getRadians() - getRadians());
+        Rotation2d correctAngle = new Rotation2d(getRadians() + correctedAngleOffset.getRadians());
+        resetRotation(correctAngle);
+    }
+
 
     public double getTurnToSpeakerSpeed(PIDController turnPidController) {
         double angleFromSpeaker = getAbsoluteAngleFromSpeaker();

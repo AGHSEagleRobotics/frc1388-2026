@@ -4,8 +4,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -34,4 +34,14 @@ public final class Constants {
       public static Translation2d CENTER_OF_HUB_BLUE = new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
       public static Translation2d CENTER_OF_HUB_RED = new Translation2d(Units.inchesToMeters(534.72), Units.inchesToMeters(158.84));
     }
+
+    public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
+        static {
+        }
+        public static final InterpolatingDoubleTreeMap SHOT_SPEED_TO_RPS = new InterpolatingDoubleTreeMap();
+        static {
+        }
+        public static final InterpolatingDoubleTreeMap DISTANCE_TO_RPS = new InterpolatingDoubleTreeMap();
+        static {
+        }
 }
