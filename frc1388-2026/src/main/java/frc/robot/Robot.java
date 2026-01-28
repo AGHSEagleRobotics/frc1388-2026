@@ -11,6 +11,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LEDSubsystem;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.util.datalog.BooleanLogEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 
 
 
@@ -27,6 +32,24 @@ public class Robot extends TimedRobot {
     public Robot() {
         m_robotContainer = new RobotContainer();
     }
+
+    @Override
+   public void robotInit() {
+     DataLogManager.start();
+     DataLogManager.log("####### RobotInit");
+     DataLogManager.log("Git version: " + BuildInfo.GIT_VERSION + " (branch: " + BuildInfo.GIT_BRANCH + " "
+         + BuildInfo.GIT_STATUS + ")");
+     DataLogManager.log("      Built: " + BuildInfo.BUILD_DATE + "  " + BuildInfo.BUILD_TIME);
+
+     // logs everytime a command starts / stops
+     CommandScheduler.getInstance()
+         .onCommandInitialize(command -> DataLogManager.log("++ " + command.getName() + " Initialized"));
+     CommandScheduler.getInstance()
+         .onCommandInterrupt(command -> DataLogManager.log("-- " + command.getName() + " Interrupted"));
+     CommandScheduler.getInstance()
+         .onCommandFinish(command -> DataLogManager.log("-- " + command.getName() + " Finished"));
+   }
+ 
 
     @Override
     public void robotPeriodic() {
@@ -47,11 +70,31 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        DataLogManager.log("####### Autonomous Init");
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
+
+         if (DriverStation.isFMSAttached()) {
+      String fmsInfo = "FMS info: ";
+      fmsInfo += " " + DriverStation.getEventName();
+      fmsInfo += " " + DriverStation.getMatchType();
+      fmsInfo += " match " + DriverStation.getMatchNumber();
+      fmsInfo += " replay " + DriverStation.getReplayNumber();
+      fmsInfo += ";  " + DriverStation.getAlliance() + " alliance";
+      fmsInfo += ",  Driver Station " + DriverStation.getLocation();
+      DataLogManager.log(fmsInfo);
+    } else {
+      DataLogManager.log("FMS not connected");
+
+      DataLogManager.log("Match type:\t" + DriverStation.getMatchType());
+      DataLogManager.log("Event name:\t" + DriverStation.getEventName());
+      DataLogManager.log("Alliance:\t" + DriverStation.getAlliance());
+      DataLogManager.log("Match number:\t" + DriverStation.getMatchNumber());
+    }
+
             m_robotContainer.m_ledSubsystem.setSolidWhite();
 
     }
