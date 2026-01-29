@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -28,8 +27,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Robot;
 import frc.robot.Constants.FieldLayout;
+import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.shotlib.ChassisAccelerations;
 import frc.robot.vision.LimelightHelpers;
@@ -49,6 +48,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double m_lastSimTime;
 
     public ChassisSpeeds m_previousSpeed = new ChassisSpeeds(0, 0, 0);
+    private ChassisSpeeds prevFieldRelVelocities = new ChassisSpeeds();
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -258,24 +258,28 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        boolean gyroWasAccepted = false;
         
         if (getPose() != null) {
             if(acceptVision(visionAcceptorShooter, "limelight-shooter")) {
                 updateVision("limelight-shooter");
                 if(acceptGyro(visionAcceptorShooter, "limelight-shooter")) {
                     resetGyro("limelight-shooter");
+                    gyroWasAccepted = true;
                 }
             }
             if(acceptVision(visionAcceptorLeft, "limelight-left")) {
                 updateVision("limelight-left");
-                if(acceptGyro(visionAcceptorLeft, "limelight-left")) {
+                if((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, "limelight-left")) {
                     resetGyro("limelight-left");
+                    gyroWasAccepted = true;
                 }
             }
             if(acceptVision(visionAcceptorRight, "limelight-right")) {
                 updateVision("limelight-right");
-                if(acceptGyro(visionAcceptorRight, "limelight-right")); {
-                    resetGyro("limrlight-right");
+                if((!gyroWasAccepted) && acceptGyro(visionAcceptorRight, "limelight-right")); {
+                    resetGyro("limelight-right");
                 }
             }
         }
@@ -358,6 +362,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_previousSpeed = getState().Speeds;
         return chassisAccelerations;
     }
+
+    public ChassisSpeeds getFieldRelativeSpeeds() {
+         ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
+         prevFieldRelVelocities = fieldRelativeSpeeds;
+         return fieldRelativeSpeeds;
+    }
+
+    public ChassisAccelerations getFieldRelativeAccelerations() {
+        return new ChassisAccelerations(getFieldRelativeSpeeds(), prevFieldRelVelocities, 0.020);
+    }
+
 
     // _______________________________________ Vision Code _______________________________________
 

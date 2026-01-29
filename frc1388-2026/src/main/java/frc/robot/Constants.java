@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
@@ -30,18 +34,24 @@ public final class Constants {
    public static class FieldLayout {
       public static double FIELD_LENGTH = Units.inchesToMeters(651.22);
       public static double FIELD_WIDTH = Units.inchesToMeters(317.69);
+   
+      public static final Pose3d CENTER_OF_HUB_BLUE = new Pose3d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84),
+                Units.inchesToMeters(72), Rotation3d.kZero);
 
-      public static Translation2d CENTER_OF_HUB_BLUE = new Translation2d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84));
-      public static Translation2d CENTER_OF_HUB_RED = new Translation2d(Units.inchesToMeters(534.72), Units.inchesToMeters(158.84));
+      public static Pose3d CENTER_OF_HUB_RED =  new Pose3d(Units.inchesToMeters(534.72), Units.inchesToMeters(158.84),
+                Units.inchesToMeters(72), Rotation3d.kZero);
     }
 
-    public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
-        static {
-        }
-        public static final InterpolatingDoubleTreeMap SHOT_SPEED_TO_RPS = new InterpolatingDoubleTreeMap();
-        static {
-        }
-        public static final InterpolatingDoubleTreeMap DISTANCE_TO_RPS = new InterpolatingDoubleTreeMap();
-        static {
-        }
-}
+    public static class ShooterConstants {
+      public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
+      public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
+      static {
+      }
+      public static final InterpolatingDoubleTreeMap SHOT_SPEED_TO_RPS = new InterpolatingDoubleTreeMap();
+      static {
+      }
+      public static final InterpolatingDoubleTreeMap DISTANCE_TO_RPS = new InterpolatingDoubleTreeMap();
+      static {
+      }
+    }
+  }
