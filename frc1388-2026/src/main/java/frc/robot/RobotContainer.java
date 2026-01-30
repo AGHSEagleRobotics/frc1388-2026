@@ -115,7 +115,7 @@ public class RobotContainer {
     //         DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
     //         return Commands.none();
     // }
-    return new PathPlannerAuto("New Auto");
+    return autoChooser.getSelected();
 
          
     }
