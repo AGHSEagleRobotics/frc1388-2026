@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
+// import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.LEDConfigs;
@@ -20,8 +20,8 @@ public class LEDSubsystem extends SubsystemBase {
 
   // LED Constants
 
-  private static final int kSlotStart = 8;
-  private static final int kSlotEnd = 50;
+  // private static final int kSlotStart = 8;
+  // private static final int kSlotEnd = 50;
   CANdleConfiguration configOn;
   CANdleConfiguration configOff;
 
