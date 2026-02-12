@@ -5,6 +5,12 @@ import static edu.wpi.first.units.Units.*;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.compound.Diff_MotionMagicVoltage_Open;
@@ -259,9 +265,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+        DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
+        DogLog.log("Drive/OdometryPose", getState().Pose);
+        DogLog.log("Drive/TargetStates", getState().ModuleTargets);
+        DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
+        DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
         if(mapleSimSwerveDrivetrain != null) {
             DogLog.log("Drive/SimulationPose", mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
         }
+    }
+
+    public MapleSimSwerveDrivetrain getSimulationDriveTrain() {
+        return mapleSimSwerveDrivetrain;
     }
 
     private void startSimThread() {
@@ -277,15 +292,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //     updateSimState(deltaTime, RobotController.getBatteryVoltage());
         // });
         // m_simNotifier.startPeriodic(kSimLoopPeriod);
+        SimulatedArena.overrideInstance(new Arena2026Rebuilt(false));
+
         mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
             Seconds.of(kSimLoopPeriod),
             // TODO: modify the following constants according to your robot
             Pounds.of(100), // robot weight
             Inches.of(30.5), // bumper length
             Inches.of(30.5), // bumper width
-            DCMotor.getKrakenX60(1), // drive motor type
-            DCMotor.getFalcon500(1), // steer motor type
-            1.2, // wheel COF
+            DCMotor.getKrakenX60(4), // drive motor type
+            DCMotor.getFalcon500(4), // steer motor type
+            2.225, // wheel COF
             getModuleLocations(),
             getPigeon2(),
             getModules(),
@@ -293,7 +310,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             TunerConstants.FrontRight,
             TunerConstants.BackLeft,
             TunerConstants.BackRight);
-    /* Run simulation at a faster rate so PID gains behave more reasonably */
+
+    
+      /* Run simulation at a faster rate so PID gains behave more reasonably */
     m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
     m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
