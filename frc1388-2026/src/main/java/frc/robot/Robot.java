@@ -32,6 +32,9 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
+        for(int i = 0; i < 50; i++) {
+         SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(new Translation2d(2 + (i*(0.01)),2)));
+        }
     }
 
     @Override
@@ -100,9 +103,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-        // SimulatedArena.getInstance().simulationPeriodic();
-        // SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(new Translation2d(2,2)));
-        // DogLog.log("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
+        SimulatedArena.getInstance().simulationPeriodic();
+        DogLog.log("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
         
     }
 }
