@@ -4,14 +4,25 @@
 
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ShooterIOSim extends SubsystemBase {
-  /** Creates a new ShooterIOSim. */
-  public ShooterIOSim() {}
+public class ShooterIOSim implements ShooterIO {
+  private TalonFXSimState shootMotorSim;
+  private EncoderSim shootEncoderSim;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  private NetworkTableEntry shootFlywheelMassKg;
+
+  /** Creates a new ShooterIOSim. */
+  public ShooterIOSim(TalonFXSimState shootMotor1Sim, EncoderSim shootEncoderSim) {
+    this.shootMotorSim = shootMotorSim;
+    this.shootEncoderSim = shootEncoderSim;
+
   }
+  
+  
 }

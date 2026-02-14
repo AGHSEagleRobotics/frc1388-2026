@@ -7,13 +7,19 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public interface ShooterIO {
-  public default void setVolts(double volts) {}
+  public default void setVoltsShooter1(double volts) {}
   
-  public default void setCoastMode(boolean coast) {}
+  public default void setVoltsShooter2(double volts) {}
   
-  public default void setShooterVelocity(double rpm) {}
+  public default void setShooter1RPM(double rpm) {}
+  
+  public default void setShooter2RPM(double rpm) {}
 
-  
+  public default void getShooterRPM(double rpm) {}
+
+  public default void setCoastMode(boolean coast) {}
+
+  public default void getEncoderAngle(int radians) {}
   
   }
 
