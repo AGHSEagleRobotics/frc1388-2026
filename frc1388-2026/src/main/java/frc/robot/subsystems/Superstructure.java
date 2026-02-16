@@ -7,8 +7,12 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Superstructure extends SubsystemBase {
+
+  public final CommandSwerveDrivetrain m_driveTrain;
   /** Creates a new Superstructure. */
-  public Superstructure() {}
+  public Superstructure(CommandSwerveDrivetrain driveTrain) {
+    m_driveTrain = driveTrain;
+  }
 
   @Override
   public void periodic() {
