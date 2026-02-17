@@ -9,6 +9,7 @@ import com.ctre.phoenix6.HootAutoReplay;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,12 +37,11 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         logInit();
 
-        System.out.println("####### RobotInit");        // DEBUG
-        DogLog.log("messages", "####### RobotInit");
-        DogLog.log("messages", "Git version: " + BuildInfo.GIT_VERSION
+        DataLogManager.log("####### RobotInit");
+        DataLogManager.log("Git version: " + BuildInfo.GIT_VERSION
                 + " (branch: " + BuildInfo.GIT_BRANCH + " "
                 + BuildInfo.GIT_STATUS + ")");
-        DogLog.log("messages", "      Built: " + BuildInfo.BUILD_DATE + "  " + BuildInfo.BUILD_TIME);
+        DataLogManager.log("      Built: " + BuildInfo.BUILD_DATE + "  " + BuildInfo.BUILD_TIME);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        DogLog.log("messages", "####### Robot Disabled");
+        DataLogManager.log("####### Robot Disabled");
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        DogLog.log("messages", "####### Autonomous Init");
+        DataLogManager.log("####### Autonomous Init");
         logMatchInfo();
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        DogLog.log("messages", "####### Teleop Init");
+        DataLogManager.log("####### Teleop Init");
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        DogLog.log("messages", "####### Test Init");
+        DataLogManager.log("####### Test Init");
         CommandScheduler.getInstance().cancelAll();
     }
 
@@ -123,11 +123,11 @@ public class Robot extends TimedRobot {
 
         // logs everytime a command starts / stops
         CommandScheduler.getInstance()
-                .onCommandInitialize(command -> DogLog.log("messages", "++ " + command.getName() + " Initialized"));
+                .onCommandInitialize(command -> DataLogManager.log("++ " + command.getName() + " Initialized"));
         CommandScheduler.getInstance()
-                .onCommandInterrupt(command -> DogLog.log("messages", "-- " + command.getName() + " Interrupted"));
+                .onCommandInterrupt(command -> DataLogManager.log("-- " + command.getName() + " Interrupted"));
         CommandScheduler.getInstance()
-                .onCommandFinish(command -> DogLog.log("messages", "-- " + command.getName() + " Finished"));
+                .onCommandFinish(command -> DataLogManager.log("-- " + command.getName() + " Finished"));
     }
 
     private void logMatchInfo() {
@@ -140,14 +140,14 @@ public class Robot extends TimedRobot {
             fmsInfo += " replay " + DriverStation.getReplayNumber();
             fmsInfo += ";  " + DriverStation.getAlliance() + " alliance";
             fmsInfo += ",  Driver Station " + DriverStation.getLocation();
-            DogLog.log("messages", fmsInfo);
+            DataLogManager.log(fmsInfo);
         } else {
-            DogLog.log("messages", "FMS not connected");
+            DataLogManager.log("FMS not connected");
 
-            DogLog.log("messages", "Match type:\t" + DriverStation.getMatchType());
-            DogLog.log("messages", "Event name:\t" + DriverStation.getEventName());
-            DogLog.log("messages", "Alliance:\t" + DriverStation.getAlliance());
-            DogLog.log("messages", "Match number:\t" + DriverStation.getMatchNumber());
+            DataLogManager.log("Match type:\t" + DriverStation.getMatchType());
+            DataLogManager.log("Event name:\t" + DriverStation.getEventName());
+            DataLogManager.log("Alliance:\t" + DriverStation.getAlliance());
+            DataLogManager.log("Match number:\t" + DriverStation.getMatchNumber());
         }
     }
 }
