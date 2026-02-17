@@ -13,14 +13,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterIOSim implements ShooterIO {
   private TalonFXSimState shootMotorSim;
-  private EncoderSim shootEncoderSim;
+  
 
   private NetworkTableEntry shootFlywheelMassKg;
 
   /** Creates a new ShooterIOSim. */
-  public ShooterIOSim(TalonFXSimState shootMotor1Sim, EncoderSim shootEncoderSim) {
+  public ShooterIOSim(TalonFXSimState shootMotor1Sim) {
     this.shootMotorSim = shootMotorSim;
-    this.shootEncoderSim = shootEncoderSim;
+    
 
   }
   

@@ -7,19 +7,31 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public interface ShooterIO {
+ public static class ShooterIOInputs {
+  public double shootMotor1VelocityRPS = 0.0;
+  public double shootMotor2VelocityRPS = 0.0;
+
+  public double shootMotor1Voltage = 0.0;
+  public double shootMotor2Voltage = 0.0;
+
+  public double shootMotor1CurrentAmps = 0.0;
+  public double shootMotor2CurrentAmps = 0.0;
+
+  public double shootMotor1TempCelsius = 0.0;
+  public double shootMotor2TempCelsius = 0.0;
+ }
+
+  default void updateInputs(ShooterIOInputs shooterIOInputs) {}
+
+  public default void setVelocityMotor1(double rps) {}
+  
+  public default void setVelocityMotor2(double rps) {}
+  
   public default void setVoltsShooter1(double volts) {}
   
   public default void setVoltsShooter2(double volts) {}
   
-  public default void setShooter1RPM(double rpm) {}
-  
-  public default void setShooter2RPM(double rpm) {}
-
-  public default void getShooterRPM(double rpm) {}
-
   public default void setCoastMode(boolean coast) {}
-
-  public default void getEncoderAngle(int radians) {}
   
   }
 

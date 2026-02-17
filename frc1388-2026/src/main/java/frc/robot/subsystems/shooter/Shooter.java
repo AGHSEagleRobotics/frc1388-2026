@@ -20,7 +20,7 @@ private final SysIdRoutine shooterSysIdRoutine =
     new SysIdRoutine.Config(null, null, null) , 
     new SysIdRoutine.Mechanism(null, null, null));        
 
-  private PhoenixPIDController shooterController = new PhoenixPIDController(0, 0, 0);
+  // private PhoenixPIDController shooterController = new PhoenixPIDController(0, 0, 0);
 
   public Shooter(ShooterIO io) {
   this.io = io;
@@ -39,8 +39,7 @@ private final SysIdRoutine shooterSysIdRoutine =
     io.setVoltsShooter2(0);
   }
 
-  private void getShooterRPM() {
-    io.getShooterRPM(0);
-  }
+ 
+  
 
 }
