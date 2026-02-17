@@ -9,7 +9,7 @@ java {
 }
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
-def FILE_PATH = "$projectDir/src/main/java/frc/robot/BuildInfo.java"
+def BUILDINFO_FILE_PATH = "$projectDir/src/main/java/frc/robot/BuildInfo.java"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -128,7 +128,7 @@ def runCommand(String... args) {
 task generateBuildInfo {
     doFirst {
         // Make sure old BuildInfo.java doesn't exist
-        delete(file(FILE_PATH))
+        delete(file(BUILDINFO_FILE_PATH))
     }
     doLast {
         def gitHash = runCommand 'git', 'log', '-1', '--pretty=format:%h'
@@ -142,8 +142,7 @@ task generateBuildInfo {
         def buildDate = new Date().format('yyyy-MM-dd')
         def buildTime = new Date().format('HH:mm:ss z')
 
-        def buildInfoClass = file(FILE_PATH)
-        // file(FILE_PATH).mkdirs()
+        def buildInfoClass = file(BUILDINFO_FILE_PATH)
         buildInfoClass.text = """
 package frc.robot;
 public class BuildInfo {

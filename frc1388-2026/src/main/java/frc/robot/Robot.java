@@ -4,18 +4,12 @@
 
 package frc.robot;
 
-import java.util.logging.Logger;
-
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
-
 import com.ctre.phoenix6.HootAutoReplay;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -32,19 +26,22 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
-        for(int i = 0; i < 50; i++) {
-         SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(new Translation2d(2 + (i*(0.01)),2)));
-        }
+// Requires simulation support:
+        // for(int i = 0; i < 50; i++) {
+        //  SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(new Translation2d(2 + (i*(0.01)),2)));
+        // }
     }
 
     @Override
     public void robotInit() {
-        DogLog.setOptions(new DogLogOptions()
-            .withLogExtras(true)
-            .withCaptureDs(true)
-            .withNtPublish(true)
-            .withCaptureNt(true));
-        DogLog.setPdh(new PowerDistribution());
+        logInit();
+
+        System.out.println("####### RobotInit");        // DEBUG
+        DogLog.log("messages", "####### RobotInit");
+        DogLog.log("messages", "Git version: " + BuildInfo.GIT_VERSION
+                + " (branch: " + BuildInfo.GIT_BRANCH + " "
+                + BuildInfo.GIT_STATUS + ")");
+        DogLog.log("messages", "      Built: " + BuildInfo.BUILD_DATE + "  " + BuildInfo.BUILD_TIME);
     }
 
     @Override
@@ -54,7 +51,9 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        DogLog.log("messages", "####### Robot Disabled");
+    }
 
     @Override
     public void disabledPeriodic() {}
@@ -64,6 +63,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        DogLog.log("messages", "####### Autonomous Init");
+        logMatchInfo();
+
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
@@ -79,6 +81,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        DogLog.log("messages", "####### Teleop Init");
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
@@ -92,6 +95,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
+        DogLog.log("messages", "####### Test Init");
         CommandScheduler.getInstance().cancelAll();
     }
 
@@ -106,5 +110,44 @@ public class Robot extends TimedRobot {
         SimulatedArena.getInstance().simulationPeriodic();
         DogLog.log("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
         
+    }
+
+    private void logInit() {
+        DogLog.setOptions(new DogLogOptions()
+            .withLogExtras(true)
+            .withCaptureDs(true)
+            .withNtPublish(true)
+            .withCaptureNt(true));
+// Causes errors if PDH is not present:
+//        DogLog.setPdh(new PowerDistribution());
+
+        // logs everytime a command starts / stops
+        CommandScheduler.getInstance()
+                .onCommandInitialize(command -> DogLog.log("messages", "++ " + command.getName() + " Initialized"));
+        CommandScheduler.getInstance()
+                .onCommandInterrupt(command -> DogLog.log("messages", "-- " + command.getName() + " Interrupted"));
+        CommandScheduler.getInstance()
+                .onCommandFinish(command -> DogLog.log("messages", "-- " + command.getName() + " Finished"));
+    }
+
+    private void logMatchInfo() {
+        // Get match info from FMS
+        if (DriverStation.isFMSAttached()) {
+            String fmsInfo = "FMS info: ";
+            fmsInfo += " " + DriverStation.getEventName();
+            fmsInfo += " " + DriverStation.getMatchType();
+            fmsInfo += " match " + DriverStation.getMatchNumber();
+            fmsInfo += " replay " + DriverStation.getReplayNumber();
+            fmsInfo += ";  " + DriverStation.getAlliance() + " alliance";
+            fmsInfo += ",  Driver Station " + DriverStation.getLocation();
+            DogLog.log("messages", fmsInfo);
+        } else {
+            DogLog.log("messages", "FMS not connected");
+
+            DogLog.log("messages", "Match type:\t" + DriverStation.getMatchType());
+            DogLog.log("messages", "Event name:\t" + DriverStation.getEventName());
+            DogLog.log("messages", "Alliance:\t" + DriverStation.getAlliance());
+            DogLog.log("messages", "Match number:\t" + DriverStation.getMatchNumber());
+        }
     }
 }
