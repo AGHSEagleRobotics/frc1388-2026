@@ -14,8 +14,8 @@ public interface ShooterIO {
   public double shootMotor1Voltage = 0.0;
   public double shootMotor2Voltage = 0.0;
 
-  public double shootMotor1CurrentAmps = 0.0;
-  public double shootMotor2CurrentAmps = 0.0;
+  public double shootMotor1StatorCurrentAmps = 0.0;
+  public double shootMotor2StatorCurrentAmps = 0.0;
 
   public double shootMotor1TempCelsius = 0.0;
   public double shootMotor2TempCelsius = 0.0;
