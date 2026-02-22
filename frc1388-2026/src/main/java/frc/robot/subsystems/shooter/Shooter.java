@@ -11,16 +11,15 @@ import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
+import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
-  /** Creates a new Shooter. */
-private final ShooterIO io;
+
+private ShooterIO io;
 private final SysIdRoutine shooterSysIdRoutine =
   new SysIdRoutine(
     new SysIdRoutine.Config(null, null, null) , 
     new SysIdRoutine.Mechanism(null, null, null));        
-
-  // private PhoenixPIDController shooterController = new PhoenixPIDController(0, 0, 0);
 
   public Shooter(ShooterIO io) {
   this.io = io;
@@ -30,13 +29,8 @@ private final SysIdRoutine shooterSysIdRoutine =
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    io.updateInputs(shooterInputs);
 
-  }
-
-  private void runShooter() {
-    io.setVoltsShooter1(0);
-    io.setVoltsShooter2(0);
   }
 
  
