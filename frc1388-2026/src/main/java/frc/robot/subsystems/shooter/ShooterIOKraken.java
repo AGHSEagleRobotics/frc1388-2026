@@ -46,14 +46,6 @@ public class ShooterIOKraken implements ShooterIO {
   private StatusSignal<Current> shootMotor2SupplyCurrentAmpsSS;
   private StatusSignal<Temperature> shootMotor2TempCelsiusSS;
 
-
-
-  //control
-  private final Slot0Configs controllerConfig = new Slot0Configs();
-  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
-  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(0.0);
-  private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0.0);
-
   //hardware/talons
   private TalonFX shootMotor1;
   private TalonFX shootMotor2;
@@ -62,36 +54,42 @@ public class ShooterIOKraken implements ShooterIO {
   private double shootMotor1Velocity;
   private double shootMotor2Velocity;
 
+  // Control
+  private final Slot0Configs controllerConfig = new Slot0Configs();
+  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
+  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(0.0);
+  private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0.0);
 
   public ShooterIOKraken() {
-    shootMotor1 = new TalonFX(shooterConfig.motorID1);
+    shootMotor1 = new TalonFX(0);
     shootMotor2 = new TalonFX(0);
 
+    //PIDS config
+    controllerConfig.kP = 0.0;
+    controllerConfig.kI = 0.0;
+    controllerConfig.kD = 0.0;
+    controllerConfig.kS = 0.0;
+    controllerConfig.kV = 0.0;
+    controllerConfig.kA = 0.0;
+    
     // General config
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.SupplyCurrentLimit = 60.0;
-    config.CurrentLimits.SupplyCurrentLimitEnable = true;
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    config.Feedback.SensorToMechanismRatio = shooterConfig.reduction();
+    TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+    shooterConfig.CurrentLimits.SupplyCurrentLimit = 60.0;
+    shooterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    shooterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    shooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    // Controller config;
-    controllerConfig.kP = gains.kP();
-    controllerConfig.kI = gains.kI();
-    controllerConfig.kD = gains.kD();
-    controllerConfig.kS = gains.kS();
-    controllerConfig.kV = gains.kV();
-    controllerConfig.kA = gains.kA();
-
-    // Apply configs
-    shootMotor1.getConfigurator().apply(config, 1.0);
-    shootMotor2.getConfigurator().apply(config, 1.0);
+    //applying configs
+    shootMotor1.getConfigurator().apply(shooterConfig, 1.0);
+    shootMotor2.getConfigurator().apply(shooterConfig, 1.0);
     shootMotor1.getConfigurator().apply(controllerConfig, 1.0);
     shootMotor2.getConfigurator().apply(controllerConfig, 1.0);
 
+    //using velocitytorquecurrentFOC to set motor velocity 
     shootMotor1VelocityRequest = new VelocityTorqueCurrentFOC(0);
     shootMotor2VelocityRequest = new VelocityTorqueCurrentFOC(0);
-    
+
+    //SS at the end is just statussignal i was too lazy to write it out all the time
     shootMotor1VelocitySS = shootMotor1.getVelocity();
     shootMotor1VoltageSS = shootMotor1.getMotorVoltage();
     shootMotor1TorqueCurrentAmpsSS = shootMotor1.getTorqueCurrent();
@@ -120,8 +118,8 @@ public class ShooterIOKraken implements ShooterIO {
 
   }
   @Override
-  public void updateInputs(ShooterIOInputs shooterInputs) {
-    shooterInputs.shootMotor1Connected = 
+  public void updateInputs(ShooterIOInputs inputs) {
+    inputs.shootMotor1Connected = 
       BaseStatusSignal.refreshAll(
         shootMotor1VelocitySS,
         shootMotor1VoltageSS,
@@ -129,7 +127,7 @@ public class ShooterIOKraken implements ShooterIO {
         shootMotor1SupplyCurrentAmpsSS,
         shootMotor1TempCelsiusSS)
       .isOK();
-    shooterInputs.shootMotor2Connected = 
+    inputs.shootMotor2Connected = 
       BaseStatusSignal.refreshAll(
         shootMotor2VelocitySS,
         shootMotor2VoltageSS,
@@ -139,21 +137,21 @@ public class ShooterIOKraken implements ShooterIO {
       .isOK();
 
     //setting signals / updating motor inputs
-    shooterInputs.shootMotor1VelocityRPS = shootMotor1VelocitySS.getValueAsDouble();
-    shooterInputs.shootMotor1ReferenceVelocityRPS = this.shootMotor1Velocity;
-    shooterInputs.shootMotor1ClosedLoopReferenceRPS = shootMotor1.getClosedLoopReference().getValueAsDouble();
-    shooterInputs.shootMotor1Voltage = shootMotor1VoltageSS.getValueAsDouble();
-    shooterInputs.shootMotor1TorqueCurrentAmps = shootMotor1TorqueCurrentAmpsSS.getValueAsDouble();
-    shooterInputs.shootMotor1SupplyCurrentAmps = shootMotor1SupplyCurrentAmpsSS.getValueAsDouble();
-    shooterInputs.shootMotor1TempCelsius = shootMotor1TempCelsiusSS.getValueAsDouble();
+    inputs.shootMotor1VelocityRPS = shootMotor1VelocitySS.getValueAsDouble();
+    inputs.shootMotor1ReferenceVelocityRPS = this.shootMotor1Velocity;
+    inputs.shootMotor1ClosedLoopReferenceRPS = shootMotor1.getClosedLoopReference().getValueAsDouble();
+    inputs.shootMotor1Voltage = shootMotor1VoltageSS.getValueAsDouble();
+    inputs.shootMotor1TorqueCurrentAmps = shootMotor1TorqueCurrentAmpsSS.getValueAsDouble();
+    inputs.shootMotor1SupplyCurrentAmps = shootMotor1SupplyCurrentAmpsSS.getValueAsDouble();
+    inputs.shootMotor1TempCelsius = shootMotor1TempCelsiusSS.getValueAsDouble();
 
-    shooterInputs.shootMotor2VelocityRPS = shootMotor2VelocitySS.getValueAsDouble();
-    shooterInputs.shootMotor2ReferenceVelocityRPS = this.shootMotor2Velocity;
-    shooterInputs.shootMotor2ClosedLoopReferenceRPS = shootMotor2.getClosedLoopReference().getValueAsDouble();
-    shooterInputs.shootMotor2Voltage = shootMotor2VoltageSS.getValueAsDouble();
-    shooterInputs.shootMotor2TorqueCurrentAmps = shootMotor2TorqueCurrentAmpsSS.getValueAsDouble();
-    shooterInputs.shootMotor2SupplyCurrentAmps = shootMotor2SupplyCurrentAmpsSS.getValueAsDouble();
-    shooterInputs.shootMotor2TempCelsius = shootMotor2TempCelsiusSS.getValueAsDouble();
+    inputs.shootMotor2VelocityRPS = shootMotor2VelocitySS.getValueAsDouble();
+    inputs.shootMotor2ReferenceVelocityRPS = this.shootMotor2Velocity;
+    inputs.shootMotor2ClosedLoopReferenceRPS = shootMotor2.getClosedLoopReference().getValueAsDouble();
+    inputs.shootMotor2Voltage = shootMotor2VoltageSS.getValueAsDouble();
+    inputs.shootMotor2TorqueCurrentAmps = shootMotor2TorqueCurrentAmpsSS.getValueAsDouble();
+    inputs.shootMotor2SupplyCurrentAmps = shootMotor2SupplyCurrentAmpsSS.getValueAsDouble();
+    inputs.shootMotor2TempCelsius = shootMotor2TempCelsiusSS.getValueAsDouble();
       
   }
   @Override
@@ -166,8 +164,13 @@ public class ShooterIOKraken implements ShooterIO {
       shootMotor1.setControl(voltageControl.withOutput(motor1Volts));
       shootMotor2.setControl(voltageControl.withOutput(motor1Volts));
   }
-   @Override
+  @Override
+    public void stopShooter() {
+      shootMotor1.setControl(neutralControl);
+      shootMotor2.setControl(neutralControl);
+    }
   
+   
   // @Override
   //   public void setVoltsMotor1(double volts) {
   //     shootMotor1.setControl(shootMotor1VoltageRequest.withOutput(volts));

@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterConstants {
-  public static final ShooterConfig shooterConfig =
-  new shooterConfig(4, 0, (1.0 / 2.0), 9000.0);
+  public static final int kShootMotor1CANID = 0;
+  public static final int kShootMotor2CANID = 0;
 
   
   }

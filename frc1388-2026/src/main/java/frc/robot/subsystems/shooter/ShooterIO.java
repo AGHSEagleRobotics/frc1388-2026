@@ -39,7 +39,7 @@ public interface ShooterIO {
 
  }
 
-  default void updateInputs(ShooterIOInputs inputs) {}
+  public default void updateInputs(ShooterIOInputs inputs) {}
 
   public default void setShooterVelocity(double motor1RPS, double motor2RPS) {}
     

@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems.shooter;
 
+import java.lang.System.Logger;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
@@ -15,7 +18,9 @@ import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
 
-private ShooterIO io;
+private final ShooterIO io;
+private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+
 private final SysIdRoutine shooterSysIdRoutine =
   new SysIdRoutine(
     new SysIdRoutine.Config(null, null, null) , 
@@ -29,7 +34,10 @@ private final SysIdRoutine shooterSysIdRoutine =
 
   @Override
   public void periodic() {
-    io.updateInputs(shooterInputs);
+    io.updateInputs(inputs);
+    Logger.processInputs("shooter subsystem", inputs);
+
+  
 
   }
 
