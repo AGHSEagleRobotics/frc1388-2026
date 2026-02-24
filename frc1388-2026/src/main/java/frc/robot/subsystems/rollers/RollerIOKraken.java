@@ -10,6 +10,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,13 +21,14 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DutyCycle;
 
 public class RollerIOKraken implements RollerIO {
   private TalonFX m_bottomRollerMotor;
   private TalonFX m_topRollerMotor;
 
-  private VelocityTorqueCurrentFOC bottomrollerVelocityRequest;
-  private VelocityTorqueCurrentFOC toprollerVelocityRequest;
+  private VoltageOut bottomRollerVoltageSet;
+  private VoltageOut topRollerVoltageSet;
 
   private StatusSignal<AngularVelocity> bottomrollerVelocityStatusSignal;
   private StatusSignal<AngularVelocity> toprollerVelocityStatusSignal;
@@ -50,8 +52,11 @@ public class RollerIOKraken implements RollerIO {
     m_bottomRollerMotor = new TalonFX(0);
     m_topRollerMotor = new TalonFX(0);
 
-    bottomrollerVelocityRequest = new VelocityTorqueCurrentFOC(0);
-    toprollerVelocityRequest = new VelocityTorqueCurrentFOC(0);
+    configurebottomRollerMotor(m_bottomRollerMotor);
+    configureTopRoller(m_topRollerMotor);
+
+    bottomRollerVoltageSet = new VoltageOut(0);
+    topRollerVoltageSet = new VoltageOut(0);
 
     bottomrollerVelocityStatusSignal = m_bottomRollerMotor.getVelocity();
     toprollerVelocityStatusSignal = m_topRollerMotor.getVelocity();
@@ -114,16 +119,16 @@ public class RollerIOKraken implements RollerIO {
     }
 
     @Override
-    public void setBottomRollerVelocity(double rps) {
-      m_bottomRollerMotor.setControl(bottomrollerVelocityRequest.withVelocity(rps));
+    public void setBottomRollerVoltage(double volts) {
+      m_bottomRollerMotor.setControl(bottomRollerVoltageSet.withOutput(volts));
     }
 
     @Override
-    public void setTopRollerVelocity(double rps) {
-      m_topRollerMotor.setControl(toprollerVelocityRequest.withVelocity(rps));
+    public void setTopRollerVoltage(double volts) {
+      m_topRollerMotor.setControl(topRollerVoltageSet.withOutput(volts));
     }
 
-      private void configurbottomRollerMotor(TalonFX rollerMotor) {
+      private void configurebottomRollerMotor(TalonFX rollerMotor) {
     TalonFXConfiguration bottomrollerConfig = new TalonFXConfiguration();
     TorqueCurrentConfigs bottomrollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
@@ -151,7 +156,7 @@ public class RollerIOKraken implements RollerIO {
     }
   }
 
-  private void configureTopRoller(TalonFX bottomRoller, TalonFX topRoller) {
+  private void configureTopRoller(TalonFX topRoller) {
     TalonFXConfiguration topRollerConfig = new TalonFXConfiguration();
     TorqueCurrentConfigs toprollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
 

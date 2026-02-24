@@ -52,7 +52,7 @@ public interface RollerIO {
 
   public default void applyOutputs(RollerIOInputs outputs) {}
 
-  public default void setBottomRollerVelocity(double rps){}
+  public default void setBottomRollerVoltage(double rps){}
 
-  public default void setTopRollerVelocity(double rps){}
+  public default void setTopRollerVoltage(double rps){}
 }

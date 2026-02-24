@@ -13,70 +13,74 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.Constants.RollerConstants;
 import frc.robot.subsystems.rollers.RollerIO.RollerIOInputs;
 import frc.robot.subsystems.rollers.RollerIO.RollerIOMode;
 import frc.robot.subsystems.rollers.RollerIO.RollerIOOutputs;
 
 public class Roller extends SubsystemBase {
   /** Creates a new RollerSubsystem. */
-  public class RollerSystem {
 
-  private double kS = 0.0;
-  private double kV = 0.0;
+  private final RollerIO m_io;
+
+  private final RollerMotor[] m_rollerMotors = {
+    RollerMotor.BOTTOMROLLER, RollerMotor.TOPROLLER,
+  };
+
+  private BooleanSupplier m_isReadyToShoot;
+  
+  private RollerState rollerState;
 
   private final RollerIOInputs inputs = new RollerIOInputs();
   private final RollerIOOutputs outputs = new RollerIOOutputs();
 
   private BooleanSupplier coastOverride = () -> false;
 
-  public RollerSystem(double kP, double kD) {
+  enum RollerMotor {
+    TOPROLLER,
+    BOTTOMROLLER
+  }
 
-    outputs.kP = kP;
-    outputs.kD = kD;
+  enum RollerState {
+    BRAKE,
+    INTAKING,
+    SHOOTING
+  }
+
+  public Roller(RollerIO io) {
+    m_io = io;
+  }
+
+  public void setShootingReady(BooleanSupplier isReadyToShoot) {
+    m_isReadyToShoot = isReadyToShoot;
   }
 
   public void periodic() {
-    // Update mode
-    if (DriverStation.isDisabled()) {
-      outputs.mode = RollerIOMode.BRAKE;
-
-      if (coastOverride.getAsBoolean()) {
-        outputs.mode = RollerIOMode.COAST;
-      }
+    m_io.updateInputs(inputs);
+    if (rollerState == RollerState.BRAKE) {
+      stop();
     }
-  }
+    else if(rollerState == RollerState.INTAKING) {
+      setIntakingRollers();
+    }
+    else if ((rollerState == RollerState.SHOOTING) && (m_isReadyToShoot.getAsBoolean())) {
+      setShootingRollers();
+    }
 
-  public void runOpenLoop(double volts) {
-    outputs.mode = RollerIOMode.VOLTAGE_CONTROL;
-    outputs.appliedVoltage = volts;
-  }
+    }
 
-  public void runClosedLoop(double setpointVelocity) {
-    outputs.mode = RollerIOMode.CLOSED_LOOP;
-    outputs.velocity = setpointVelocity;
-    outputs.feedforward = Math.signum(setpointVelocity) * kS + setpointVelocity * kV;
-  }
+    public void stop() {
+      m_io.setBottomRollerVoltage(0);
+      m_io.setTopRollerVoltage(0);
+    }
 
-  public void setGains(double kP, double kD) {
-    outputs.kP = kP;
-    outputs.kD = kD;
-  }
+    public void setIntakingRollers() {
+      m_io.setBottomRollerVoltage(RollerConstants.bottomRollerIntakeSpeed);
+    }
 
-  public void setFeedforward(double kS, double kV) {
-    this.kS = kS;
-    this.kV = kV;
+    public void setShootingRollers() {
+      m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
+      m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);
+    }
+    
   }
-
-  public double getTorqueCurrent() {
-    return inputs.bottomrollerTorqueCurrentAmps;
-  }
-
-  public double getVelocity() {
-    return inputs.bottomrollerVelocityRPS;
-  }
-
-  public void stop() {
-    outputs.mode = RollerIOMode.BRAKE;
-  }
-}
-}
