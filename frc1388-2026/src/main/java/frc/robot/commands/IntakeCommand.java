@@ -7,11 +7,11 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeDeployment;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeCommand extends Command {
-  private final IntakeDeployment m_intakeDeployment;
+  private final IntakeSubsystem m_intakeDeployment;
   private final
 //   /** Creates a new IntakeCommand. */
   public IntakeCommand() {
