@@ -9,7 +9,7 @@ import com.ctre.phoenix6.StatusCode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public interface ShooterIO {
- public static class ShooterIOInputs {
+ public static class ShooterInputs {
   //VelocityRPS is the actual speed of the motor in revolutions per second,
   //ReferenceVelocityRPS is the velocity that we are asking for it to be, 
   //and ClosedLoopReferenceRPS is the velocity that the motor is trying to reach at that moment
@@ -39,7 +39,7 @@ public interface ShooterIO {
 
  }
 
-  public default void updateInputs(ShooterIOInputs inputs) {}
+  public default void updateInputs(ShooterInputs inputs) {}
 
   public default void setShooterVelocity(double motor1RPS, double motor2RPS) {}
     

@@ -10,13 +10,14 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
@@ -29,9 +30,6 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterIOKraken implements ShooterIO {
-  //velocitytorquecurrentFOC requests / used for setting velocity
-  private VelocityTorqueCurrentFOC shootMotor1VelocityRequest;
-  private VelocityTorqueCurrentFOC shootMotor2VelocityRequest;
 
   //statussignals
   private StatusSignal<AngularVelocity> shootMotor1VelocitySS;
@@ -85,9 +83,7 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor1.getConfigurator().apply(controllerConfig, 1.0);
     shootMotor2.getConfigurator().apply(controllerConfig, 1.0);
 
-    //using velocitytorquecurrentFOC to set motor velocity 
-    shootMotor1VelocityRequest = new VelocityTorqueCurrentFOC(0);
-    shootMotor2VelocityRequest = new VelocityTorqueCurrentFOC(0);
+   
 
     //SS at the end is just statussignal i was too lazy to write it out all the time
     shootMotor1VelocitySS = shootMotor1.getVelocity();
@@ -118,7 +114,7 @@ public class ShooterIOKraken implements ShooterIO {
 
   }
   @Override
-  public void updateInputs(ShooterIOInputs inputs) {
+  public void updateInputs(ShooterInputs inputs) {
     inputs.shootMotor1Connected = 
       BaseStatusSignal.refreshAll(
         shootMotor1VelocitySS,
@@ -155,14 +151,10 @@ public class ShooterIOKraken implements ShooterIO {
       
   }
   @Override
-    public void setShooterVelocity(double motor1RPS, double motor2RPS) {
-      shootMotor1.setControl(velocityControl.withVelocity(motor1RPS));
-      shootMotor2.setControl(velocityControl.withVelocity(motor2RPS));
-    }
-  @Override
     public void setShooterVolts(double motor1Volts, double motor2Volts) {
       shootMotor1.setControl(voltageControl.withOutput(motor1Volts));
-      shootMotor2.setControl(voltageControl.withOutput(motor1Volts));
+      shootMotor2.setControl(new Follower(0, MotorAlignmentValue.Opposed)); //might need to change opposed valueto aligned later
+      //have following motor inverted from other motor
   }
   @Override
     public void stopShooter() {
