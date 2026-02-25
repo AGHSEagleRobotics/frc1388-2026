@@ -25,8 +25,16 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.rollers.Roller;
+import frc.robot.subsystems.rollers.RollerIO;
+import frc.robot.subsystems.rollers.RollerIOKraken;
 
 public class RobotContainer {
+    // subsystems
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Roller roller;
+    public final Superstructure superstructure;
+
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -41,11 +49,11 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    public final Superstructure superstructure = new Superstructure(drivetrain);
+    public RobotContainer() {        
+        roller = new Roller(new RollerIO() {});
+        superstructure = new Superstructure(drivetrain, roller);
 
-    public RobotContainer() {
         configureBindings();
         drivetrain.resetPose(new Pose2d(3, 3, new Rotation2d()));
     }
