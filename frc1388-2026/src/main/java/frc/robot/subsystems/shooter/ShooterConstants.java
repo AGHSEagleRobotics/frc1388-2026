@@ -8,9 +8,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterConstants {
-  public static final int kShootMotor1CANID = 0;
-  public static final int kShootMotor2CANID = 0;
-
+  public static final int SHOOT_MOTOR1_CANID = 0;
+  public static final int SHOOT_MOTOR2_CANID = 0;
+  
+  public static final double SHOOTING_STATE_VELOCITY = 0;
+  public static final double SOTM_STATE_VELOCITY = 0;
+  public static final double IDLE_STATE_VELOCITY = 0;
+  public static final double PASSING_STATE_VELOCITY = 0;
   
   }
 

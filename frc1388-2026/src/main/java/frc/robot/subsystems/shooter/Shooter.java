@@ -18,9 +18,17 @@ import frc.robot.Robot;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterInputs;
 
 public class Shooter extends SubsystemBase {
-
 private final ShooterIO io;
 private final ShooterInputs inputs = new ShooterInputs();
+
+private ShooterState shooterState;
+
+enum ShooterState {
+  SHOOTING, 
+  PASSING,
+  IDLE,
+  SOTM,
+}
 
 private final SysIdRoutine shooterSysIdRoutine =
   new SysIdRoutine(
@@ -29,12 +37,24 @@ private final SysIdRoutine shooterSysIdRoutine =
 
   public Shooter(ShooterIO io) {
   this.io = io;
- 
     
   }
 
   @Override
   public void periodic() {
+    if (shooterState == ShooterState.IDLE) {
+      stopShooter();
+    }
+    else if (shooterState == ShooterState.SHOOTING) {
+      setShooterVelocity(ShooterConstants.SHOOTING_STATE_VELOCITY);
+    }
+    else if (shooterState == ShooterState.PASSING) {
+      setShooterVelocity(ShooterConstants.PASSING_STATE_VELOCITY);
+    }
+    else if (shooterState == ShooterState.SOTM) {
+      setShooterVelocity(ShooterConstants.SOTM_STATE_VELOCITY);
+    }
+
   //Logging
    SmartDashboard.putBoolean("Shooter/Motor1/isConnected", inputs.shootMotor1Connected);
    SmartDashboard.putNumber("Shooter/Motor1/Velocity", inputs.shootMotor1VelocityRPS);
@@ -54,14 +74,26 @@ private final SysIdRoutine shooterSysIdRoutine =
    SmartDashboard.putNumber("Shooter/Motor2/SupplyCurrentAmps", inputs.shootMotor2SupplyCurrentAmps);
    SmartDashboard.putNumber("Shooter/Motor2/TempCelsius", inputs.shootMotor2TempCelsius);
 
-  
-
   }
 
-  public void setShooterVelocity() {
-    io.setShooterVelocity(0, 0);
+  public void setShooterVelocity(double shootRPS) {
+    io.setShooterVelocity(0);
   }
  
+  public void setShooterVolts(double shootMotorVolts) {
+    io.setShooterVolts(0);
+  }
+
+  public void setKickerVolts(double kickerVolts) {
+    io.setKickerVolts(0);
+  }
+
+  public void stopShooter() {
+    io.stopShooter();
+  }
+
+
+  
   
 
 }

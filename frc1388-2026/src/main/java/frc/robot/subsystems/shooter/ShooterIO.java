@@ -15,41 +15,49 @@ public interface ShooterIO {
   //and ClosedLoopReferenceRPS is the velocity that the motor is trying to reach at that moment
   public boolean shootMotor1Connected = true;
   public boolean shootMotor2Connected = true;
+  public boolean kickerMotorConnected = true;
 
   public double shootMotor1VelocityRPS = 0.0;
   public double shootMotor2VelocityRPS = 0.0;
+  public double kickerMotorVelocityRPS = 0.0;
 
   public double shootMotor1ReferenceVelocityRPS = 0.0;
   public double shootMotor2ReferenceVelocityRPS = 0.0;
+  public double kickerMotorReferenceVelocityRPS = 0.0;
 
   public double shootMotor1ClosedLoopReferenceRPS = 0.0;
   public double shootMotor2ClosedLoopReferenceRPS = 0.0;
+  public double kickerMotorClosedLoopReferenceRPS = 0.0;
 
   public double shootMotor1Voltage = 0.0;
   public double shootMotor2Voltage = 0.0;
+  public double kickerMotorVoltage = 0.0;
 
   public double shootMotor1TorqueCurrentAmps = 0.0;
   public double shootMotor2TorqueCurrentAmps = 0.0;
+  public double kickerMotorTorqueCurrentAmps = 0.0;
   
   public double shootMotor1SupplyCurrentAmps = 0.0;
   public double shootMotor2SupplyCurrentAmps = 0.0;
+  public double kickerMotorSupplyCurrentAmps = 0.0;
 
   public double shootMotor1TempCelsius = 0.0;
   public double shootMotor2TempCelsius = 0.0;
+  public double kickerMotorTempCelsius = 0.0;
 
  }
 
-  public default void updateInputs(ShooterInputs inputs) {}
+  public void updateInputs(ShooterInputs inputs);
 
-  public default void setShooterVelocity(double motor1RPS, double motor2RPS) {}
+  public void setShooterVelocity(double shooterRPS);
     
-  public default void setShooterVolts(double motor1Volts, double motor2Volts) {}
+  public void setShooterVolts(double shootMotorVolts);
 
-  public default void setPID(double kP, double kI, double kD) {}
+  public void setKickerVolts(double kickerVolts);
 
-  public default void stopShooter() {}
-    
-  public default void setCoastMode(boolean coast) {}
+  public void stopShooter();
+
+  public void setCoastMode(boolean coast);
   
   }
 
