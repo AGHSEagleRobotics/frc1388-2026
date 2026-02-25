@@ -34,7 +34,7 @@ public class ShotCalculator extends SubsystemBase {
         Pose2d drivetrainPose = drivetrain.getPose();
 
         targetDistance = drivetrainPose.getTranslation().getDistance(targetLocation.toPose2d().getTranslation());
-        targetSpeedRps = ShooterConstants.DISTANCE_TO_SHOT_SPEED.get(targetDistance);
+        targetSpeedRps = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(targetDistance);
 
         Pose3d shooterPose = new Pose3d(drivetrainPose).plus(ShooterConstants.BALL_TRANSFORM_CENTER);
 
