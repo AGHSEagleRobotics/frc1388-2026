@@ -4,13 +4,13 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.IntakePickupSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.intake.Intake;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-  public static Command exampleAuto(IntakePickupSubsystem subsystem) {
+  public static Command exampleAuto(Intake subsystem) {
     return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
   }
 

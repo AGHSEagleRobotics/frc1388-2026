@@ -39,34 +39,6 @@ public class RobotContainer {
 
     // public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-
-    //   private final TalonFX m_throwerMotor1 = new TalonFX(1); 
-    //   private final TalonFX m_throwerMotor2 = new TalonFX(2); 
-    //   private final TalonFX m_hoodMotor = new TalonFX(3); 
-    //   private final Ale_ThrowerSubsystem m_throwerSubsystem = new Ale_ThrowerSubsystem(m_throwerMotor1, m_throwerMotor2, m_hoodMotor);
-      private final SparkFlex m_intakeMotor1 = new SparkFlex(1, null);
-      private final SparkFlex m_intakeMotor2 = new SparkFlex(2, null);
-
-     
-
-    //   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(
-        // new SparkFlex(1, MotorType.kBrushless),
-        // new SparkFlex(2, MotorType.kBrushless),
-        // new SparkMax(3, MotorType.kBrushless),
-        // new DigitalInput(1),
-        // new DigitalInput(2);
-
-    //   private final IntakeCommand m_intakeCommand = new IntakeCommand();
-        // new SparkFlex(1, MotorType.kBrushless),
-        // new SparkFlex(2, MotorType.kBrushless),
-        // new SparkMax(3, MotorType.kBrushless),
-        // new DigitalInput(1),
-        // new DigitalInput(2));
-
-
-      
-
-
     private final CommandXboxController m_driverController =
     new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
