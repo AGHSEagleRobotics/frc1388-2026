@@ -18,8 +18,8 @@ public final class Constants {
   }
 
   public static class RollerConstants {
-    public static final double bottomRollerIntakeSpeed = 0;
-    public static final double bottomRollerShootingSpeed = 0;
-    public static final double topRollerShootingSpeed = 0;
+    public static final double bottomRollerIntakeSpeed = 4;
+    public static final double bottomRollerShootingSpeed = 4;
+    public static final double topRollerShootingSpeed = 4;
   }
 }
