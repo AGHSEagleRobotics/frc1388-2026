@@ -51,7 +51,7 @@ public class RobotContainer {
 
 
     public RobotContainer() {        
-        roller = new Roller(new RollerIO() {});
+        roller = new Roller(new RollerIOKraken());
         superstructure = new Superstructure(drivetrain, roller);
 
         configureBindings();

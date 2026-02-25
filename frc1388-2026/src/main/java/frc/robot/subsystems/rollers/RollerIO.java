@@ -48,11 +48,9 @@ public interface RollerIO {
     public boolean brakeModeEnabled = true;
   }
 
-  public default void updateInputs(RollerIOInputs inputs) {}
+  public void updateInputs(RollerIOInputs inputs);
 
-  public default void applyOutputs(RollerIOInputs outputs) {}
+  public void setBottomRollerVoltage(double rps);
 
-  public default void setBottomRollerVoltage(double rps){}
-
-  public default void setTopRollerVoltage(double rps){}
+  public void setTopRollerVoltage(double rps);
 }
