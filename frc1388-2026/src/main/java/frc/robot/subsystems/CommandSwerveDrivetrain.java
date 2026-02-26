@@ -1,14 +1,25 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.controls.compound.Diff_MotionMagicVoltage_Open;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -18,22 +29,31 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.FieldLayout;
 import frc.robot.Robot;
+import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.shotlib.ChassisAccelerations;
 import frc.robot.vision.LimelightHelpers;
 import frc.robot.vision.LimelightHelpers.PoseEstimate;
 import frc.robot.vision.VisionAcceptor;
+import frc.robot.utils.simulation.MapleSimSwerveDrivetrain;
+import dev.doglog.DogLog;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -49,6 +69,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public ChassisSpeeds m_previousSpeed = new ChassisSpeeds(0, 0, 0);
     private ChassisSpeeds prevFieldRelVelocities = new ChassisSpeeds();
+
+    private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -163,17 +185,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *                                CAN FD, and 100 Hz on CAN 2.0.
      * @param modules                 Constants for each specific module
      */
+
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
         double odometryUpdateFrequency,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
+        SwerveModuleConstants<?, ?, ?>... modules) {
+    super(
+            drivetrainConstants,
+            odometryUpdateFrequency,
+            // modules
+            MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
+    if (Utils.isSimulation()) {
+        startSimThread();
     }
-
+}
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
      * <p>
@@ -193,18 +218,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *                                  and radians
      * @param modules                   Constants for each specific module
      */
+    
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
         double odometryUpdateFrequency,
         Matrix<N3, N1> odometryStandardDeviation,
         Matrix<N3, N1> visionStandardDeviation,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
+        SwerveModuleConstants<?, ?, ?>... modules) {
+    super(
+            drivetrainConstants,
+            odometryUpdateFrequency,
+            odometryStandardDeviation,
+            visionStandardDeviation,
+            // modules
+            MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
+    if (Utils.isSimulation()) {
+        startSimThread();
     }
+    // configureAutoBuilder();
+}
 
     /**
      * Returns a command that applies the specified control request to this swerve drivetrain.
@@ -259,6 +291,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
+        DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
         
         if (getPose() != null) {
@@ -283,21 +316,55 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }
             }
         }
+        DogLog.log("Drive/OdometryPose", getState().Pose);
+        DogLog.log("Drive/TargetStates", getState().ModuleTargets);
+        DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
+        DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
+        if(mapleSimSwerveDrivetrain != null) {
+            DogLog.log("Drive/SimulationPose", mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+        }
+    }
+
+    public MapleSimSwerveDrivetrain getSimulationDriveTrain() {
+        return mapleSimSwerveDrivetrain;
     }
 
     private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
+        // m_lastSimTime = Utils.getCurrentTimeSeconds();
 
-        /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
+        // /* Run simulation at a faster rate so PID gains behave more reasonably */
+        // m_simNotifier = new Notifier(() -> {
+        //     final double currentTime = Utils.getCurrentTimeSeconds();
+        //     double deltaTime = currentTime - m_lastSimTime;
+        //     m_lastSimTime = currentTime;
 
-            /* use the measured time delta, get battery voltage from WPILib */
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        });
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
+        //     /* use the measured time delta, get battery voltage from WPILib */
+        //     updateSimState(deltaTime, RobotController.getBatteryVoltage());
+        // });
+        // m_simNotifier.startPeriodic(kSimLoopPeriod);
+        SimulatedArena.overrideInstance(new Arena2026Rebuilt(false));
+
+        mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
+            Seconds.of(kSimLoopPeriod),
+            // TODO: modify the following constants according to your robot
+            Pounds.of(100), // robot weight
+            Inches.of(30.5), // bumper length
+            Inches.of(30.5), // bumper width
+            DCMotor.getKrakenX60(4), // drive motor type
+            DCMotor.getFalcon500(4), // steer motor type
+            2.225, // wheel COF
+            getModuleLocations(),
+            getPigeon2(),
+            getModules(),
+            TunerConstants.FrontLeft,
+            TunerConstants.FrontRight,
+            TunerConstants.BackLeft,
+            TunerConstants.BackRight);
+
+    
+      /* Run simulation at a faster rate so PID gains behave more reasonably */
+    m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
+    m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
     /**
@@ -343,6 +410,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    @Override
+    public void resetPose(Pose2d pose) {
+        if (this.mapleSimSwerveDrivetrain != null)
+            mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+        Timer.delay(0.05); // Wait for simulation to update
+        super.resetPose(pose);
     }
 
     public Pose2d getPose() {

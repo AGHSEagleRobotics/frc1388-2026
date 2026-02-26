@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 
@@ -25,10 +28,18 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class RollerConstants {
+    public static final double bottomRollerIntakeSpeed = 4;
+    public static final double bottomRollerShootingSpeed = 4;
+    public static final double topRollerShootingSpeed = 4;
+  }
+
   public static class DriveTrainConstants {
     public static final double ROBOT_MAX_SPEED = Units.feetToMeters(14.4); // R1 in meters per second
     public static final double DT_SECONDS = 0.02; // 20ms per tick
     public static final double DISTANCE_PER_TICK = ROBOT_MAX_SPEED * DT_SECONDS; // 20ms per tick
+
+    public static final double ROBOT_DIMENSIONS = Units.inchesToMeters(31.25);
   }
 
    public static class FieldLayout {
@@ -40,6 +51,21 @@ public final class Constants {
 
       public static Pose3d CENTER_OF_HUB_RED =  new Pose3d(Units.inchesToMeters(534.72), Units.inchesToMeters(158.84),
                 Units.inchesToMeters(72), Rotation3d.kZero);
+
+      public static final double BLUE_ALLIANCE_ZONE = Units.inchesToMeters(156.61);
+      public static final double RED_ALLIANCE_ZONE = Units.inchesToMeters(FIELD_LENGTH - BLUE_ALLIANCE_ZONE);
+
+      public static final Translation3d BLUE_PASSING_SPOT_LEFT = new Translation3d(
+        Meters.of(Units.inchesToMeters(90)), Meters.of(FieldLayout.FIELD_WIDTH).div(2).plus(Meters.of(Units.inchesToMeters(85))), Meters.zero());
+      
+        public static final Translation3d BLUE_PASSING_SPOT_RIGHT = new Translation3d(
+          Meters.of(Units.inchesToMeters(90)), Meters.of(FieldLayout.FIELD_WIDTH).div(2).minus(Meters.of(Units.inchesToMeters(85))), Meters.zero());
+
+      public static final Translation3d RED_PASSING_SPOT_LEFT = new Translation3d(
+        Meters.of(BLUE_PASSING_SPOT_LEFT.getX() - FIELD_LENGTH), Meters.of(FIELD_WIDTH).div(2).plus(Meters.of(FIELD_WIDTH - BLUE_PASSING_SPOT_LEFT.getY())), Meters.zero());
+
+       public static final Translation3d RED_PASSING_SPOT_RIGHT = new Translation3d(
+        Meters.of(BLUE_PASSING_SPOT_RIGHT.getX() - FIELD_LENGTH), Meters.of(FIELD_WIDTH).div(2).minus(Meters.of(FIELD_WIDTH - BLUE_PASSING_SPOT_RIGHT.getY())), Meters.zero());
     }
 
     public static class ShooterConstants {
