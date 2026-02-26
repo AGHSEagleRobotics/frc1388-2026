@@ -21,12 +21,12 @@ public class Shooter extends SubsystemBase {
 private final ShooterIO io;
 private final ShooterInputs inputs = new ShooterInputs();
 
-private ShooterState shooterState;
+public ShooterState shooterState;
 
-enum ShooterState {
+public enum ShooterState {
+  IDLE,
   SHOOTING, 
   PASSING,
-  IDLE,
   SOTM,
 }
 
@@ -37,7 +37,7 @@ private final SysIdRoutine shooterSysIdRoutine =
 
   public Shooter(ShooterIO io) {
   this.io = io;
-    
+  shooterState = ShooterState.IDLE;
   }
 
   @Override
@@ -90,10 +90,13 @@ private final SysIdRoutine shooterSysIdRoutine =
 
   public void stopShooter() {
     io.stopShooter();
+  }  
+
+  public ShooterState getShooterState() {
+    return shooterState;
   }
 
-
-  
-  
-
+  public void setShooterState(ShooterState shooterState) {
+    this.shooterState = shooterState;
+  }
 }

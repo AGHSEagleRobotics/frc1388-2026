@@ -24,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.shooter.*;
-import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.rollers.Roller;
 import frc.robot.subsystems.rollers.RollerIO;
 import frc.robot.subsystems.rollers.RollerIOKraken;
@@ -57,7 +57,7 @@ public class RobotContainer {
     public RobotContainer() {        
         roller = new Roller(new RollerIOKraken());
         shooter = new Shooter(new ShooterIOKraken());
-        superstructure = new Superstructure(drivetrain, roller);
+        superstructure = new Superstructure(drivetrain, roller, shooter);
 
 
         

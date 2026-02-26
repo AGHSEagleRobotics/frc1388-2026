@@ -43,14 +43,15 @@ public class Roller extends SubsystemBase {
     BOTTOMROLLER
   }
 
-  enum RollerState {
-    BRAKE,
+  public enum RollerState {
+    IDLE,
     INTAKING,
     SHOOTING
   }
 
   public Roller(RollerIO io) {
     m_io = io;
+    rollerState = RollerState.IDLE;
   }
 
   public void setShootingReady(BooleanSupplier isReadyToShoot) {
@@ -59,7 +60,7 @@ public class Roller extends SubsystemBase {
 
   public void periodic() {
     m_io.updateInputs(inputs);
-    if (rollerState == RollerState.BRAKE) {
+    if (rollerState == RollerState.IDLE) {
       stop();
     }
     else if(rollerState == RollerState.INTAKING) {
@@ -83,5 +84,13 @@ public class Roller extends SubsystemBase {
     public void setShootingRollers() {
       m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
       m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);
+    }
+
+    public RollerState getRollerState() {
+      return rollerState;
+    }
+
+    public void setRollerState(RollerState rollerState) {
+      this.rollerState = rollerState;
     }
 }
