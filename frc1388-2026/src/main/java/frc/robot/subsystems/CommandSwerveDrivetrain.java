@@ -485,14 +485,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
 
     public double getTurnToSpeakerSpeed(PIDController turnPidController) {
-        double angleFromSpeaker = getAbsoluteAngleFromSpeaker();
+        double angleFromSpeaker = getAbsoluteAngleFromHub();
         double rz = getAngle();
         rz = rz < 0 ? rz + 360 : rz;
         double speed = -(turnPidController.calculate(angleFromSpeaker - rz));
         return speed;
     }
 
-    public double getAbsoluteAngleFromSpeaker() {
+    public double getAbsoluteAngleFromHub() {
         // double[] botPose = getBotPose();
         // double rX = getBotPoseValue(botPose, 0);
         // double rY = getBotPoseValue(botPose, 1);
@@ -510,10 +510,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
-    public double getAbsouluteDistanceFromSpeaker() {
+    public double getAbsouluteDistanceFromHub() {
         double rX = getPose().getX();
         double tX;
-        double tAngle = getAbsoluteAngleFromSpeaker();
+        double tAngle = getAbsoluteAngleFromHub();
         if (Robot.getAllianceColor() == Alliance.Blue) {
             tX = FieldLayout.CENTER_OF_HUB_BLUE.getX();
         } else {
