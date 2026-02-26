@@ -11,18 +11,18 @@ import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ShooterIOSim implements ShooterIO {
-  private TalonFXSimState shootMotorSim;
+// public class ShooterIOSim implements ShooterIO {
+//   private TalonFXSimState shootMotorSim;
   
 
-  private NetworkTableEntry shootFlywheelMassKg;
+//   private NetworkTableEntry shootFlywheelMassKg;
 
-  /** Creates a new ShooterIOSim. */
-  public ShooterIOSim(TalonFXSimState shootMotor1Sim) {
-    this.shootMotorSim = shootMotorSim;
+//   /** Creates a new ShooterIOSim. */
+//   public ShooterIOSim(TalonFXSimState shootMotor1Sim) {
+//     this.shootMotorSim = shootMotorSim;
     
 
-  }
+//   }
   
   
-}
+// }
