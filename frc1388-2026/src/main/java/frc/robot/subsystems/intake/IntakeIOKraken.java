@@ -4,6 +4,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -34,8 +35,11 @@ import frc.robot.Constants;
 
 /** Add your docs here. */
 public class IntakeIOKraken implements IntakeIO {
-private TalonFX m_deployMotor;
+  private TalonFX m_deployMotor;
   private TalonFX m_rollerMotor;
+
+  public static final double ROTOR_TO_PINION_RATIO = 2.0 / 1;
+  public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
 
   private VoltageOut deployMotorVoltageSet;
   private VoltageOut rollerMotorVoltageSet;
@@ -58,12 +62,19 @@ private TalonFX m_deployMotor;
   private StatusSignal<Voltage> deployMotorVoltageStatusSignal;
   private StatusSignal<Voltage> rollerMotorVoltageStatusSignal;
 
+  private final MotionMagicVoltage rackPositionRequest = new MotionMagicVoltage(0);
+  private final VoltageOut rackVoltageRequest = new VoltageOut(0);
+  private final VoltageOut spinVoltageRequest = new VoltageOut(0).withEnableFOC(false);
+
+  private final NeutralOut neutralOut = new NeutralOut();
+
+
   public IntakeIOKraken() {
     m_deployMotor = new TalonFX(0);
     m_rollerMotor = new TalonFX(0);
 
     configureDeployMotor(m_deployMotor);
-    configurerollerMotor(m_rollerMotor);
+    configureRollerMotor(m_rollerMotor);
 
     deployMotorVoltageSet = new VoltageOut(0);
     rollerMotorVoltageSet = new VoltageOut(0);
@@ -111,86 +122,143 @@ private TalonFX m_deployMotor;
     inputs.deployMotorSupplyCurrentAmps = deployMotorSupplyCurrentStatusSignal.getValueAsDouble();
     inputs.rollerMotorSupplyCurrentAmps = rollerMotorSupplyCurrentStatusSignal.getValueAsDouble();
 
-    inputs.bottomrollerVelocityRPS = bottomrollerVelocityStatusSignal.getValueAsDouble();
-    inputs.toprollerVelocityRPS = toprollerVelocityStatusSignal.getValueAsDouble();
+    inputs.deployMotorVelocityRPS = deployMotorVelocityStatusSignal.getValueAsDouble();
+    inputs.rollerMotorVelocityRPS = rollerMotorVelocityStatusSignal.getValueAsDouble();
 
     // Retrieve the closed loop reference status signals directly from the motor in this method
     // instead of retrieving in advance because the status signal returned depends on the current
     // control mode.
-    inputs.bottomrollerReferenceVelocityRPS = m_bottomRollerMotor.getClosedLoopReference().getValueAsDouble();
-    inputs.toprollerReferenceVelocityRPS = m_topRollerMotor.getClosedLoopReference().getValueAsDouble();
+    inputs.deployMotorReferenceVelocityRPS = m_deployMotor.getClosedLoopReference().getValueAsDouble();
+    inputs.rollerMotorReferenceVelocityRPS = m_rollerMotor.getClosedLoopReference().getValueAsDouble();
 
-    inputs.bottomrollerTempCelsius = bottomrollerTemperatureStatusSignal.getValueAsDouble();
-    inputs.toprollerTempCelsius = toprollerTemperatureStatusSignal.getValueAsDouble();
+    inputs.bottomrollerTempCelsius = deployMotorTemperatureStatusSignal.getValueAsDouble();
+    inputs.rollerMotorTempCelsius = rollerMotorTemperatureStatusSignal.getValueAsDouble();
 
-    inputs.bottomrollerVoltage = bottomrollerVoltageStatusSignal.getValueAsDouble();
-    inputs.toprollerVoltage = toprollerVoltageStatusSignal.getValueAsDouble();
+    inputs.deployMotorVoltage = deployMotorVoltageStatusSignal.getValueAsDouble();
+    inputs.rollerMotorVoltage = rollerMotorVoltageStatusSignal.getValueAsDouble();
 
+    }
+
+    public static Distance rotorAngleToDistance(Angle rotorAngle) {
+        return PINION_PITCH_RADIUS.times(rotorAngle.in(Radians));
+    }
+
+    public static Angle distanceToRotorAngle(Distance distance) {
+        return Radians.of(distance.in(Meters) / PINION_PITCH_RADIUS.in(Meters));
     }
 
     @Override
-    public void setBottomRollerVoltage(double volts) {
-      m_bottomRollerMotor.setControl(bottomRollerVoltageSet.withOutput(volts));
+    public void setRackPosition(Distance position) {
+      m_deployMotor.setControl(rackPositionRequest.withPosition(distanceToRotorAngle(position)));
     }
 
     @Override
-    public void setTopRollerVoltage(double volts) {
-      m_topRollerMotor.setControl(topRollerVoltageSet.withOutput(volts));
+    public void setRackOutput(Voltage out) {
+        m_deployMotor.setControl(rackVoltageRequest.withOutput(out));
     }
 
-      private void configurebottomRollerMotor(TalonFX rollerMotor) {
-    TalonFXConfiguration bottomrollerConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs bottomrollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
+    @Override
+    public void setSpinOutput(Voltage volts) {
+      m_rollerMotor.setControl(rollerMotorVoltageSet.withOutput(volts));
+    }
+
+    @Override
+    public void stopRack() {
+        m_deployMotor.setControl(neutralOut);
+    }
+
+    @Override
+    public void stopSpin() {
+        m_rollerMotor.setControl(neutralOut);
+    }
+    
+    @Override
+    public void zeroPosition() {
+        m_deployMotor.setPosition(0);
+    }
+
+      private void configuredeployMotor(TalonFX deployMotor) {
+    TalonFXConfiguration deployMotorConfig = new TalonFXConfiguration();
+    TorqueCurrentConfigs deployMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
     // TODO: CHANGE LATER
-    bottomrollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
-    bottomrollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
+    deployMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
+    deployMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
 
-    bottomrollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    bottomrollerConfig.Slot0.kP = 0;
-    bottomrollerConfig.Slot0.kI = 0;
-    bottomrollerConfig.Slot0.kD = 0;
-    bottomrollerConfig.Slot0.kS = 0;
+    deployMotorConfig.Slot0.kP = 0;
+    deployMotorConfig.Slot0.kI = 0;
+    deployMotorConfig.Slot0.kD = 0;
+    deployMotorConfig.Slot0.kS = 0;
 
     //TODO: CORRECT LATER
-    bottomrollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    deployMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     //TODO: CHECK VALUE
-    bottomrollerConfig.Feedback.SensorToMechanismRatio = 1;
+    deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = rollerMotor.getConfigurator().apply(bottomrollerConfig);
+      status = deployMotor.getConfigurator().apply(deployMotorConfig);
       if (status.isOK()) break;
     }
   }
 
-  private void configureTopRoller(TalonFX topRoller) {
-    TalonFXConfiguration topRollerConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs toprollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
+  private void configureDeployMotor(TalonFX deployMotor) {
+    TalonFXConfiguration deployMotorConfig = new TalonFXConfiguration();
+    TorqueCurrentConfigs deployMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
     //TODO: CORRECT LATER
-    toprollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
-    toprollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
+    deployMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
+    deployMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
 
-    topRollerConfig.TorqueCurrent = toprollerTorqueCurrentConfigs;
+    deployMotorConfig.TorqueCurrent = deployMotorTorqueCurrentConfigs;
 
-    topRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
-    topRollerConfig.Slot0.kP = 0;
-    topRollerConfig.Slot0.kI = 0;
-    topRollerConfig.Slot0.kD = 0;
-    topRollerConfig.Slot0.kS = 0;
+    deployMotorConfig.Slot0.kP = 0;
+    deployMotorConfig.Slot0.kI = 0;
+    deployMotorConfig.Slot0.kD = 0;
+    deployMotorConfig.Slot0.kS = 0;
 
     //TODO: CHANGE LATER
-    topRollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    deployMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    topRollerConfig.Feedback.SensorToMechanismRatio = 1;
+    deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = topRoller.getConfigurator().apply(topRollerConfig);
+      status = deployMotor.getConfigurator().apply(deployMotorConfig);
+      if (status.isOK()) break;
+    }
+  }
+
+  private void configureRollerMotor(TalonFX rollerMotor) {
+    TalonFXConfiguration rollerMotorConfig = new TalonFXConfiguration();
+    TorqueCurrentConfigs rollerMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
+
+    //TODO: CORRECT LATER
+    rollerMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
+    rollerMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
+
+    rollerMotorConfig.TorqueCurrent = rollerMotorTorqueCurrentConfigs;
+
+    rollerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    // TODO: CORRECT LATER
+    rollerMotorConfig.Slot0.kP = 0;
+    rollerMotorConfig.Slot0.kI = 0;
+    rollerMotorConfig.Slot0.kD = 0;
+    rollerMotorConfig.Slot0.kS = 0;
+
+    //TODO: CHANGE LATER
+    rollerMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    rollerMotorConfig.Feedback.SensorToMechanismRatio = 1;
+
+    StatusCode status = StatusCode.StatusCodeNotInitialized;
+    for (int i = 0; i < 5; ++i) {
+      status = rollerMotor.getConfigurator().apply(rollerMotorConfig);
       if (status.isOK()) break;
     }
   }

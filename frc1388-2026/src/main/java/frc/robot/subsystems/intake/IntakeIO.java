@@ -18,18 +18,25 @@ import edu.wpi.first.units.measure.Voltage;
 /** Add your docs here. */
 public interface IntakeIO {
     public static class IntakeIOInputs {
-        public boolean rackMotorConnected = false;
-        public Distance rackPosition = Meters.of(0.0);
-        public LinearVelocity rackVelocity = MetersPerSecond.of(0.0);
-        public Distance rackSetpoint = Meters.of(0.0);
-        public LinearVelocity rackSetpointVelocity = MetersPerSecond.of(0.0);
-        public Current rackCurrent = Amps.of(0.0);
-        public Voltage rackAppliedVolts = Volts.of(0.0);
+        double deployMotorTorqueCurrentAmps = 0;
+        double rollerMotorTorqueCurrentAmps = 0;
 
-        public boolean spinMotorConnected = false;
-        public AngularVelocity spinVelocity = RadiansPerSecond.of(0.0);
-        public Current spinCurrent = Amps.of(0.0);
-        public Voltage spinAppliedVolts = Volts.of(0.0);
+        double deployMotorSupplyCurrentAmps = 0;
+        double rollerMotorSupplyCurrentAmps = 0;
+
+        double deployMotorVelocityRPS = 0;
+        double rollerMotorVelocityRPS = 0;
+
+        double deployMotorReferenceVelocityRPS = 0;
+        double rollerMotorReferenceVelocityRPS = 0;
+
+        double bottomrollerTempCelsius = 0;
+        double rollerMotorTempCelsius = 0;
+
+        double deployMotorVoltage = 0;
+        double rollerMotorVoltage = 0;
+
+
     }
 
     public default void updateInputs(IntakeIOInputs inputs) {}
@@ -45,4 +52,5 @@ public interface IntakeIO {
     public default void stopSpin() {}
 
     public default void zeroPosition() {}
+
 }
