@@ -14,6 +14,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Robot;
 import frc.robot.shotlib.ShootOnTheFlyCalculator.InterceptSolution;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 
@@ -38,7 +39,7 @@ public class ShotCalculator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Pose2d drivetrainPose = drivetrain.getPose();
+        Pose2d drivetrainPose = this.drivetrain.getPose();
 
         targetDistance = drivetrainPose.getTranslation().getDistance(getTargetLocation().toPose2d().getTranslation());
         targetSpeedRps = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(targetDistance);
@@ -109,5 +110,39 @@ public class ShotCalculator extends SubsystemBase {
             }
         }
         return targetLocation;
+    }
+
+    public double getAbsoluteAngleFromTargetSOTM() {
+        // double[] botPose = getBotPose();
+        // double rX = getBotPoseValue(botPose, 0);
+        // double rY = getBotPoseValue(botPose, 1);
+        double rX = this.drivetrain.getPose().getX();
+        double rY = this.drivetrain.getPose().getY();
+
+        if (Robot.getAllianceColor() == DriverStation.Alliance.Blue) {
+            return Math.toDegrees(
+                    Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
+                    + 180;
+        } else {
+            return Math.toDegrees(
+                    Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
+                    + 180;
+        }
+    }
+
+    public double getAbsouluteDistanceFromTargetSOTM() {
+        double rX = this.drivetrain.getPose().getX();
+        double tX;
+        double tAngle = getAbsoluteAngleFromTargetSOTM();
+        if (Robot.getAllianceColor() == Alliance.Blue) {
+            tX = currentEffectiveTargetPose.getX();
+        } else {
+            tX = currentEffectiveTargetPose.getX();
+        }
+        double adjacent = rX - tX;
+        double distanceFromSpeaker = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
+                                                                                     // cos(angle)
+
+        return distanceFromSpeaker;
     }
 }

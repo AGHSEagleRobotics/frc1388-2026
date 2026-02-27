@@ -133,8 +133,8 @@ public class RollerIOKraken implements RollerIO {
     TorqueCurrentConfigs bottomrollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
     // TODO: CHANGE LATER
-    bottomrollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
-    bottomrollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
+    bottomrollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40.0;
+    bottomrollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40.0;
 
     bottomrollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -161,8 +161,8 @@ public class RollerIOKraken implements RollerIO {
     TorqueCurrentConfigs toprollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
     //TODO: CORRECT LATER
-    toprollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
-    toprollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
+    toprollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40.0;
+    toprollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40.0;
 
     topRollerConfig.TorqueCurrent = toprollerTorqueCurrentConfigs;
 

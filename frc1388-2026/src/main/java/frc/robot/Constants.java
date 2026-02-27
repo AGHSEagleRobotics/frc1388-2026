@@ -76,5 +76,11 @@ public final class Constants {
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
       }
+      public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
+      static {
+      }
+      public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_HOODANGLE = new InterpolatingDoubleTreeMap();
+      static {
+      }
     }
   }
