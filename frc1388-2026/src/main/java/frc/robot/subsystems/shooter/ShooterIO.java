@@ -4,34 +4,60 @@
 
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.StatusCode;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public interface ShooterIO {
- public static class ShooterIOInputs {
+ public static class ShooterInputs {
+  //VelocityRPS is the actual speed of the motor in revolutions per second,
+  //ReferenceVelocityRPS is the velocity that we are asking for it to be, 
+  //and ClosedLoopReferenceRPS is the velocity that the motor is trying to reach at that moment
+  public boolean shootMotor1Connected = true;
+  public boolean shootMotor2Connected = true;
+  public boolean kickerMotorConnected = true;
+
   public double shootMotor1VelocityRPS = 0.0;
   public double shootMotor2VelocityRPS = 0.0;
+  public double kickerMotorVelocityRPS = 0.0;
+
+  public double shootMotor1ReferenceVelocityRPS = 0.0;
+  public double shootMotor2ReferenceVelocityRPS = 0.0;
+  public double kickerMotorReferenceVelocityRPS = 0.0;
+
+  public double shootMotor1ClosedLoopReferenceRPS = 0.0;
+  public double shootMotor2ClosedLoopReferenceRPS = 0.0;
+  public double kickerMotorClosedLoopReferenceRPS = 0.0;
 
   public double shootMotor1Voltage = 0.0;
   public double shootMotor2Voltage = 0.0;
+  public double kickerMotorVoltage = 0.0;
 
-  public double shootMotor1CurrentAmps = 0.0;
-  public double shootMotor2CurrentAmps = 0.0;
+  public double shootMotor1TorqueCurrentAmps = 0.0;
+  public double shootMotor2TorqueCurrentAmps = 0.0;
+  public double kickerMotorTorqueCurrentAmps = 0.0;
+  
+  public double shootMotor1SupplyCurrentAmps = 0.0;
+  public double shootMotor2SupplyCurrentAmps = 0.0;
+  public double kickerMotorSupplyCurrentAmps = 0.0;
 
   public double shootMotor1TempCelsius = 0.0;
   public double shootMotor2TempCelsius = 0.0;
+  public double kickerMotorTempCelsius = 0.0;
+
  }
 
-  default void updateInputs(ShooterIOInputs shooterIOInputs) {}
+  public void updateInputs(ShooterInputs inputs);
 
-  public default void setVelocityMotor1(double rps) {}
-  
-  public default void setVelocityMotor2(double rps) {}
-  
-  public default void setVoltsShooter1(double volts) {}
-  
-  public default void setVoltsShooter2(double volts) {}
-  
-  public default void setCoastMode(boolean coast) {}
+  public void setShooterVelocity(double shooterRPS);
+    
+  public void setShooterVolts(double shootMotorVolts);
+
+  public void setKickerVolts(double kickerVolts);
+
+  public void stopShooter();
+
+  public void setCoastMode(boolean coast);
   
   }
 
