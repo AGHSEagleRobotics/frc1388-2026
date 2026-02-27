@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.shotlib.ShotCalculator;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.rollers.Roller;
 import frc.robot.subsystems.rollers.Roller.RollerState;
@@ -21,6 +22,7 @@ public class Superstructure extends SubsystemBase {
   public final CommandSwerveDrivetrain m_driveTrain;
   public final Roller m_roller;
   public final Shooter m_shooter;
+  public ShotCalculator m_shotCalculator;
   public RobotState robotState;
   public RollerState rollerState;
   public ShooterState shooterState;
@@ -35,42 +37,42 @@ public class Superstructure extends SubsystemBase {
   }
 
   /** Creates a new Superstructure. */
-  public Superstructure(CommandSwerveDrivetrain driveTrain, Roller roller, Shooter shooter) {
+  public Superstructure(CommandSwerveDrivetrain driveTrain, Roller roller, Shooter shooter, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
     m_roller = roller;
     m_shooter = shooter;
+    m_shotCalculator = shotCalculator;
   }
 
   @Override
   public void periodic() {
-        // This method will be called once per scheduler run
-    if(robotState == RobotState.IDLE) {
-      //add intake here
+    // This method will be called once per scheduler run
+    m_shooter.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
+    m_shooter.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+    m_shooter.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+    
+    if (robotState == RobotState.IDLE) {
+      // add intake here
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
-    }
-    else if (robotState == RobotState.INTAKEDEPLOY) {
-      //add intake here
+    } else if (robotState == RobotState.INTAKEDEPLOY) {
+      // add intake here
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
-    }
-    else if(robotState == RobotState.INTAKING) {
+    } else if (robotState == RobotState.INTAKING) {
       // add intake here
       m_roller.setRollerState(RollerState.INTAKING);
       m_shooter.setShooterState(ShooterState.IDLE);
-    }
-    else if (robotState == RobotState.PASSING) {
+    } else if (robotState == RobotState.PASSING) {
       // add intake here
       m_roller.setRollerState(RollerState.SHOOTING);
       m_shooter.setShooterState(ShooterState.PASSING);
-    }
-    else if (robotState == RobotState.SHOOTING) {
+    } else if (robotState == RobotState.SHOOTING) {
       // add intake here
       m_roller.setRollerState(RollerState.SHOOTING);
       m_shooter.setShooterState(ShooterState.SHOOTING);
-    }
-    else if (robotState == RobotState.SOTM) {
-      //add intake here
+    } else if (robotState == RobotState.SOTM) {
+      // add intake here
       m_roller.setRollerState(RollerState.SHOOTING);
       m_shooter.setShooterState(ShooterState.SOTM);
     }

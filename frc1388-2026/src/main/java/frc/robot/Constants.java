@@ -69,6 +69,14 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
+      public static final int SHOOT_MOTOR1_CANID = 0;
+      public static final int SHOOT_MOTOR2_CANID = 0;
+
+      public static final double SHOOTING_STATE_VELOCITY = 0;
+      public static final double SOTM_STATE_VELOCITY = 0;
+      public static final double IDLE_STATE_VELOCITY = 0;
+      public static final double PASSING_STATE_VELOCITY = 0;
+
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
