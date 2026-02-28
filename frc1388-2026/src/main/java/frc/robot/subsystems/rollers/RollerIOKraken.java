@@ -49,7 +49,7 @@ public class RollerIOKraken implements RollerIO {
   private StatusSignal<Voltage> toprollerVoltageStatusSignal;
 
   public RollerIOKraken() {
-    m_bottomRollerMotor = new TalonFX(0);
+    m_bottomRollerMotor = new TalonFX(40);
     m_topRollerMotor = new TalonFX(0);
 
     configurebottomRollerMotor(m_bottomRollerMotor);

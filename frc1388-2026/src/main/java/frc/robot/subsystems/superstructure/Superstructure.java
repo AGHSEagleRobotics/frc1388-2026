@@ -27,13 +27,14 @@ public class Superstructure extends SubsystemBase {
   public RollerState rollerState;
   public ShooterState shooterState;
 
-  enum RobotState {
+  public enum RobotState {
     IDLE,
     INTAKEDEPLOY,
     INTAKING,
     SHOOTING,
     PASSING,
     SOTM,
+    TESTING
   }
 
   /** Creates a new Superstructure. */
@@ -42,6 +43,7 @@ public class Superstructure extends SubsystemBase {
     m_roller = roller;
     m_shooter = shooter;
     m_shotCalculator = shotCalculator;
+    robotState = RobotState.IDLE;
   }
 
   @Override
@@ -75,6 +77,8 @@ public class Superstructure extends SubsystemBase {
       // add intake here
       m_roller.setRollerState(RollerState.SHOOTING);
       m_shooter.setShooterState(ShooterState.SOTM);
+    } else if (robotState == RobotState.TESTING) {
+      m_roller.setRollerState(RollerState.TESTING);
     }
   }
 
@@ -82,7 +86,8 @@ public class Superstructure extends SubsystemBase {
     return robotState;
   }
 
-  public void setRobotState(RobotState robotState) {
-    this.robotState = robotState;
+  public Command setRobotState(RobotState robotState) {
+    return this.runOnce(() ->
+    this.robotState = robotState);
   }
 }

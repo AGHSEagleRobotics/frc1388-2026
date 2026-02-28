@@ -80,15 +80,23 @@ public final class Constants {
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
+        DISTANCE_TO_SHOT_RPM.put(1.0, 1.0);
+        DISTANCE_TO_SHOT_RPM.put(2.0, 2.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
+        DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 1.0);
+        DISTANCE_TO_SHOT_HOODANGLE.put(2.0, 2.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
       static {
+        DISTANCE_TO_PASS_RPM.put(1.0, 1.0);
+        DISTANCE_TO_PASS_RPM.put(2.0, 2.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
+        DISTANCE_TO_PASS_HOODANGLE.put(1.0, 1.0);
+        DISTANCE_TO_PASS_HOODANGLE.put(2.0, 2.0);
       }
     }
   }

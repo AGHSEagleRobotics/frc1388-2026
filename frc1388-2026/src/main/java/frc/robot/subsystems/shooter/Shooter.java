@@ -34,10 +34,10 @@ public enum ShooterState {
   SOTM,
 }
 
-private final SysIdRoutine shooterSysIdRoutine =
-  new SysIdRoutine(
-    new SysIdRoutine.Config(null, null, null) , 
-    new SysIdRoutine.Mechanism(null, null, null));        
+// private final SysIdRoutine shooterSysIdRoutine =
+  // new SysIdRoutine(
+  //   new SysIdRoutine.Config(null, null, null) , 
+  //   new SysIdRoutine.Mechanism(null, null, null));        
 
   public Shooter(ShooterIO io) {
   this.io = io;

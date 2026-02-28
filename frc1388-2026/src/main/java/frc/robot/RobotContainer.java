@@ -31,6 +31,8 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.rollers.Roller;
 import frc.robot.subsystems.rollers.RollerIO;
 import frc.robot.subsystems.rollers.RollerIOKraken;
+import frc.robot.subsystems.rollers.Roller.RollerState;
+import frc.robot.subsystems.superstructure.Superstructure.RobotState;
 
 public class RobotContainer {
     // subsystems
@@ -39,6 +41,7 @@ public class RobotContainer {
     public final Superstructure superstructure;
     public final Shooter shooter;
     public final ShotCalculator shotcalculator;
+    public RobotState robotState;
 
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -54,6 +57,8 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+
+    private final CommandXboxController testJoystick = new CommandXboxController(2);
 
 
     public RobotContainer() {        
@@ -91,7 +96,7 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
-
+        testJoystick.a().whileTrue(superstructure.setRobotState(RobotState.TESTING));
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
