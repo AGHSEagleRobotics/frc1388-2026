@@ -81,11 +81,17 @@ public final class Constants {
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
       }
-      public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
-      static {
-      }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
       static {
+      }
+      
+    }
+
+    public static class HoodConstants {
+      public static final double HOOD_OFFSET = 0.0;
+      public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
+      static {
+        // DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 15.0); example replace with real values
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {

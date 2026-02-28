@@ -4,24 +4,27 @@
 
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public interface HoodIO {
 
   public static class HoodIOInputs{
-    public double hoodMotorVelocityRPS = 0.0;
-
     public double hoodMotorVoltage = 0.0;
 
     public double hoodMotorCurrentAmps = 0.0;
 
     public double hoodMotorTempCelsius = 0.0;
 
+    public double hoodMotorPosition = 0.0;
   }
-  default void updateInputs(HoodIOInputs hoodIOInputs){
+  public void updateInputs(HoodIOInputs hoodIOInputs);
 
-    public default void 
-  }
+  public void setPosition(double position);
 
+  public void setVoltage(double volts);
 
+  public double getPosition();
 }
