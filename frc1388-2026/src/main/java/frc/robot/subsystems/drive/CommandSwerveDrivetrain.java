@@ -294,7 +294,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
         
-        if (getState() != null) {
+        if (getState().Pose != null) {
             if(acceptVision(visionAcceptorShooter, "limelight-shooter")) {
                 updateVision("limelight-shooter");
                 if(acceptGyro(visionAcceptorShooter, "limelight-shooter")) {
@@ -472,9 +472,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public boolean acceptVision(VisionAcceptor acceptor, String name) {
         boolean acceptVisionMeasurement = false;
         PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-
+        if (currentPose != null) {
         acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
         previousPositions.put(name, currentPose.pose);
+        }
         return acceptVisionMeasurement;
     }
 
