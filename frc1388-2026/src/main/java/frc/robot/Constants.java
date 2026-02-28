@@ -35,7 +35,7 @@ public final class Constants {
   }
 
   public static class DriveTrainConstants {
-    public static final double ROBOT_MAX_SPEED = Units.feetToMeters(14.4); // R1 in meters per second
+    public static final double ROBOT_MAX_SPEED = Units.feetToMeters(14.9); // R1 in meters per second
     public static final double DT_SECONDS = 0.02; // 20ms per tick
     public static final double DISTANCE_PER_TICK = ROBOT_MAX_SPEED * DT_SECONDS; // 20ms per tick
 
@@ -76,13 +76,21 @@ public final class Constants {
       public static final double SOTM_STATE_VELOCITY = 0;
       public static final double IDLE_STATE_VELOCITY = 0;
       public static final double PASSING_STATE_VELOCITY = 0;
+      public static final double TESTING_STATE_VOLTS = 4;
+
+      public static final double KICKER_SHOOTING_VELOCITY = 0;
+      public static final double TESTING_KICKER_VOLTS = 0;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
+        DISTANCE_TO_SHOT_RPM.put(1.0, 1.0);
+        DISTANCE_TO_SHOT_RPM.put(2.0, 2.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
       static {
+        DISTANCE_TO_PASS_RPM.put(1.0, 1.0);
+        DISTANCE_TO_PASS_RPM.put(2.0, 2.0);
       }
       
     }
@@ -91,10 +99,13 @@ public final class Constants {
       public static final double HOOD_OFFSET = 0.0;
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
-        // DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 15.0); example replace with real values
+        DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 1.0);
+        DISTANCE_TO_SHOT_HOODANGLE.put(2.0, 2.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
+        DISTANCE_TO_PASS_HOODANGLE.put(1.0, 1.0);
+        DISTANCE_TO_PASS_HOODANGLE.put(2.0, 2.0);
       }
     }
   }

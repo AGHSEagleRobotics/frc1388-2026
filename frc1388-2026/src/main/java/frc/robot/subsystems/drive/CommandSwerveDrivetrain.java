@@ -294,7 +294,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
         
-        if (getPose() != null) {
+        if (getState().Pose != null) {
             if(acceptVision(visionAcceptorShooter, "limelight-shooter")) {
                 updateVision("limelight-shooter");
                 if(acceptGyro(visionAcceptorShooter, "limelight-shooter")) {
@@ -315,11 +315,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     resetGyro("limelight-right");
                 }
             }
-        }
         DogLog.log("Drive/OdometryPose", getState().Pose);
         DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
         DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
+        }
         if(mapleSimSwerveDrivetrain != null) {
             DogLog.log("Drive/SimulationPose", mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
         }
@@ -421,31 +421,49 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public Pose2d getPose() {
+        if (getState().Pose != null) {
         return getState().Pose;
+        }
+        return new Pose2d(0, 0, new Rotation2d(0));
     }
 
     public double getAngle() {
+        if (getState().Pose != null) {
         return getState().Pose.getRotation().getDegrees();
+        }
+        return 0;
     }
 
     public double getRadians() {
+        if (getState().Pose != null) {
         return getState().Pose.getRotation().getRadians();
+        }
+        return 0;
     }
 
     public ChassisAccelerations getAccelerations() {
+        if (getState() != null) {
         ChassisAccelerations chassisAccelerations = new ChassisAccelerations(getState().Speeds, m_previousSpeed, 0.02);
         m_previousSpeed = getState().Speeds;
         return chassisAccelerations;
+        }
+        return new ChassisAccelerations(0, 0, 0);
     }
 
     public ChassisSpeeds getFieldRelativeSpeeds() {
+        if (getState() != null) {
          ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
          prevFieldRelVelocities = fieldRelativeSpeeds;
          return fieldRelativeSpeeds;
+        }
+        return new ChassisSpeeds(0, 0, 0);
     }
 
     public ChassisAccelerations getFieldRelativeAccelerations() {
+        if (getState() != null) {
         return new ChassisAccelerations(getFieldRelativeSpeeds(), prevFieldRelVelocities, 0.020);
+        }
+        return new ChassisAccelerations(new ChassisSpeeds(0, 0, 0), new ChassisSpeeds(0,0,0), 0);
     }
 
 
@@ -454,9 +472,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public boolean acceptVision(VisionAcceptor acceptor, String name) {
         boolean acceptVisionMeasurement = false;
         PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-
+        if (currentPose != null) {
         acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
         previousPositions.put(name, currentPose.pose);
+        }
         return acceptVisionMeasurement;
     }
 

@@ -16,6 +16,7 @@ import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,14 +32,18 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.rollers.Roller;
 import frc.robot.subsystems.rollers.RollerIO;
 import frc.robot.subsystems.rollers.RollerIOKraken;
+import frc.robot.subsystems.rollers.Roller.RollerState;
+import frc.robot.subsystems.superstructure.Superstructure.RobotState;
 
 public class RobotContainer {
     // subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Roller roller;
-    public final Superstructure superstructure;
     public final Shooter shooter;
+    public final Hood hood;
+    public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
+    public RobotState robotState;
 
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -55,12 +60,15 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
+    private final CommandXboxController testJoystick = new CommandXboxController(2);
+
 
     public RobotContainer() {        
         roller = new Roller(new RollerIOKraken());
         shooter = new Shooter(new ShooterIOKraken());
+        hood = new Hood(new HoodIOKraken());
         shotcalculator = new ShotCalculator(drivetrain);
-        superstructure = new Superstructure(drivetrain, roller, shooter, shotcalculator);
+        superstructure = new Superstructure(drivetrain, roller, shooter, hood, shotcalculator);
 
 
         
@@ -71,12 +79,19 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
+        double leftX = MathUtil.applyDeadband(joystick.getLeftY(), 0.1);
+        double leftY = MathUtil.applyDeadband(joystick.getLeftX(), 0.1);
+        double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
+        
+        double xVelocity = -MaxSpeed * scale(leftX, 2.5);
+        double yVelocity = -MaxSpeed * scale(leftY, 2.5);
+        double omega = -MaxAngularRate * scale(rightX, 2.5); 
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(getRotationalVelocity()) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(xVelocity) // Drive forward with negative Y (forward)
+                    .withVelocityY(yVelocity) // Drive left with negative X (left)
+                    .withRotationalRate(omega) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -91,7 +106,7 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
-
+        testJoystick.a().whileTrue(superstructure.setRobotState(RobotState.TESTING));
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -142,5 +157,9 @@ public class RobotContainer {
                 drivetrain.getTurnToSpeakerSpeed(null);
             }
             return m_rotationalVelocity;
+    }
+
+    private double scale(double in, double scale) {
+        return Math.tan(in * Math.atan(scale)) / scale;
     }
 }

@@ -22,6 +22,7 @@ public class Hood extends SubsystemBase {
     IDLE,
     SHOOTING,
     SOTM,
+    PASSING,
     TESTING
   }
 
@@ -44,9 +45,11 @@ public class Hood extends SubsystemBase {
     else if (hoodState == HoodState.SOTM) {
       setShootingPosition(HoodConstants.DISTANCE_TO_SHOT_HOODANGLE.get(m_distanceFromHubSOTM));
     }
-    // add passing here
+    else if (hoodState == HoodState.PASSING) {
+      setShootingPosition(HoodConstants.DISTANCE_TO_PASS_HOODANGLE.get(m_distanceFromPass));
+    }
     else if (hoodState == HoodState.TESTING) {
-
+      setTestingPosition(0);
     }
 
   }
@@ -67,6 +70,11 @@ public class Hood extends SubsystemBase {
   public void setTestingPosition(double position) {
     m_io.setPosition(position);
   }
+
+  public void setHoodState(HoodState hoodState) {
+    this.hoodState = hoodState;
+  }
+
   public void setDistanceFromHub(double distanceFromHub) {
     m_distanceFromHub = distanceFromHub;
   }

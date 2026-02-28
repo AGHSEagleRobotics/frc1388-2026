@@ -76,6 +76,9 @@ public class HoodIOKraken implements HoodIO {
 
     hoodMotorPositionStatusSignal = hoodMotor.getPosition();
 
+    hoodMotorVoltageRequest = new VoltageOut(0);
+    hoodMotorPositionRequest = new MotionMagicVoltage(0);
+
     configureCANcoder(CANcoder);
     configureHoodMotor(hoodMotor);
   }

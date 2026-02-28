@@ -54,6 +54,8 @@ public interface ShooterIO {
   public void setShooterVolts(double shootMotorVolts);
 
   public void setKickerVolts(double kickerVolts);
+  
+  public void setKickerVelocity(double kickerRPS);
 
   public void stopShooter();
 

@@ -205,10 +205,17 @@ public class ShooterIOKraken implements ShooterIO {
     public void setKickerVolts(double kickerVolts) {
       kickerMotor.setControl(voltageControl.withOutput(kickerVolts));
     }
+
+  @Override
+  public void setKickerVelocity(double kickerRPS) {
+    kickerMotor.setControl(velocityControl.withVelocity(kickerRPS));
+  }
+
   @Override
     public void stopShooter() {
       shootMotor1.setControl(neutralControl);
       shootMotor2.setControl(neutralControl);
+      kickerMotor.setControl(neutralControl);
     }
   @Override
     public void setCoastMode(boolean coast) {

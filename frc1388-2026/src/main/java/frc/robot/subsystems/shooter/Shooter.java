@@ -32,12 +32,13 @@ public enum ShooterState {
   SHOOTING, 
   PASSING,
   SOTM,
+  TESTING
 }
 
-private final SysIdRoutine shooterSysIdRoutine =
-  new SysIdRoutine(
-    new SysIdRoutine.Config(null, null, null) , 
-    new SysIdRoutine.Mechanism(null, null, null));        
+// private final SysIdRoutine shooterSysIdRoutine =
+  // new SysIdRoutine(
+  //   new SysIdRoutine.Config(null, null, null) , 
+  //   new SysIdRoutine.Mechanism(null, null, null));        
 
   public Shooter(ShooterIO io) {
   this.io = io;
@@ -51,12 +52,19 @@ private final SysIdRoutine shooterSysIdRoutine =
     }
     else if (shooterState == ShooterState.SHOOTING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub));
+      setKickerVelocity(ShooterConstants.KICKER_SHOOTING_VELOCITY);
     }
     else if (shooterState == ShooterState.PASSING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass));
+      setKickerVelocity(ShooterConstants.KICKER_SHOOTING_VELOCITY);
     }
     else if (shooterState == ShooterState.SOTM) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM));
+      setKickerVelocity(ShooterConstants.KICKER_SHOOTING_VELOCITY);
+    }
+    else if (shooterState == ShooterState.TESTING) {
+      setShooterVolts(ShooterConstants.TESTING_STATE_VOLTS);
+      setKickerVolts(ShooterConstants.TESTING_KICKER_VOLTS);
     }
 
   //Logging
@@ -90,6 +98,10 @@ private final SysIdRoutine shooterSysIdRoutine =
 
   public void setKickerVolts(double kickerVolts) {
     io.setKickerVolts(kickerVolts);
+  }
+
+  public void setKickerVelocity(double kickerRPS) {
+    io.setKickerVelocity(kickerRPS);
   }
 
   public void stopShooter() {
