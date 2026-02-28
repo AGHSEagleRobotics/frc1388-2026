@@ -136,7 +136,7 @@ public class RollerIOKraken implements RollerIO {
     bottomrollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40.0;
     bottomrollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40.0;
 
-    bottomRollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+    bottomrollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
 
     bottomrollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
