@@ -14,15 +14,19 @@ import static edu.wpi.first.units.Units.Second;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
@@ -32,17 +36,18 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.Constants.HoodConstants;
 
 /** Add your docs here. */
 public class IntakeIOKraken implements IntakeIO {
-  private TalonFX m_deployMotor;
+  private TalonFX m_deployMotor1;
+  private TalonFX m_deployMotor2;
   private TalonFX m_rollerMotor;
+  private CANcoder CANcoder;
 
-  public static final double ROTOR_TO_PINION_RATIO = 2.0 / 1;
-  public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
-
-  private VoltageOut deployMotorVoltageSet;
-  private VoltageOut rollerMotorVoltageSet;
+  private VoltageOut rollerMotorVoltageRequest;
+  private VoltageOut deployMotorVoltageRequest;
+  private final MotionMagicVoltage deployMotorPositionRequest;
 
   private StatusSignal<AngularVelocity> deployMotorVelocityStatusSignal;
   private StatusSignal<AngularVelocity> rollerMotorVelocityStatusSignal;
@@ -62,39 +67,42 @@ public class IntakeIOKraken implements IntakeIO {
   private StatusSignal<Voltage> deployMotorVoltageStatusSignal;
   private StatusSignal<Voltage> rollerMotorVoltageStatusSignal;
 
-  private final MotionMagicVoltage rackPositionRequest = new MotionMagicVoltage(0);
-  private final VoltageOut rackVoltageRequest = new VoltageOut(0);
-  private final VoltageOut spinVoltageRequest = new VoltageOut(0).withEnableFOC(false);
+
 
   private final NeutralOut neutralOut = new NeutralOut();
 
 
   public IntakeIOKraken() {
-    m_deployMotor = new TalonFX(0);
-    m_rollerMotor = new TalonFX(0);
+    m_deployMotor1 = new TalonFX(44);
+    m_deployMotor2 = new TalonFX(45);
+    m_rollerMotor = new TalonFX(43);
+    CANcoder = new CANcoder(52);
 
-    configureDeployMotor(m_deployMotor);
+    configureDeployMotors(m_deployMotor1, m_deployMotor2);
     configureRollerMotor(m_rollerMotor);
+    configureCANcoder(CANcoder);
 
-    deployMotorVoltageSet = new VoltageOut(0);
-    rollerMotorVoltageSet = new VoltageOut(0);
+    deployMotorVoltageRequest = new VoltageOut(0);
+    rollerMotorVoltageRequest = new VoltageOut(0);
+    deployMotorPositionRequest = new MotionMagicVoltage(0);
 
-    deployMotorVelocityStatusSignal = m_deployMotor.getVelocity();
+
+    deployMotorVelocityStatusSignal = m_deployMotor1.getVelocity();
     rollerMotorVelocityStatusSignal = m_rollerMotor.getVelocity();
 
-    deployMotorTorqueCurrentStatusSignal = m_deployMotor.getTorqueCurrent();
+    deployMotorTorqueCurrentStatusSignal = m_deployMotor1.getTorqueCurrent();
     rollerMotorTorqueCurrentStatusSignal = m_rollerMotor.getTorqueCurrent();
 
-    deployMotorSupplyCurrentStatusSignal = m_deployMotor.getSupplyCurrent();
+    deployMotorSupplyCurrentStatusSignal = m_deployMotor1.getSupplyCurrent();
     rollerMotorSupplyCurrentStatusSignal = m_rollerMotor.getSupplyCurrent();
 
-    deployMotorReferenceVelocityStatusSignal = m_deployMotor.getClosedLoopReference();
+    deployMotorReferenceVelocityStatusSignal = m_deployMotor1.getClosedLoopReference();
     rollerMotorReferenceVelocityStatusSignal = m_rollerMotor.getClosedLoopReference();
 
-    deployMotorTemperatureStatusSignal = m_deployMotor.getDeviceTemp();
+    deployMotorTemperatureStatusSignal = m_deployMotor1.getDeviceTemp();
     rollerMotorTemperatureStatusSignal = m_rollerMotor.getDeviceTemp();
 
-    deployMotorVoltageStatusSignal = m_deployMotor.getMotorVoltage();
+    deployMotorVoltageStatusSignal = m_deployMotor1.getMotorVoltage();
     rollerMotorVoltageStatusSignal = m_rollerMotor.getMotorVoltage();
   }
 
@@ -128,7 +136,7 @@ public class IntakeIOKraken implements IntakeIO {
     // Retrieve the closed loop reference status signals directly from the motor in this method
     // instead of retrieving in advance because the status signal returned depends on the current
     // control mode.
-    inputs.deployMotorReferenceVelocityRPS = m_deployMotor.getClosedLoopReference().getValueAsDouble();
+    inputs.deployMotorReferenceVelocityRPS = m_deployMotor1.getClosedLoopReference().getValueAsDouble();
     inputs.rollerMotorReferenceVelocityRPS = m_rollerMotor.getClosedLoopReference().getValueAsDouble();
 
     inputs.bottomrollerTempCelsius = deployMotorTemperatureStatusSignal.getValueAsDouble();
@@ -138,33 +146,26 @@ public class IntakeIOKraken implements IntakeIO {
     inputs.rollerMotorVoltage = rollerMotorVoltageStatusSignal.getValueAsDouble();
 
     }
-
-    public static Distance rotorAngleToDistance(Angle rotorAngle) {
-        return PINION_PITCH_RADIUS.times(rotorAngle.in(Radians));
-    }
-
-    public static Angle distanceToRotorAngle(Distance distance) {
-        return Radians.of(distance.in(Meters) / PINION_PITCH_RADIUS.in(Meters));
+    @Override
+    public void setDeployPosition(double position) {
+      m_deployMotor1.setControl(deployMotorPositionRequest.withPosition(position));
+      m_deployMotor2.setControl(new Follower(44, MotorAlignmentValue.Opposed));
     }
 
     @Override
-    public void setRackPosition(Distance position) {
-      m_deployMotor.setControl(rackPositionRequest.withPosition(distanceToRotorAngle(position)));
+    public void setDeployVoltage(double volts) {
+        m_deployMotor1.setControl(deployMotorVoltageRequest.withOutput(volts));
+        m_deployMotor2.setControl(new Follower(44, MotorAlignmentValue.Opposed));
     }
 
     @Override
-    public void setRackOutput(Voltage out) {
-        m_deployMotor.setControl(rackVoltageRequest.withOutput(out));
-    }
-
-    @Override
-    public void setSpinOutput(Voltage volts) {
-      m_rollerMotor.setControl(rollerMotorVoltageSet.withOutput(volts));
+    public void setRollerVoltage(double volts) {
+      m_rollerMotor.setControl(rollerMotorVoltageRequest.withOutput(volts));
     }
 
     @Override
     public void stopRack() {
-        m_deployMotor.setControl(neutralOut);
+        m_deployMotor1.setControl(neutralOut);
     }
 
     @Override
@@ -174,49 +175,25 @@ public class IntakeIOKraken implements IntakeIO {
     
     @Override
     public void zeroPosition() {
-        m_deployMotor.setPosition(0);
+        m_deployMotor1.setPosition(0);
     }
 
-      private void configuredeployMotor(TalonFX deployMotor) {
-    TalonFXConfiguration deployMotorConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs deployMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
-
-    // TODO: CHANGE LATER
-    deployMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
-    deployMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
-
-    deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-    deployMotorConfig.Slot0.kP = 0;
-    deployMotorConfig.Slot0.kI = 0;
-    deployMotorConfig.Slot0.kD = 0;
-    deployMotorConfig.Slot0.kS = 0;
-
-    //TODO: CORRECT LATER
-    deployMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    //TODO: CHECK VALUE
-    deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
-
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < 5; ++i) {
-      status = deployMotor.getConfigurator().apply(deployMotorConfig);
-      if (status.isOK()) break;
-    }
-  }
-
-  private void configureDeployMotor(TalonFX deployMotor) {
+  private void configureDeployMotors(TalonFX deployMotor1, TalonFX deployMotor2) {
     TalonFXConfiguration deployMotorConfig = new TalonFXConfiguration();
     TorqueCurrentConfigs deployMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
     //TODO: CORRECT LATER
-    deployMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
-    deployMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
+    deployMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40;
+    deployMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40;
 
+    deployMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
     deployMotorConfig.TorqueCurrent = deployMotorTorqueCurrentConfigs;
 
     deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
+    deployMotorConfig.Slot0.kG = 0;
+    deployMotorConfig.Slot0.kV = 0;
+    deployMotorConfig.Slot0.kA = 0;
     deployMotorConfig.Slot0.kP = 0;
     deployMotorConfig.Slot0.kI = 0;
     deployMotorConfig.Slot0.kD = 0;
@@ -229,7 +206,8 @@ public class IntakeIOKraken implements IntakeIO {
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = deployMotor.getConfigurator().apply(deployMotorConfig);
+      status = deployMotor1.getConfigurator().apply(deployMotorConfig);
+      status = deployMotor2.getConfigurator().apply(deployMotorConfig);
       if (status.isOK()) break;
     }
   }
@@ -261,5 +239,14 @@ public class IntakeIOKraken implements IntakeIO {
       status = rollerMotor.getConfigurator().apply(rollerMotorConfig);
       if (status.isOK()) break;
     }
+  }
+
+  public void configureCANcoder(CANcoder CANcoder) {
+    CANcoderConfiguration CANcoderConfig = new CANcoderConfiguration();
+
+    //TODO: CHANGE LATER
+    CANcoderConfig.MagnetSensor.MagnetOffset = HoodConstants.HOOD_OFFSET;
+    
+    CANcoder.getConfigurator().apply(CANcoderConfig);
   }
 }

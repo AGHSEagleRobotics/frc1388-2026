@@ -39,18 +39,18 @@ public interface IntakeIO {
 
     }
 
-    public default void updateInputs(IntakeIOInputs inputs) {}
+    public void updateInputs(IntakeIOInputs inputs);
 
-    public default void setRackPosition(Distance position) {}
+    public void setDeployPosition(double position);
 
-    public default void setRackOutput(Voltage out) {}
+    public void setDeployVoltage(double out);
 
-    public default void setSpinOutput(Voltage out) {}
+    public void setRollerVoltage(double out);
 
-    public default void stopRack() {}
+    public void stopRack();
 
-    public default void stopSpin() {}
+    public void stopSpin();
 
-    public default void zeroPosition() {}
+    public void zeroPosition();
 
 }
