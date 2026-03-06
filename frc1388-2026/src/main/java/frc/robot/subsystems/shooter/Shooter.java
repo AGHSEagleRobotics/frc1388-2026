@@ -32,7 +32,8 @@ public enum ShooterState {
   SHOOTING, 
   PASSING,
   SOTM,
-  TESTING
+  TESTING,
+  MANUAL
 }
 
 // private final SysIdRoutine shooterSysIdRoutine =
@@ -65,6 +66,9 @@ public enum ShooterState {
     else if (shooterState == ShooterState.TESTING) {
       setShooterVolts(ShooterConstants.TESTING_STATE_VOLTS);
       setKickerVolts(ShooterConstants.TESTING_KICKER_VOLTS);
+    }
+    else if (shooterState == ShooterState.MANUAL) {
+      setShooterVelocity(0);
     }
 
   //Logging

@@ -5,6 +5,7 @@
 package frc.robot.subsystems.superstructure;
 
 import org.ironmaple.simulation.Goal;
+import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +42,9 @@ public class Superstructure extends SubsystemBase {
     SHOOTING,
     PASSING,
     SOTM,
-    TESTING
+    TESTING,
+    MANUAL_SHORT,
+    MANUAL_FAR
   }
 
   /** Creates a new Superstructure. */
@@ -100,6 +103,16 @@ public class Superstructure extends SubsystemBase {
       m_roller.setRollerState(RollerState.TESTING);
       m_shooter.setShooterState(ShooterState.TESTING);
       m_hood.setHoodState(HoodState.TESTING);
+    } else if (robotState == RobotState.MANUAL_SHORT) {
+      m_intake.setIntakeState(IntakeState.SHOOTING);
+      m_roller.setRollerState(RollerState.SHOOTING);
+      m_shooter.setShooterState(ShooterState.MANUAL);
+      m_hood.setHoodState(HoodState.MANUAL_SHORT);
+    } else if (robotState == RobotState.MANUAL_FAR) {
+      m_intake.setIntakeState(IntakeState.SHOOTING);
+      m_roller.setRollerState(RollerState.SHOOTING);
+      m_shooter.setShooterState(ShooterState.MANUAL);
+      m_hood.setHoodState(HoodState.MANUAL_FAR);
     }
   }
 
@@ -110,5 +123,38 @@ public class Superstructure extends SubsystemBase {
   public Command setRobotState(RobotState robotState) {
     return this.runOnce(() ->
     this.robotState = robotState);
+  }
+
+  public Command startShooting() {
+    return this.runOnce(() -> {
+      m_roller.setRollerState(RollerState.SHOOTING);
+      m_shooter.setShooterState(ShooterState.SHOOTING);
+      m_hood.setHoodState(HoodState.SHOOTING);
+    });
+  }
+
+  public Command stopShooting() {
+    return this.runOnce(() -> {
+      m_roller.setRollerState(RollerState.IDLE);
+      m_shooter.setShooterState(ShooterState.IDLE);
+      m_hood.setHoodState(HoodState.IDLE);
+    });
+  }
+
+  public Command deployIntakingCommand() {
+    if (m_intake.getIntakeState() == IntakeState.INTAKING) {
+      return this.runOnce(() -> {
+        m_intake.setIntakeState(IntakeState.EXTENDED);
+      });
+    }
+    return this.runOnce(() -> {
+      m_intake.setIntakeState(IntakeState.INTAKING);
+    });
+  }
+
+  public Command retractIntake() {
+    return this.runOnce(() -> {
+      m_intake.setIntakeState(IntakeState.RETRACT);
+    });
   }
 }

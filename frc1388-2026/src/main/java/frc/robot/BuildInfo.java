@@ -1,8 +1,8 @@
 package frc.robot;
 public class BuildInfo {
-  public static final String GIT_VERSION = "6ee6588";
-  public static final String GIT_BRANCH = "feature/intake2";
-  public static final String GIT_STATUS = "39 files changed, 5074 insertions(+), 250 deletions(-)";
-  public static final String BUILD_DATE = "2026-02-28";
-  public static final String BUILD_TIME = "16:08:46 PST";
+  public static final String GIT_VERSION = "712e5c2";
+  public static final String GIT_BRANCH = "feature/manualAndFixes";
+  public static final String GIT_STATUS = "7 files changed, 81 insertions(+), 15 deletions(-)";
+  public static final String BUILD_DATE = "2026-03-05";
+  public static final String BUILD_TIME = "20:32:13 PST";
 }

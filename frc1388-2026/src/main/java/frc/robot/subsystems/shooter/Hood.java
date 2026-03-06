@@ -23,6 +23,8 @@ public class Hood extends SubsystemBase {
     SHOOTING,
     SOTM,
     PASSING,
+    MANUAL_SHORT,
+    MANUAL_FAR,
     TESTING
   }
 
@@ -50,6 +52,12 @@ public class Hood extends SubsystemBase {
     }
     else if (hoodState == HoodState.TESTING) {
       setTestingPosition(0);
+    }
+    else if (hoodState == HoodState.MANUAL_SHORT) {
+      setShootingPosition(0);
+    }
+    else if (hoodState == HoodState.MANUAL_FAR) {
+      setShootingPosition(0);
     }
 
   }

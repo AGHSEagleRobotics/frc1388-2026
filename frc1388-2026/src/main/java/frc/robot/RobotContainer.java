@@ -34,6 +34,7 @@ import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOKraken;
+import frc.robot.subsystems.intake.Intake.IntakeState;
 import frc.robot.subsystems.rollers.Roller;
 import frc.robot.subsystems.rollers.RollerIO;
 import frc.robot.subsystems.rollers.RollerIOKraken;
@@ -52,7 +53,7 @@ public class RobotContainer {
     public RobotState robotState;
 
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private double m_rotationalVelocity = 0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -125,6 +126,17 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        // DRIVER CONTROLLER
+
+        // sets robot shoot on/off
+        joystick.rightTrigger().whileTrue(superstructure.startShooting());
+        joystick.rightTrigger().onFalse(superstructure.stopShooting());
+
+        // sets intake on/off
+        joystick.leftBumper().onTrue(superstructure.deployIntakingCommand());
+        // retracts intake
+        joystick.leftTrigger().onTrue(superstructure.retractIntake());
     }
 
     public Command getAutonomousCommand() {

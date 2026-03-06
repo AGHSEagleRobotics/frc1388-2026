@@ -55,10 +55,6 @@ public class Roller extends SubsystemBase {
     rollerState = RollerState.IDLE;
   }
 
-  public void setShootingReady(BooleanSupplier isReadyToShoot) {
-    m_isReadyToShoot = isReadyToShoot;
-  }
-
   public void periodic() {
     m_io.updateInputs(inputs);
     if (rollerState == RollerState.IDLE) {
@@ -100,4 +96,8 @@ public class Roller extends SubsystemBase {
     public void setRollerState(RollerState rollerState) {
       this.rollerState = rollerState;
     }
+
+    public void setShootingReady(BooleanSupplier isReadyToShoot) {
+    m_isReadyToShoot = isReadyToShoot;
+  }
 }
