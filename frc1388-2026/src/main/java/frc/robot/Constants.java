@@ -118,4 +118,38 @@ public final class Constants {
       public static final double HALF_WAY = 0.5;
       public static final double TESTING_VOLTS = 4;
     }
+
+    public static class AutoConstants {
+
+    public enum Objective {
+      // FOURSCORERIGHT("4L4RIGHT"),
+      // FOURSCORELEFT("4L4LEFT"),
+      // THREESCORERIGHT("3L4Right"),
+      // THREESCORELEFT("3L4Left"),
+      // TWOSCORERIGHT("2L4Left"),
+      // TWOSCORELEFT("2L4Right"),
+      // ONESCORECENTER("1L4Cent"),
+      // ONESCORELEFT("1L4Left"),
+      // ONESCORERIGHT("1L4Right"),
+      // LEAVE("LeaveCent"),
+      // CHOREOAUTOROUTINE("choreoAutoRoutine");
+      DEFAULT1("default1"),
+      DEFAULT2("default2"),
+      DEFAULT3("default3");
+
+
+      public static final Objective Default = DEFAULT1;
+
+      private String m_dashboardDescript; // This is what will show on dashboard
+
+      private Objective(String dashboardDescript) {
+        m_dashboardDescript = dashboardDescript;
+      }
+
+      public String getDashboardDescript() {
+        return m_dashboardDescript;
+      }
+    }
+
   }
+}

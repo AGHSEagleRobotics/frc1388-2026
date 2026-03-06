@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkMax;
 
+import frc.robot.vision.Dashboard;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -68,6 +69,7 @@ public class RobotContainer {
 
     private final CommandXboxController testJoystick = new CommandXboxController(2);
 
+    private final Dashboard m_dashboard = new Dashboard();
 
     public RobotContainer() {        
         intake = new Intake(new IntakeIOKraken());
@@ -76,7 +78,6 @@ public class RobotContainer {
         hood = new Hood(new HoodIOKraken());
         shotcalculator = new ShotCalculator(drivetrain);
         superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
-
 
         
         configureBindings();
