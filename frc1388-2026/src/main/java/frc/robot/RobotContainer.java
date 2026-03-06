@@ -43,11 +43,11 @@ import frc.robot.subsystems.superstructure.Superstructure.RobotState;
 
 public class RobotContainer {
     // subsystems
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final Intake intake;
-    public final Roller roller;
-    public final Shooter shooter;
-    public final Hood hood;
+    public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
+    public final Intake m_intake;
+    public final Roller m_roller;
+    public final Shooter m_shooter;
+    public final Hood m_hood;
     public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
     public RobotState robotState;
@@ -55,6 +55,8 @@ public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private double m_rotationalVelocity = 0;
+
+    private final AutoMethod m_autoMethod;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -72,16 +74,17 @@ public class RobotContainer {
     private final Dashboard m_dashboard = new Dashboard();
 
     public RobotContainer() {        
-        intake = new Intake(new IntakeIOKraken());
-        roller = new Roller(new RollerIOKraken());
-        shooter = new Shooter(new ShooterIOKraken());
-        hood = new Hood(new HoodIOKraken());
-        shotcalculator = new ShotCalculator(drivetrain);
-        superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
+        m_intake = new Intake(new IntakeIOKraken());
+        m_roller = new Roller(new RollerIOKraken());
+        m_shooter = new Shooter(new ShooterIOKraken());
+        m_hood = new Hood(new HoodIOKraken());
+        shotcalculator = new ShotCalculator(m_drivetrain);
+        superstructure = new Superstructure(m_drivetrain, m_intake, m_roller, m_shooter, m_hood, shotcalculator);
 
-        
+        m_autoMethod = new AutoMethod(m_dashboard, m_drivetrain, m_intake, m_roller, m_shooter, m_hood);
+
         configureBindings();
-        drivetrain.resetPose(new Pose2d(3, 3, new Rotation2d()));
+        m_drivetrain.resetPose(new Pose2d(3, 3, new Rotation2d()));
     }
 
     private void configureBindings() {
@@ -94,9 +97,9 @@ public class RobotContainer {
         double xVelocity = -MaxSpeed * scale(leftX, 2.5);
         double yVelocity = -MaxSpeed * scale(leftY, 2.5);
         double omega = -MaxAngularRate * scale(rightX, 2.5); 
-        drivetrain.setDefaultCommand(
+        m_drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
+            m_drivetrain.applyRequest(() ->
                 drive.withVelocityX(xVelocity) // Drive forward with negative Y (forward)
                     .withVelocityY(yVelocity) // Drive left with negative X (left)
                     .withRotationalRate(omega) // Drive counterclockwise with negative X (left)
@@ -107,25 +110,25 @@ public class RobotContainer {
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
-            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
+            m_drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        joystick.a().whileTrue(m_drivetrain.applyRequest(() -> brake));
+        joystick.b().whileTrue(m_drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
         testJoystick.a().whileTrue(superstructure.setRobotState(RobotState.TESTING));
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.back().and(joystick.y()).whileTrue(m_drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.back().and(joystick.x()).whileTrue(m_drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.start().and(joystick.y()).whileTrue(m_drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.start().and(joystick.x()).whileTrue(m_drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick.leftBumper().onTrue(m_drivetrain.runOnce(m_drivetrain::seedFieldCentric));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        m_drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
@@ -134,16 +137,16 @@ public class RobotContainer {
         return Commands.sequence(
             // Reset our field centric heading to match the robot
             // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+            m_drivetrain.runOnce(() -> m_drivetrain.seedFieldCentric(Rotation2d.kZero)),
             // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
+            m_drivetrain.applyRequest(() ->
                 drive.withVelocityX(0.5)
                     .withVelocityY(0)
                     .withRotationalRate(0)
             )
             .withTimeout(5.0),
             // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
+            m_drivetrain.applyRequest(() -> idle)
         );
     }
 
@@ -162,7 +165,7 @@ public class RobotContainer {
                 autoTracking = false;
             }
             if (autoTracking == true) {
-                drivetrain.getTurnToSpeakerSpeed(null);
+                m_drivetrain.getTurnToSpeakerSpeed(null);
             }
             return m_rotationalVelocity;
     }
