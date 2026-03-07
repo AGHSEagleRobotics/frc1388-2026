@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.FieldLayout;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -294,25 +295,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
         
+        LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
         if (getState().Pose != null) {
-            if(acceptVision(visionAcceptorShooter, "limelight-shooter")) {
-                updateVision("limelight-shooter");
-                if(acceptGyro(visionAcceptorShooter, "limelight-shooter")) {
-                    resetGyro("limelight-shooter");
+            if(acceptVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+                updateVision(LimelightConstants.SHOOTER_LIMELIGHT);
+                if(acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+                    resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
                     gyroWasAccepted = true;
                 }
             }
-            if(acceptVision(visionAcceptorLeft, "limelight-left")) {
-                updateVision("limelight-left");
-                if((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, "limelight-left")) {
-                    resetGyro("limelight-left");
+            if(acceptVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+                updateVision(LimelightConstants.LEFT_LIMELIGHT);
+                if((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+                    resetGyro(LimelightConstants.LEFT_LIMELIGHT);
                     gyroWasAccepted = true;
-                }
-            }
-            if(acceptVision(visionAcceptorRight, "limelight-right")) {
-                updateVision("limelight-right");
-                if((!gyroWasAccepted) && acceptGyro(visionAcceptorRight, "limelight-right")); {
-                    resetGyro("limelight-right");
                 }
             }
         DogLog.log("Drive/OdometryPose", getState().Pose);

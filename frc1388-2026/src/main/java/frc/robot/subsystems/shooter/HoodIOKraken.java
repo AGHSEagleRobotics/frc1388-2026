@@ -17,6 +17,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -24,6 +25,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
@@ -56,15 +58,18 @@ public class HoodIOKraken implements HoodIO {
   StatusSignal<Temperature> hoodMotorTempCelsiusStatusSignal;
 
   StatusSignal<Angle> hoodMotorPositionStatusSignal;
-
   
   private final TalonFX hoodMotor;
+  private final TalonFX secondaryHoodMotor;
   private final CANcoder CANcoder;
 
   public HoodIOKraken() {
 
     hoodMotor = new TalonFX(38);
+    secondaryHoodMotor = new TalonFX(39);
     CANcoder = new CANcoder(51);
+
+    secondaryHoodMotor.setControl(new Follower(38, MotorAlignmentValue.Opposed));
 
     hoodMotorVelocityStatusSignal = hoodMotor.getVelocity();
 
@@ -92,6 +97,7 @@ public class HoodIOKraken implements HoodIO {
       hoodMotorTempCelsiusStatusSignal,
       hoodMotorPositionStatusSignal);
 
+      inputs.hoodMotorVelocityRPS = hoodMotorVelocityStatusSignal.getValueAsDouble();
       inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();
       inputs.hoodMotorTempCelsius = hoodMotorTempCelsiusStatusSignal.getValueAsDouble();
       inputs.hoodMotorVoltage = hoodMotorVoltageStatusSignal.getValueAsDouble();

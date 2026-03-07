@@ -89,17 +89,18 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         double leftX = MathUtil.applyDeadband(joystick.getLeftY(), 0.1);
         double leftY = MathUtil.applyDeadband(joystick.getLeftX(), 0.1);
-        double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
+
         
         double xVelocity = -MaxSpeed * scale(leftX, 2.5);
         double yVelocity = -MaxSpeed * scale(leftY, 2.5);
-        double omega = -MaxAngularRate * scale(rightX, 2.5); 
+        
+
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(xVelocity) // Drive forward with negative Y (forward)
                     .withVelocityY(yVelocity) // Drive left with negative X (left)
-                    .withRotationalRate(omega) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(getRotationalVelocity()) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -114,7 +115,6 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
-        testJoystick.a().whileTrue(superstructure.setRobotState(RobotState.TESTING));
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -129,14 +129,53 @@ public class RobotContainer {
 
         // DRIVER CONTROLLER
 
-        // sets robot shoot on/off
+        // sets robot shoot on/off while right trigger is held
+        if (superstructure.pointedAtTarget()) {
         joystick.rightTrigger().whileTrue(superstructure.startShooting());
+        }
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
 
-        // sets intake on/off
+        // manual shooting
+        joystick.rightBumper().whileTrue(superstructure.shootManually());
+        joystick.rightBumper().onFalse(superstructure.stopShooting());
+
+        // sets intake on/off on toggle default = on
         joystick.leftBumper().onTrue(superstructure.deployIntakingCommand());
         // retracts intake
         joystick.leftTrigger().onTrue(superstructure.retractIntake());
+
+        // sets hood angle for a close shot and far shot
+        joystick.a().onTrue(superstructure.setHoodAngleClose());
+        joystick.y().onTrue(superstructure.setHoodAngleFar());
+
+        // TESTING JOYSTICK
+        
+        // intake deploy and retract
+        testJoystick.leftBumper().onTrue(superstructure.testIntakeDeploy());
+        testJoystick.leftTrigger().onTrue(superstructure.retractIntake());
+
+        // intake rollers test
+        testJoystick.rightTrigger().whileTrue(superstructure.testIntakeRollers());
+        testJoystick.rightTrigger().onFalse(superstructure.stopIntakeRollers());
+
+        // roller floor test
+        testJoystick.rightBumper().whileTrue(superstructure.testRollers());
+        testJoystick.rightBumper().onFalse(superstructure.stopRollers());
+
+        // shooter test
+        testJoystick.rightTrigger().whileTrue(superstructure.testShooter());
+        testJoystick.rightTrigger().onFalse(getAutonomousCommand());
+
+        // SYS ID TUNING
+        testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
+        testJoystick.y().whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
+        testJoystick.a().whileTrue(shooter.sysIdDynamic(Direction.kForward));
+        testJoystick.b().whileTrue(shooter.sysIdDynamic(Direction.kReverse));
+
+        testJoystick.pov(0).whileTrue(hood.sysIdQuasistaticCommand(Direction.kForward));
+        testJoystick.pov(90).whileTrue(hood.sysIdQuasistaticCommand(Direction.kReverse));
+        testJoystick.pov(180).whileTrue(hood.sysIdDynamicCommand(Direction.kForward));
+        testJoystick.pov(270).whileTrue(hood.sysIdDynamicCommand(Direction.kReverse));
     }
 
     public Command getAutonomousCommand() {
@@ -159,23 +198,12 @@ public class RobotContainer {
     }
 
     public double getRotationalVelocity() {
-        boolean rightStickButton = joystick.rightStick().getAsBoolean();
-        boolean autoTracking = false;
-        boolean lastAutoTrackButtonPressed = false;
-
-            if (rightStickButton && !lastAutoTrackButtonPressed) {
-                autoTracking = !autoTracking;
-            }
-            lastAutoTrackButtonPressed = rightStickButton;
-
-            if (joystick.getRightX() != 0) {
-                m_rotationalVelocity = -joystick.getRightX() * MaxAngularRate;
-                autoTracking = false;
-            }
-            if (autoTracking == true) {
-                drivetrain.getTurnToSpeakerSpeed(null);
-            }
-            return m_rotationalVelocity;
+        double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
+        double omega = -MaxAngularRate * scale(rightX, 2.5);
+        if (joystick.rightTrigger().getAsBoolean()) {
+            omega = superstructure.turnToTargetSpeed();
+        }
+        return omega;
     }
 
     private double scale(double in, double scale) {

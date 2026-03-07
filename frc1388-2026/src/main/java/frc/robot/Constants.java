@@ -81,6 +81,10 @@ public final class Constants {
       public static final double KICKER_SHOOTING_VELOCITY = 0;
       public static final double TESTING_KICKER_VOLTS = 0;
 
+      public static final double MANUAL_SHOOT_CLOSE = 2000;
+
+      public static final double MANUAL_SHOOT_FAR = 4000;
+
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
@@ -97,6 +101,8 @@ public final class Constants {
 
     public static class HoodConstants {
       public static final double HOOD_OFFSET = 0.0;
+      public static final double HOOD_CLOSE = 0.0;
+      public static final double HOOD_FAR = 0.0;
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
         DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 1.0);
@@ -117,5 +123,10 @@ public final class Constants {
       public static final double UP_POSITION = 1;
       public static final double HALF_WAY = 0.5;
       public static final double TESTING_VOLTS = 4;
+    }
+
+    public static class LimelightConstants {
+      public static final String SHOOTER_LIMELIGHT = "limelight-shooter";
+      public static final String LEFT_LIMELIGHT = "limelight-left";
     }
   }

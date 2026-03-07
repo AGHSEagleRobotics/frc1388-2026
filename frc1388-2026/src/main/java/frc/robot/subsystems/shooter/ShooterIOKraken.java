@@ -22,6 +22,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -37,12 +38,14 @@ public class ShooterIOKraken implements ShooterIO {
   private StatusSignal<Current> shootMotor1TorqueCurrentAmpsSS;
   private StatusSignal<Current> shootMotor1SupplyCurrentAmpsSS;
   private StatusSignal<Temperature> shootMotor1TempCelsiusSS;
+  private StatusSignal<Angle> shootMotor1PositionStatusSignal;
   
   private StatusSignal<AngularVelocity> shootMotor2VelocitySS;
   private StatusSignal<Voltage> shootMotor2VoltageSS;
   private StatusSignal<Current> shootMotor2TorqueCurrentAmpsSS;
   private StatusSignal<Current> shootMotor2SupplyCurrentAmpsSS;
   private StatusSignal<Temperature> shootMotor2TempCelsiusSS;
+  private StatusSignal<Angle> shootMotor2PositionStatusSignal;
 
   
   private StatusSignal<AngularVelocity> kickerMotorVelocitySS;
@@ -50,6 +53,7 @@ public class ShooterIOKraken implements ShooterIO {
   private StatusSignal<Current> kickerMotorTorqueCurrentAmpsSS;
   private StatusSignal<Current> kickerMotorSupplyCurrentAmpsSS;
   private StatusSignal<Temperature> kickerMotorTempCelsiusSS;
+  private StatusSignal<Angle> kickerPositionStatusSignal;
 
   //hardware/talons
   private TalonFX shootMotor1;
@@ -72,6 +76,7 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor2 = new TalonFX(37);
     kickerMotor = new TalonFX(42);
 
+    shootMotor2.setControl(new Follower(36, MotorAlignmentValue.Opposed)); //same thing as setshootervolts w/ motor inverison, also might wanna look into feedforward constants
     //PIDS config
     controllerConfig.kP = 0.0;
     controllerConfig.kI = 0.0;
@@ -103,18 +108,21 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor1TorqueCurrentAmpsSS = shootMotor1.getTorqueCurrent();
     shootMotor1SupplyCurrentAmpsSS = shootMotor1.getSupplyCurrent();
     shootMotor1TempCelsiusSS = shootMotor1.getDeviceTemp();
+    shootMotor1PositionStatusSignal = shootMotor1.getPosition();
     
     shootMotor2VelocitySS = shootMotor2.getVelocity();
     shootMotor2VoltageSS = shootMotor2.getMotorVoltage();
     shootMotor2TorqueCurrentAmpsSS = shootMotor2.getTorqueCurrent();
     shootMotor2SupplyCurrentAmpsSS = shootMotor2.getTorqueCurrent();
     shootMotor2TempCelsiusSS = shootMotor2.getDeviceTemp();
-    
+    shootMotor2PositionStatusSignal = shootMotor2.getPosition();
+
     kickerMotorVelocitySS = kickerMotor.getVelocity();
     kickerMotorVoltageSS = kickerMotor.getMotorVoltage();
     kickerMotorTorqueCurrentAmpsSS = kickerMotor.getTorqueCurrent();
     kickerMotorSupplyCurrentAmpsSS = kickerMotor.getTorqueCurrent();
     kickerMotorTempCelsiusSS = kickerMotor.getDeviceTemp();
+    kickerPositionStatusSignal = kickerMotor.getPosition();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
       100.0, 
@@ -123,18 +131,21 @@ public class ShooterIOKraken implements ShooterIO {
       shootMotor1TorqueCurrentAmpsSS,
       shootMotor1SupplyCurrentAmpsSS,
       shootMotor1TempCelsiusSS,
+      shootMotor1PositionStatusSignal,
       
       shootMotor2VelocitySS,
       shootMotor2VoltageSS,
       shootMotor2TorqueCurrentAmpsSS,
       shootMotor2SupplyCurrentAmpsSS,
       shootMotor2TempCelsiusSS,
+      shootMotor2PositionStatusSignal,
       
       kickerMotorVelocitySS,
       kickerMotorVoltageSS,
       kickerMotorTorqueCurrentAmpsSS,
       kickerMotorSupplyCurrentAmpsSS,
-      kickerMotorTempCelsiusSS
+      kickerMotorTempCelsiusSS,
+      kickerPositionStatusSignal
       ); 
 
   }
@@ -146,7 +157,8 @@ public class ShooterIOKraken implements ShooterIO {
         shootMotor1VoltageSS,
         shootMotor1TorqueCurrentAmpsSS,
         shootMotor1SupplyCurrentAmpsSS,
-        shootMotor1TempCelsiusSS)
+        shootMotor1TempCelsiusSS,
+        shootMotor1PositionStatusSignal)
       .isOK();
     inputs.shootMotor2Connected = 
       BaseStatusSignal.refreshAll(
@@ -154,7 +166,8 @@ public class ShooterIOKraken implements ShooterIO {
         shootMotor2VoltageSS,
         shootMotor2TorqueCurrentAmpsSS,
         shootMotor2SupplyCurrentAmpsSS,
-        shootMotor2TempCelsiusSS)
+        shootMotor2TempCelsiusSS,
+        shootMotor2PositionStatusSignal)
       .isOK();
     inputs.kickerMotorConnected =
       BaseStatusSignal.refreshAll(
@@ -162,7 +175,8 @@ public class ShooterIOKraken implements ShooterIO {
         kickerMotorVoltageSS,
         kickerMotorTorqueCurrentAmpsSS,
         kickerMotorSupplyCurrentAmpsSS,
-        kickerMotorTempCelsiusSS)
+        kickerMotorTempCelsiusSS,
+        kickerPositionStatusSignal)
       .isOK();
 
     //setting signals / updating motor inputs
@@ -173,6 +187,7 @@ public class ShooterIOKraken implements ShooterIO {
     inputs.shootMotor1TorqueCurrentAmps = shootMotor1TorqueCurrentAmpsSS.getValueAsDouble();
     inputs.shootMotor1SupplyCurrentAmps = shootMotor1SupplyCurrentAmpsSS.getValueAsDouble();
     inputs.shootMotor1TempCelsius = shootMotor1TempCelsiusSS.getValueAsDouble();
+    inputs.shootMotor1Position = shootMotor1PositionStatusSignal.getValueAsDouble();
 
     inputs.shootMotor2VelocityRPS = shootMotor2VelocitySS.getValueAsDouble();
     inputs.shootMotor2ReferenceVelocityRPS = this.shootMotor2Velocity;
@@ -181,6 +196,7 @@ public class ShooterIOKraken implements ShooterIO {
     inputs.shootMotor2TorqueCurrentAmps = shootMotor2TorqueCurrentAmpsSS.getValueAsDouble();
     inputs.shootMotor2SupplyCurrentAmps = shootMotor2SupplyCurrentAmpsSS.getValueAsDouble();
     inputs.shootMotor2TempCelsius = shootMotor2TempCelsiusSS.getValueAsDouble();
+    inputs.shootMotor2Position = shootMotor2PositionStatusSignal.getValueAsDouble();
     
     inputs.kickerMotorVelocityRPS = kickerMotorVelocitySS.getValueAsDouble();
     inputs.kickerMotorReferenceVelocityRPS = this.kickerMotorVelocity;
@@ -189,16 +205,15 @@ public class ShooterIOKraken implements ShooterIO {
     inputs.kickerMotorTorqueCurrentAmps = kickerMotorTorqueCurrentAmpsSS.getValueAsDouble();
     inputs.kickerMotorSupplyCurrentAmps = kickerMotorSupplyCurrentAmpsSS.getValueAsDouble();
     inputs.kickerMotorTempCelsius = kickerMotorTempCelsiusSS.getValueAsDouble();
+    inputs.kickerPosition = kickerPositionStatusSignal.getValueAsDouble();
   }
   @Override
       public void setShooterVelocity(double shooterRPS) {
         shootMotor1.setControl(velocityControl.withVelocity(shooterRPS));
-        shootMotor2.setControl(new Follower(36, MotorAlignmentValue.Opposed)); //same thing as setshootervolts w/ motor inverison, also might wanna look into feedforward constants
       }
   @Override
     public void setShooterVolts(double shootMotorVolts) {
       shootMotor1.setControl(voltageControl.withOutput(shootMotorVolts));
-      shootMotor2.setControl(new Follower(36, MotorAlignmentValue.Opposed)); //might need to change opposed valueto aligned later
       //have following motor inverted from other motor
     }
   @Override

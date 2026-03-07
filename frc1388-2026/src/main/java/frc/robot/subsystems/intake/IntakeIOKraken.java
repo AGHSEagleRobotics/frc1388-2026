@@ -67,6 +67,7 @@ public class IntakeIOKraken implements IntakeIO {
   private StatusSignal<Voltage> deployMotorVoltageStatusSignal;
   private StatusSignal<Voltage> rollerMotorVoltageStatusSignal;
 
+  private StatusSignal<Angle> deployMotorPositionStatusSignal;
 
 
   private final NeutralOut neutralOut = new NeutralOut();
@@ -77,6 +78,8 @@ public class IntakeIOKraken implements IntakeIO {
     m_deployMotor2 = new TalonFX(45);
     m_rollerMotor = new TalonFX(43);
     CANcoder = new CANcoder(52);
+
+    m_deployMotor2.setControl(new Follower(44, MotorAlignmentValue.Opposed));
 
     configureDeployMotors(m_deployMotor1, m_deployMotor2);
     configureRollerMotor(m_rollerMotor);
@@ -104,6 +107,8 @@ public class IntakeIOKraken implements IntakeIO {
 
     deployMotorVoltageStatusSignal = m_deployMotor1.getMotorVoltage();
     rollerMotorVoltageStatusSignal = m_rollerMotor.getMotorVoltage();
+
+    deployMotorPositionStatusSignal = m_deployMotor1.getPosition();
   }
 
    @Override
@@ -121,7 +126,8 @@ public class IntakeIOKraken implements IntakeIO {
         deployMotorTemperatureStatusSignal,
         rollerMotorTemperatureStatusSignal,
         deployMotorVoltageStatusSignal,
-        rollerMotorVoltageStatusSignal);
+        rollerMotorVoltageStatusSignal,
+        deployMotorPositionStatusSignal);
 
 
     inputs.deployMotorTorqueCurrentAmps = deployMotorTorqueCurrentStatusSignal.getValueAsDouble();
@@ -145,17 +151,16 @@ public class IntakeIOKraken implements IntakeIO {
     inputs.deployMotorVoltage = deployMotorVoltageStatusSignal.getValueAsDouble();
     inputs.rollerMotorVoltage = rollerMotorVoltageStatusSignal.getValueAsDouble();
 
+    inputs.deployMotorPosition = deployMotorPositionStatusSignal.getValueAsDouble();
     }
     @Override
     public void setDeployPosition(double position) {
       m_deployMotor1.setControl(deployMotorPositionRequest.withPosition(position));
-      m_deployMotor2.setControl(new Follower(44, MotorAlignmentValue.Opposed));
     }
 
     @Override
     public void setDeployVoltage(double volts) {
         m_deployMotor1.setControl(deployMotorVoltageRequest.withOutput(volts));
-        m_deployMotor2.setControl(new Follower(44, MotorAlignmentValue.Opposed));
     }
 
     @Override
@@ -217,8 +222,11 @@ public class IntakeIOKraken implements IntakeIO {
     TorqueCurrentConfigs rollerMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
     //TODO: CORRECT LATER
-    rollerMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 0;
-    rollerMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 0;
+    rollerMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40;
+    rollerMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40;
+
+    
+    rollerMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
 
     rollerMotorConfig.TorqueCurrent = rollerMotorTorqueCurrentConfigs;
 

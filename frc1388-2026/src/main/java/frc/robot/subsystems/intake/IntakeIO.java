@@ -36,6 +36,7 @@ public interface IntakeIO {
         double deployMotorVoltage = 0;
         double rollerMotorVoltage = 0;
 
+        double deployMotorPosition;
 
     }
 

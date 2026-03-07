@@ -19,6 +19,8 @@ public interface HoodIO {
     public double hoodMotorTempCelsius = 0.0;
 
     public double hoodMotorPosition = 0.0;
+    
+    public double hoodMotorVelocityRPS = 0.0;
   }
   public void updateInputs(HoodIOInputs hoodIOInputs);
 

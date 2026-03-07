@@ -7,6 +7,7 @@ package frc.robot.subsystems.superstructure;
 import org.ironmaple.simulation.Goal;
 import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -35,6 +36,8 @@ public class Superstructure extends SubsystemBase {
   public ShooterState shooterState;
   public HoodState hoodState;
 
+  public static final PIDController rotationPID = new PIDController(0.01, 0, .0);
+
   public enum RobotState {
     IDLE,
     INTAKEDEPLOY,
@@ -56,6 +59,10 @@ public class Superstructure extends SubsystemBase {
     m_hood = hood;
     m_shotCalculator = shotCalculator;
     robotState = RobotState.IDLE;
+
+    rotationPID.enableContinuousInput(0, 360);
+    // rotationPID.setIZone(2);
+    // rotationPID.setIntegratorRange(-0.36, 0.36);
   }
 
   @Override
@@ -67,53 +74,6 @@ public class Superstructure extends SubsystemBase {
     m_hood.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
     m_hood.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
     m_hood.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
-    
-    if (robotState == RobotState.IDLE) {
-      m_intake.setIntakeState(IntakeState.RETRACT);
-      m_roller.setRollerState(RollerState.IDLE);
-      m_shooter.setShooterState(ShooterState.IDLE);
-      m_hood.setHoodState(HoodState.IDLE);
-    } else if (robotState == RobotState.INTAKEDEPLOY) {
-      m_intake.setIntakeState(IntakeState.EXTENDED);
-      m_roller.setRollerState(RollerState.IDLE);
-      m_shooter.setShooterState(ShooterState.IDLE);
-      m_hood.setHoodState(HoodState.IDLE);
-    } else if (robotState == RobotState.INTAKING) {
-      m_intake.setIntakeState(IntakeState.INTAKING);
-      m_roller.setRollerState(RollerState.INTAKING);
-      m_shooter.setShooterState(ShooterState.IDLE);
-      m_hood.setHoodState(HoodState.IDLE);
-    } else if (robotState == RobotState.PASSING) {
-      m_intake.setIntakeState(IntakeState.SHOOTING);
-      m_roller.setRollerState(RollerState.SHOOTING);
-      m_shooter.setShooterState(ShooterState.PASSING);
-      m_hood.setHoodState(HoodState.PASSING);
-    } else if (robotState == RobotState.SHOOTING) {
-      m_intake.setIntakeState(IntakeState.SHOOTING);
-      m_roller.setRollerState(RollerState.SHOOTING);
-      m_shooter.setShooterState(ShooterState.SHOOTING);
-      m_hood.setHoodState(HoodState.SHOOTING);
-    } else if (robotState == RobotState.SOTM) {
-      m_intake.setIntakeState(IntakeState.INTAKING);
-      m_roller.setRollerState(RollerState.SHOOTING);
-      m_shooter.setShooterState(ShooterState.SOTM);
-      m_hood.setHoodState(HoodState.SOTM);
-    } else if (robotState == RobotState.TESTING) {
-      m_intake.setIntakeState(IntakeState.TESTING);
-      m_roller.setRollerState(RollerState.TESTING);
-      m_shooter.setShooterState(ShooterState.TESTING);
-      m_hood.setHoodState(HoodState.TESTING);
-    } else if (robotState == RobotState.MANUAL_SHORT) {
-      m_intake.setIntakeState(IntakeState.SHOOTING);
-      m_roller.setRollerState(RollerState.SHOOTING);
-      m_shooter.setShooterState(ShooterState.MANUAL);
-      m_hood.setHoodState(HoodState.MANUAL_SHORT);
-    } else if (robotState == RobotState.MANUAL_FAR) {
-      m_intake.setIntakeState(IntakeState.SHOOTING);
-      m_roller.setRollerState(RollerState.SHOOTING);
-      m_shooter.setShooterState(ShooterState.MANUAL);
-      m_hood.setHoodState(HoodState.MANUAL_FAR);
-    }
   }
 
   public RobotState getRobotState() {
@@ -157,4 +117,71 @@ public class Superstructure extends SubsystemBase {
       m_intake.setIntakeState(IntakeState.RETRACT);
     });
   }
+
+  public Command shootManually() {
+    if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
+      return this.runOnce(() -> {
+        m_roller.setRollerState(RollerState.SHOOTING);
+        m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
+      });
+    }
+    else {
+      return this.runOnce(() -> {
+        m_roller.setRollerState(RollerState.SHOOTING);
+        m_shooter.setShooterState(ShooterState.MANUAL_FAR);
+      });
+    }
+  }
+
+  public Command setHoodAngleClose() {
+    return this.runOnce(() -> 
+    m_hood.setHoodState(HoodState.MANUAL_CLOSE));
+  }
+
+  public Command setHoodAngleFar() {
+    return this.runOnce(() -> 
+    m_hood.setHoodState(HoodState.MANUAL_FAR));
+  }
+  
+  public Command testIntakeDeploy() {
+    return this.runOnce(() -> 
+    m_intake.setIntakeState(IntakeState.EXTENDED));
+  }
+
+  public Command testIntakeRollers() {
+    return this.runOnce(() -> 
+    m_intake.setIntakeState(IntakeState.TESTING));
+  }
+
+  public Command stopIntakeRollers() {
+    return this.runOnce(() ->
+    m_intake.setIntakeState(IntakeState.STOP));
+  }
+
+  public Command testRollers() {
+    return this.runOnce(() ->
+    m_roller.setRollerState(RollerState.TESTING));
+  }
+
+  public Command stopRollers() {
+    return this.runOnce(() -> 
+    m_roller.setRollerState(RollerState.IDLE));
+  }
+
+  public Command testShooter() {
+    return this.runOnce(() ->
+    m_shooter.setShooterState(ShooterState.TESTING));
+  }
+
+  public double turnToTargetSpeed() {
+        double angleFromSpeaker = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
+        double rz = m_driveTrain.getAngle();
+        rz = rz < 0 ? rz + 360 : rz;
+        double speed = -(rotationPID.calculate(angleFromSpeaker - rz));
+        return speed;
+    }
+
+    public boolean pointedAtTarget() {
+      return rotationPID.atSetpoint();
+    }
 }

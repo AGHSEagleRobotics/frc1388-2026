@@ -4,7 +4,15 @@
 
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.HoodIO.HoodIOInputs;
@@ -18,12 +26,18 @@ public class Hood extends SubsystemBase {
   public double m_distanceFromHubSOTM;
   public double m_distanceFromPass;
 
+  private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
+  private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
+  private final MutAngularVelocity sysidVelocityMeasure = RotationsPerSecond.mutable(0);
+
+  private final SysIdRoutine sysIdRoutine;  
+  
   public enum HoodState {
     IDLE,
     SHOOTING,
     SOTM,
     PASSING,
-    MANUAL_SHORT,
+    MANUAL_CLOSE,
     MANUAL_FAR,
     TESTING
   }
@@ -32,6 +46,24 @@ public class Hood extends SubsystemBase {
   public Hood(HoodIO io) {
     m_io = io;
     hoodState = HoodState.IDLE;
+
+    sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(3), null, null),
+        new SysIdRoutine.Mechanism(
+            (Voltage volts) -> {
+              m_io.setVoltage(volts.in(Volts));
+            },
+            log -> {
+              log.motor("left")
+                  .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.hoodMotorVoltage,
+                      Volts))
+                  .angularPosition(
+                      sysidPositionMeasure.mut_replace(inputs.hoodMotorPosition,
+                          Rotations))
+                  .angularVelocity(sysidVelocityMeasure.mut_replace(inputs.hoodMotorVelocityRPS,
+                      RotationsPerSecond));
+            },
+            this));
   }
 
   @Override
@@ -53,7 +85,7 @@ public class Hood extends SubsystemBase {
     else if (hoodState == HoodState.TESTING) {
       setTestingPosition(0);
     }
-    else if (hoodState == HoodState.MANUAL_SHORT) {
+    else if (hoodState == HoodState.MANUAL_CLOSE) {
       setShootingPosition(0);
     }
     else if (hoodState == HoodState.MANUAL_FAR) {
@@ -94,4 +126,16 @@ public class Hood extends SubsystemBase {
   public void setDistanceFromPass(double distanceFromPass) {
     m_distanceFromPass = distanceFromPass;
   }
+
+  public HoodState getHoodState() {
+    return hoodState;
+  }
+
+  public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.quasistatic(direction).withName("shooterHood.sysIdQuasistatic");
+    }
+
+    public Command sysIdDynamicCommand(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.dynamic(direction).withName("shooterHood.sysIdDynamic");
+    }
 }
