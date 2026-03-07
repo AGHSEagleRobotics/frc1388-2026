@@ -38,6 +38,7 @@ public class Superstructure extends SubsystemBase {
 
   public static final PIDController rotationPID = new PIDController(0.01, 0, .0);
 
+  //TODO: remove unused RobotState
   public enum RobotState {
     IDLE,
     INTAKEDEPLOY,
@@ -90,6 +91,7 @@ public class Superstructure extends SubsystemBase {
       m_roller.setRollerState(RollerState.SHOOTING);
       m_shooter.setShooterState(ShooterState.SHOOTING);
       m_hood.setHoodState(HoodState.SHOOTING);
+//TODO: add an Intake.SHOOTING state?
     });
   }
 
@@ -101,6 +103,7 @@ public class Superstructure extends SubsystemBase {
     });
   }
 
+//TODO: Add dashboard indicator for intake state: especially INTAKING vs EXTENDED
   public Command deployIntakingCommand() {
     if (m_intake.getIntakeState() == IntakeState.INTAKING) {
       return this.runOnce(() -> {

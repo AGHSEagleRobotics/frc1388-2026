@@ -72,6 +72,7 @@ public class ShooterIOKraken implements ShooterIO {
   private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0.0);
 
   public ShooterIOKraken() {
+//TODO: lots of magic numbers!
     shootMotor1 = new TalonFX(36);
     shootMotor2 = new TalonFX(37);
     kickerMotor = new TalonFX(42);

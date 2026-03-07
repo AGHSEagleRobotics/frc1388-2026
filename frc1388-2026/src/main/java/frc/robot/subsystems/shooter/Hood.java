@@ -54,6 +54,7 @@ public class Hood extends SubsystemBase {
               m_io.setVoltage(volts.in(Volts));
             },
             log -> {
+//TODO: "hood/left"
               log.motor("left")
                   .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.hoodMotorVoltage,
                       Volts))

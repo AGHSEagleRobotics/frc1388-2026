@@ -52,6 +52,7 @@ public class RobotContainer {
     public final ShotCalculator shotcalculator;
     public RobotState robotState;
 
+//TODO: make constants for the following
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private double m_rotationalVelocity = 0;
@@ -130,6 +131,10 @@ public class RobotContainer {
         // DRIVER CONTROLLER
 
         // sets robot shoot on/off while right trigger is held
+//TODO: Calling pointedAtTarget here isn't correct, as it only gets evaulated during initialization
+//TODO: Need to work out timing of trigger actions wrt aiming vs starting to shoot
+//      For example, trigger should enable aiming while held,
+//      and trigger becoming true (whileTrue) should set a state which shoots only when pointedAtTarget
         if (superstructure.pointedAtTarget()) {
         joystick.rightTrigger().whileTrue(superstructure.startShooting());
         }
@@ -198,6 +203,9 @@ public class RobotContainer {
     }
 
     public double getRotationalVelocity() {
+//TODO: maybe read shooter state instead of reading trigger?
+//TODO: if (shooting) do this else do that
+//TODO: rename function to indicate that it's a calculation and not just getting a value
         double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
         double omega = -MaxAngularRate * scale(rightX, 2.5);
         if (joystick.rightTrigger().getAsBoolean()) {

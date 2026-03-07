@@ -61,6 +61,7 @@ public enum ShooterState {
       new SysIdRoutine.Mechanism(
           (Voltage volts) -> setShooterVolts(volts.in(Volts)),
           log -> {
+//TODO: "shooter/left"
             log.motor("left")
                 .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.shootMotor1Voltage,
                     Volts))
@@ -104,6 +105,7 @@ public enum ShooterState {
     }
 
   //Logging
+//TODO: Convert to DogLog?
    SmartDashboard.putBoolean("Shooter/Motor1/isConnected", inputs.shootMotor1Connected);
    SmartDashboard.putNumber("Shooter/Motor1/Velocity", inputs.shootMotor1VelocityRPS);
    SmartDashboard.putNumber("Shooter/Motor1/ReferenceVelocity", inputs.shootMotor1ReferenceVelocityRPS);
