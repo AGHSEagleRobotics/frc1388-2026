@@ -214,7 +214,6 @@ public class ShooterIOKraken implements ShooterIO {
   @Override
     public void setShooterVolts(double shootMotorVolts) {
       shootMotor1.setControl(voltageControl.withOutput(shootMotorVolts));
-      //have following motor inverted from other motor
     }
   @Override
     public void setKickerVolts(double kickerVolts) {

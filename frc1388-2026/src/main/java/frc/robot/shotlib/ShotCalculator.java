@@ -119,26 +119,17 @@ public class ShotCalculator extends SubsystemBase {
         double rX = this.drivetrain.getPose().getX();
         double rY = this.drivetrain.getPose().getY();
 
-        if (Robot.getAllianceColor() == DriverStation.Alliance.Blue) {
-            return Math.toDegrees(
-                    Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
-                    + 180;
-        } else {
-            return Math.toDegrees(
-                    Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
-                    + 180;
-        }
+        return Math.toDegrees(
+                Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
+                + 180;
     }
 
     public double getAbsouluteDistanceFromTargetSOTM() {
         double rX = this.drivetrain.getPose().getX();
         double tX;
         double tAngle = getAbsoluteAngleFromTargetSOTM();
-        if (Robot.getAllianceColor() == Alliance.Blue) {
-            tX = currentEffectiveTargetPose.getX();
-        } else {
-            tX = currentEffectiveTargetPose.getX();
-        }
+        tX = currentEffectiveTargetPose.getX();
+
         double adjacent = rX - tX;
         double distanceFromSpeaker = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
                                                                                      // cos(angle)

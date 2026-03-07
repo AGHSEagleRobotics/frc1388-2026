@@ -297,6 +297,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         
         LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
         LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
+        
         if (getState().Pose != null) {
             if(acceptVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
                 updateVision(LimelightConstants.SHOOTER_LIMELIGHT);

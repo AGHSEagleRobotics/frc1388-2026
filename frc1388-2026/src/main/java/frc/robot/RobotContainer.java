@@ -100,7 +100,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(xVelocity) // Drive forward with negative Y (forward)
                     .withVelocityY(yVelocity) // Drive left with negative X (left)
-                    .withRotationalRate(getRotationalVelocity()) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(calculateRotationalVelocity()) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -131,7 +131,7 @@ public class RobotContainer {
 
         // sets robot shoot on/off while right trigger is held
         if (superstructure.pointedAtTarget()) {
-        joystick.rightTrigger().whileTrue(superstructure.startShooting());
+            joystick.rightTrigger().whileTrue(superstructure.startShooting());
         }
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
 
@@ -197,7 +197,7 @@ public class RobotContainer {
         );
     }
 
-    public double getRotationalVelocity() {
+    public double calculateRotationalVelocity() {
         double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
         double omega = -MaxAngularRate * scale(rightX, 2.5);
         if (joystick.rightTrigger().getAsBoolean()) {

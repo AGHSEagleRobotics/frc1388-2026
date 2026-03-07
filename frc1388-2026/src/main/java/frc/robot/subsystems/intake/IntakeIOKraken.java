@@ -185,14 +185,8 @@ public class IntakeIOKraken implements IntakeIO {
 
   private void configureDeployMotors(TalonFX deployMotor1, TalonFX deployMotor2) {
     TalonFXConfiguration deployMotorConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs deployMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
-
-    //TODO: CORRECT LATER
-    deployMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40;
-    deployMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40;
 
     deployMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
-    deployMotorConfig.TorqueCurrent = deployMotorTorqueCurrentConfigs;
 
     deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
@@ -219,16 +213,8 @@ public class IntakeIOKraken implements IntakeIO {
 
   private void configureRollerMotor(TalonFX rollerMotor) {
     TalonFXConfiguration rollerMotorConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs rollerMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
-    //TODO: CORRECT LATER
-    rollerMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40;
-    rollerMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40;
-
-    
     rollerMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
-
-    rollerMotorConfig.TorqueCurrent = rollerMotorTorqueCurrentConfigs;
 
     rollerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER

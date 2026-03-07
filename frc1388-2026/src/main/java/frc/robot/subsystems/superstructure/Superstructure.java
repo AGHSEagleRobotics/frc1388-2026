@@ -174,10 +174,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public double turnToTargetSpeed() {
-        double angleFromSpeaker = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
+        double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
         double rz = m_driveTrain.getAngle();
         rz = rz < 0 ? rz + 360 : rz;
-        double speed = -(rotationPID.calculate(angleFromSpeaker - rz));
+        double speed = -(rotationPID.calculate(angleFromTarget - rz));
         return speed;
     }
 

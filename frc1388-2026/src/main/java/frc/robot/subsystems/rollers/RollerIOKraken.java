@@ -77,23 +77,22 @@ public class RollerIOKraken implements RollerIO {
     toprollerVoltageStatusSignal = m_topRollerMotor.getMotorVoltage();
   }
 
-   @Override
+  @Override
   public void updateInputs(RollerIOInputs inputs) {
 
     BaseStatusSignal.refreshAll(
-        bottomrollerVelocityStatusSignal,
-        bottomrollerTorqueCurrentStatusSignal,
-        bottomrollerSupplyCurrentStatusSignal,
-        bottomrollerReferenceVelocityStatusSignal,
-        toprollerSupplyCurrentStatusSignal,
-        toprollerTorqueCurrentStatusSignal,
-        toprollerVelocityStatusSignal,
-        toprollerReferenceVelocityStatusSignal,
-        bottomrollerTemperatureStatusSignal,
-        toprollerTemperatureStatusSignal,
-        bottomrollerVoltageStatusSignal,
-        toprollerVoltageStatusSignal);
-
+      bottomrollerVelocityStatusSignal,
+      bottomrollerTorqueCurrentStatusSignal,
+      bottomrollerSupplyCurrentStatusSignal,
+      bottomrollerReferenceVelocityStatusSignal,
+      toprollerSupplyCurrentStatusSignal,
+      toprollerTorqueCurrentStatusSignal,
+      toprollerVelocityStatusSignal,
+      toprollerReferenceVelocityStatusSignal,
+      bottomrollerTemperatureStatusSignal,
+      toprollerTemperatureStatusSignal,
+      bottomrollerVoltageStatusSignal,
+      toprollerVoltageStatusSignal);
 
     inputs.bottomrollerTorqueCurrentAmps = bottomrollerTorqueCurrentStatusSignal.getValueAsDouble();
     inputs.toprollerTorqueCurrentAmps = toprollerTorqueCurrentStatusSignal.getValueAsDouble();
@@ -104,8 +103,10 @@ public class RollerIOKraken implements RollerIO {
     inputs.bottomrollerVelocityRPS = bottomrollerVelocityStatusSignal.getValueAsDouble();
     inputs.toprollerVelocityRPS = toprollerVelocityStatusSignal.getValueAsDouble();
 
-    // Retrieve the closed loop reference status signals directly from the motor in this method
-    // instead of retrieving in advance because the status signal returned depends on the current
+    // Retrieve the closed loop reference status signals directly from the motor in
+    // this method
+    // instead of retrieving in advance because the status signal returned depends
+    // on the current
     // control mode.
     inputs.bottomrollerReferenceVelocityRPS = m_bottomRollerMotor.getClosedLoopReference().getValueAsDouble();
     inputs.toprollerReferenceVelocityRPS = m_topRollerMotor.getClosedLoopReference().getValueAsDouble();
@@ -115,8 +116,7 @@ public class RollerIOKraken implements RollerIO {
 
     inputs.bottomrollerVoltage = bottomrollerVoltageStatusSignal.getValueAsDouble();
     inputs.toprollerVoltage = toprollerVoltageStatusSignal.getValueAsDouble();
-
-    }
+  }
 
     @Override
     public void setBottomRollerVoltage(double volts) {
@@ -128,64 +128,54 @@ public class RollerIOKraken implements RollerIO {
       m_topRollerMotor.setControl(topRollerVoltageSet.withOutput(volts));
     }
 
-      private void configurebottomRollerMotor(TalonFX rollerMotor) {
-    TalonFXConfiguration bottomrollerConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs bottomrollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
+    private void configurebottomRollerMotor(TalonFX rollerMotor) {
+      TalonFXConfiguration bottomrollerConfig = new TalonFXConfiguration();
 
-    // TODO: CHANGE LATER
-    bottomrollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40.0;
-    bottomrollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40.0;
+      bottomrollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
 
-    bottomrollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+      bottomrollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    bottomrollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+      bottomrollerConfig.Slot0.kP = 0;
+      bottomrollerConfig.Slot0.kI = 0;
+      bottomrollerConfig.Slot0.kD = 0;
+      bottomrollerConfig.Slot0.kS = 0;
 
-    bottomrollerConfig.Slot0.kP = 0;
-    bottomrollerConfig.Slot0.kI = 0;
-    bottomrollerConfig.Slot0.kD = 0;
-    bottomrollerConfig.Slot0.kS = 0;
+      // TODO: CORRECT LATER
+      bottomrollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    //TODO: CORRECT LATER
-    bottomrollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      // TODO: CHECK VALUE
+      bottomrollerConfig.Feedback.SensorToMechanismRatio = 1;
 
-    //TODO: CHECK VALUE
-    bottomrollerConfig.Feedback.SensorToMechanismRatio = 1;
+      StatusCode status = StatusCode.StatusCodeNotInitialized;
+      for (int i = 0; i < 5; ++i) {
+        status = rollerMotor.getConfigurator().apply(bottomrollerConfig);
+        if (status.isOK())
+          break;
+      }
+    }
 
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < 5; ++i) {
-      status = rollerMotor.getConfigurator().apply(bottomrollerConfig);
-      if (status.isOK()) break;
+    private void configureTopRoller(TalonFX topRoller) {
+      TalonFXConfiguration topRollerConfig = new TalonFXConfiguration();
+
+      topRollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+
+      topRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      // TODO: CORRECT LATER
+      topRollerConfig.Slot0.kP = 0;
+      topRollerConfig.Slot0.kI = 0;
+      topRollerConfig.Slot0.kD = 0;
+      topRollerConfig.Slot0.kS = 0;
+
+      // TODO: CHANGE LATER
+      topRollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+      topRollerConfig.Feedback.SensorToMechanismRatio = 1;
+
+      StatusCode status = StatusCode.StatusCodeNotInitialized;
+      for (int i = 0; i < 5; ++i) {
+        status = topRoller.getConfigurator().apply(topRollerConfig);
+        if (status.isOK())
+          break;
+      }
     }
   }
-
-  private void configureTopRoller(TalonFX topRoller) {
-    TalonFXConfiguration topRollerConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs toprollerTorqueCurrentConfigs = new TorqueCurrentConfigs();
-
-    //TODO: CORRECT LATER
-    toprollerTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40.0;
-    toprollerTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40.0;
-
-    topRollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
-
-    topRollerConfig.TorqueCurrent = toprollerTorqueCurrentConfigs;
-
-    topRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    // TODO: CORRECT LATER
-    topRollerConfig.Slot0.kP = 0;
-    topRollerConfig.Slot0.kI = 0;
-    topRollerConfig.Slot0.kD = 0;
-    topRollerConfig.Slot0.kS = 0;
-
-    //TODO: CHANGE LATER
-    topRollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    topRollerConfig.Feedback.SensorToMechanismRatio = 1;
-
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
-    for (int i = 0; i < 5; ++i) {
-      status = topRoller.getConfigurator().apply(topRollerConfig);
-      if (status.isOK()) break;
-    }
-  }
-}

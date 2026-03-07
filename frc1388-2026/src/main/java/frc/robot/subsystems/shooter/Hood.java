@@ -91,11 +91,9 @@ public class Hood extends SubsystemBase {
     else if (hoodState == HoodState.MANUAL_FAR) {
       setShootingPosition(0);
     }
-
   }
 
   public void stop() {
-    m_io.setVoltage(0);
     m_io.setPosition(m_io.getPosition());
   }
 
