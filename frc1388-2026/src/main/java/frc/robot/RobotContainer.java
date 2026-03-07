@@ -87,19 +87,11 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        double leftX = MathUtil.applyDeadband(joystick.getLeftY(), 0.1);
-        double leftY = MathUtil.applyDeadband(joystick.getLeftX(), 0.1);
-
-        
-        double xVelocity = -MaxSpeed * scale(leftX, 2.5);
-        double yVelocity = -MaxSpeed * scale(leftY, 2.5);
-        
-
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(xVelocity) // Drive forward with negative Y (forward)
-                    .withVelocityY(yVelocity) // Drive left with negative X (left)
+                drive.withVelocityX(calculateVelocity(joystick.getLeftY())) // Drive forward with negative Y (forward)
+                    .withVelocityY(calculateVelocity(joystick.getLeftX())) // Drive left with negative X (left)
                     .withRotationalRate(calculateRotationalVelocity()) // Drive counterclockwise with negative X (left)
             )
         );
@@ -151,12 +143,12 @@ public class RobotContainer {
         // TESTING JOYSTICK
         
         // intake deploy and retract
-        testJoystick.leftBumper().onTrue(superstructure.testIntakeDeploy());
-        testJoystick.leftTrigger().onTrue(superstructure.retractIntake());
+        testJoystick.leftBumper().whileTrue(superstructure.testIntakeDeploy());
+        testJoystick.leftBumper().onFalse(superstructure.retractIntake());
 
         // intake rollers test
-        testJoystick.rightTrigger().whileTrue(superstructure.testIntakeRollers());
-        testJoystick.rightTrigger().onFalse(superstructure.stopIntakeRollers());
+        testJoystick.a().whileTrue(superstructure.testIntakeRollers());
+        testJoystick.a().onFalse(superstructure.stopIntakeRollers());
 
         // roller floor test
         testJoystick.rightBumper().whileTrue(superstructure.testRollers());
@@ -164,18 +156,22 @@ public class RobotContainer {
 
         // shooter test
         testJoystick.rightTrigger().whileTrue(superstructure.testShooter());
-        testJoystick.rightTrigger().onFalse(getAutonomousCommand());
+        testJoystick.rightTrigger().onFalse(superstructure.stopShooting());
+
+        // hood test
+        testJoystick.b().whileTrue(superstructure.testHood());
+        testJoystick.b().onFalse(superstructure.stopHood());
 
         // SYS ID TUNING
-        testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
-        testJoystick.y().whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
-        testJoystick.a().whileTrue(shooter.sysIdDynamic(Direction.kForward));
-        testJoystick.b().whileTrue(shooter.sysIdDynamic(Direction.kReverse));
+        // testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
+        // testJoystick.y().whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
+        // testJoystick.a().whileTrue(shooter.sysIdDynamic(Direction.kForward));
+        // testJoystick.b().whileTrue(shooter.sysIdDynamic(Direction.kReverse));
 
-        testJoystick.pov(0).whileTrue(hood.sysIdQuasistaticCommand(Direction.kForward));
-        testJoystick.pov(90).whileTrue(hood.sysIdQuasistaticCommand(Direction.kReverse));
-        testJoystick.pov(180).whileTrue(hood.sysIdDynamicCommand(Direction.kForward));
-        testJoystick.pov(270).whileTrue(hood.sysIdDynamicCommand(Direction.kReverse));
+        // testJoystick.pov(0).whileTrue(hood.sysIdQuasistaticCommand(Direction.kForward));
+        // testJoystick.pov(90).whileTrue(hood.sysIdQuasistaticCommand(Direction.kReverse));
+        // testJoystick.pov(180).whileTrue(hood.sysIdDynamicCommand(Direction.kForward));
+        // testJoystick.pov(270).whileTrue(hood.sysIdDynamicCommand(Direction.kReverse));
     }
 
     public Command getAutonomousCommand() {
@@ -195,6 +191,12 @@ public class RobotContainer {
             // Finally idle for the rest of auton
             drivetrain.applyRequest(() -> idle)
         );
+    }
+
+    public double calculateVelocity(double joystick) {
+        double leftJoystick = MathUtil.applyDeadband(joystick, 0.1);
+        double velocity = -MaxSpeed * scale(leftJoystick, 2.5);
+        return velocity;
     }
 
     public double calculateRotationalVelocity() {

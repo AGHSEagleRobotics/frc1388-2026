@@ -129,6 +129,7 @@ public class RollerIOKraken implements RollerIO {
     }
 
     private void configurebottomRollerMotor(TalonFX rollerMotor) {
+      // invert roller
       TalonFXConfiguration bottomrollerConfig = new TalonFXConfiguration();
 
       bottomrollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
@@ -141,7 +142,7 @@ public class RollerIOKraken implements RollerIO {
       bottomrollerConfig.Slot0.kS = 0;
 
       // TODO: CORRECT LATER
-      bottomrollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      bottomrollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       // TODO: CHECK VALUE
       bottomrollerConfig.Feedback.SensorToMechanismRatio = 1;

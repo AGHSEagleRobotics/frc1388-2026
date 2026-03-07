@@ -59,17 +59,14 @@ public class Roller extends SubsystemBase {
     m_io.updateInputs(inputs);
     if (rollerState == RollerState.IDLE) {
       stop();
-    }
-    else if(rollerState == RollerState.INTAKING) {
+    } else if (rollerState == RollerState.INTAKING) {
       setIntakingRollers();
-    }
-    else if ((rollerState == RollerState.SHOOTING) && (m_isReadyToShoot.getAsBoolean())) {
+    } else if ((rollerState == RollerState.SHOOTING)) {
       setShootingRollers();
-    }
-    else if (rollerState == RollerState.TESTING) {
+    } else if (rollerState == RollerState.TESTING) {
       setTestingRollers();
     }
-    }
+  }
 
     public void stop() {
       m_io.setBottomRollerVoltage(0);
@@ -87,6 +84,7 @@ public class Roller extends SubsystemBase {
 
     public void setTestingRollers() {
       m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
+      m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);
     }
 
     public RollerState getRollerState() {

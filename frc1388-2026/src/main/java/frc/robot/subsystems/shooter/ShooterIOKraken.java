@@ -70,13 +70,13 @@ public class ShooterIOKraken implements ShooterIO {
   private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
   private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(0.0);
   private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0.0);
+  private final Follower followRequest = new Follower(36, MotorAlignmentValue.Opposed);
 
   public ShooterIOKraken() {
     shootMotor1 = new TalonFX(36);
     shootMotor2 = new TalonFX(37);
     kickerMotor = new TalonFX(42);
 
-    shootMotor2.setControl(new Follower(36, MotorAlignmentValue.Opposed)); //same thing as setshootervolts w/ motor inverison, also might wanna look into feedforward constants
     //PIDS config
     controllerConfig.kP = 0.0;
     controllerConfig.kI = 0.0;
@@ -148,6 +148,7 @@ public class ShooterIOKraken implements ShooterIO {
       kickerPositionStatusSignal
       ); 
 
+      shootMotor2.setControl(followRequest); //same thing as setshootervolts w/ motor inverison, also might wanna look into feedforward constants
   }
   @Override
   public void updateInputs(ShooterInputs inputs) {

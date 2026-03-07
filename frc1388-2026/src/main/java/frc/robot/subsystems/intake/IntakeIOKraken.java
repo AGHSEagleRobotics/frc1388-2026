@@ -72,14 +72,13 @@ public class IntakeIOKraken implements IntakeIO {
 
   private final NeutralOut neutralOut = new NeutralOut();
 
+  private final Follower followRequest = new Follower(44, MotorAlignmentValue.Opposed);
 
   public IntakeIOKraken() {
     m_deployMotor1 = new TalonFX(44);
     m_deployMotor2 = new TalonFX(45);
     m_rollerMotor = new TalonFX(43);
     CANcoder = new CANcoder(52);
-
-    m_deployMotor2.setControl(new Follower(44, MotorAlignmentValue.Opposed));
 
     configureDeployMotors(m_deployMotor1, m_deployMotor2);
     configureRollerMotor(m_rollerMotor);
@@ -109,6 +108,9 @@ public class IntakeIOKraken implements IntakeIO {
     rollerMotorVoltageStatusSignal = m_rollerMotor.getMotorVoltage();
 
     deployMotorPositionStatusSignal = m_deployMotor1.getPosition();
+
+    
+    m_deployMotor2.setControl(followRequest);
   }
 
    @Override
@@ -199,7 +201,7 @@ public class IntakeIOKraken implements IntakeIO {
     deployMotorConfig.Slot0.kS = 0;
 
     //TODO: CHANGE LATER
-    deployMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    deployMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
 

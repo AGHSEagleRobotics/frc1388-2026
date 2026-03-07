@@ -58,7 +58,8 @@ public class Intake extends SubsystemBase {
     INTAKING,
     SHOOTING,
     MEDIUS,
-    TESTING,
+    TESTINGROLLER,
+    TESTINGDEPLOY,
     STOP
   }
 
@@ -106,8 +107,10 @@ public class Intake extends SubsystemBase {
     } else if (intakeState == IntakeState.SHOOTING) {
       setPosition(IntakeConstants.HALF_WAY);
       setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
-    } else if (intakeState == IntakeState.TESTING) {
+    } else if (intakeState == IntakeState.TESTINGROLLER) {
       setIntakingRollers(IntakeConstants.TESTING_VOLTS);
+    } else if (intakeState == IntakeState.TESTINGDEPLOY) {
+      setDeployVolts(4);
     } else if (intakeState == IntakeState.STOP) {
       setIntakingRollers(0);
     }

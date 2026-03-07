@@ -63,31 +63,33 @@ public class HoodIOKraken implements HoodIO {
   private final TalonFX secondaryHoodMotor;
   private final CANcoder CANcoder;
 
+  private final Follower followRequest = new Follower(38, MotorAlignmentValue.Opposed);
   public HoodIOKraken() {
 
     hoodMotor = new TalonFX(38);
     secondaryHoodMotor = new TalonFX(39);
     CANcoder = new CANcoder(51);
 
-    secondaryHoodMotor.setControl(new Follower(38, MotorAlignmentValue.Opposed));
-
+    
     hoodMotorVelocityStatusSignal = hoodMotor.getVelocity();
-
+    
     hoodMotorVoltageStatusSignal = hoodMotor.getMotorVoltage();
-
+    
     hoodMotorCurrentAmpsStatusSignal = hoodMotor.getStatorCurrent();
-
+    
     hoodMotorTempCelsiusStatusSignal = hoodMotor.getDeviceTemp();
-
+    
     hoodMotorPositionStatusSignal = hoodMotor.getPosition();
-
+    
     hoodMotorVoltageRequest = new VoltageOut(0);
     hoodMotorPositionRequest = new MotionMagicVoltage(0);
-
+    
     configureCANcoder(CANcoder);
     configureHoodMotor(hoodMotor);
+    
+    secondaryHoodMotor.setControl(followRequest);
   }
-
+  
   @Override
   public void updateInputs(HoodIOInputs inputs) {
     BaseStatusSignal.refreshAll(
@@ -96,21 +98,16 @@ public class HoodIOKraken implements HoodIO {
       hoodMotorCurrentAmpsStatusSignal, 
       hoodMotorTempCelsiusStatusSignal,
       hoodMotorPositionStatusSignal);
-
+      
       inputs.hoodMotorVelocityRPS = hoodMotorVelocityStatusSignal.getValueAsDouble();
       inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();
       inputs.hoodMotorTempCelsius = hoodMotorTempCelsiusStatusSignal.getValueAsDouble();
       inputs.hoodMotorVoltage = hoodMotorVoltageStatusSignal.getValueAsDouble();
       inputs.hoodMotorPosition = hoodMotorPositionStatusSignal.getValueAsDouble();
-  }
+    }
 
   public void configureHoodMotor(TalonFX hoodMotor) {
     TalonFXConfiguration hoodMotorConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs hoodMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
-
-    // TODO: CHANGE LATER
-    hoodMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40.0;
-    hoodMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40.0;
 
     hoodMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
@@ -124,7 +121,7 @@ public class HoodIOKraken implements HoodIO {
     hoodMotorConfig.Slot0.kS = 0;
 
     // TODO: CORRECT LATER
-    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     // TODO: CHECK VALUE
     hoodMotorConfig.Feedback.SensorToMechanismRatio = 1;

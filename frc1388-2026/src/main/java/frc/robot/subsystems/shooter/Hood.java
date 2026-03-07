@@ -83,7 +83,7 @@ public class Hood extends SubsystemBase {
       setShootingPosition(HoodConstants.DISTANCE_TO_PASS_HOODANGLE.get(m_distanceFromPass));
     }
     else if (hoodState == HoodState.TESTING) {
-      setTestingPosition(0);
+      m_io.setVoltage(4);
     }
     else if (hoodState == HoodState.MANUAL_CLOSE) {
       setShootingPosition(0);

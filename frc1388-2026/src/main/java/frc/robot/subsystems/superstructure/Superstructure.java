@@ -145,12 +145,12 @@ public class Superstructure extends SubsystemBase {
   
   public Command testIntakeDeploy() {
     return this.runOnce(() -> 
-    m_intake.setIntakeState(IntakeState.EXTENDED));
+    m_intake.setIntakeState(IntakeState.TESTINGDEPLOY));
   }
 
   public Command testIntakeRollers() {
     return this.runOnce(() -> 
-    m_intake.setIntakeState(IntakeState.TESTING));
+    m_intake.setIntakeState(IntakeState.TESTINGROLLER));
   }
 
   public Command stopIntakeRollers() {
@@ -171,6 +171,16 @@ public class Superstructure extends SubsystemBase {
   public Command testShooter() {
     return this.runOnce(() ->
     m_shooter.setShooterState(ShooterState.TESTING));
+  }
+
+  public Command testHood() {
+    return this.runOnce(() ->
+    m_hood.setHoodState(HoodState.TESTING));
+  }
+
+  public Command stopHood() {
+    return this.runOnce(() ->
+    m_hood.setHoodState(HoodState.IDLE));
   }
 
   public double turnToTargetSpeed() {
