@@ -67,7 +67,9 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        m_robotContainer.resetGyro();
+    }
 
     @Override
     public void disabledExit() {}

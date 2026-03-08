@@ -28,10 +28,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.vision.LimelightHelpers;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOKraken;
@@ -110,7 +112,7 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -224,5 +226,14 @@ public class RobotContainer {
                                         .withRotationalRate(calculateRotationalVelocity()));
                     }
                 }, drivetrain));
+    }
+
+    public void resetGyro() {
+        if(LimelightHelpers.getTV(LimelightConstants.SHOOTER_LIMELIGHT)) {
+            drivetrain.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+        }
+        if(LimelightHelpers.getTV(LimelightConstants.LEFT_LIMELIGHT)) {
+            drivetrain.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+        }
     }
 }
