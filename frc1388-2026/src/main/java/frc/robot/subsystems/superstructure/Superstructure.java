@@ -8,10 +8,12 @@ import org.ironmaple.simulation.Goal;
 import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
@@ -31,25 +33,12 @@ public class Superstructure extends SubsystemBase {
   public final Shooter m_shooter;
   public final Hood m_hood;
   public ShotCalculator m_shotCalculator;
-  public RobotState robotState;
-  public RollerState rollerState;
-  public ShooterState shooterState;
-  public HoodState hoodState;
+  public RollerState m_rollerState;
+  public ShooterState m_shooterState;
+  public HoodState m_hoodState;
+  public IntakeState m_intakeState;
 
   public static final PIDController rotationPID = new PIDController(0.01, 0, .0);
-
-  public enum RobotState {
-    IDLE,
-    INTAKEDEPLOY,
-    INTAKING,
-    SHOOTING,
-    PASSING,
-    SOTM,
-    TESTING,
-    MANUAL_SHORT,
-    MANUAL_FAR
-  }
-
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, Hood hood, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
@@ -58,7 +47,6 @@ public class Superstructure extends SubsystemBase {
     m_shooter = shooter;
     m_hood = hood;
     m_shotCalculator = shotCalculator;
-    robotState = RobotState.IDLE;
 
     rotationPID.enableContinuousInput(0, 360);
     // rotationPID.setIZone(2);
@@ -76,20 +64,17 @@ public class Superstructure extends SubsystemBase {
     m_hood.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
   }
 
-  public RobotState getRobotState() {
-    return robotState;
-  }
-
-  public Command setRobotState(RobotState robotState) {
-    return this.runOnce(() ->
-    this.robotState = robotState);
-  }
-
   public Command startShooting() {
-    return this.runOnce(() -> {
+    return this.run(() -> {
+      if (isRobotMoving()) {
+        m_shooter.setShooterState(ShooterState.SOTM);
+        m_hood.setHoodState(HoodState.SOTM);
+      } else {
+        m_shooter.setShooterState(ShooterState.SHOOTING);
+        m_hood.setHoodState(HoodState.SHOOTING);
+        m_intake.setIntakeState(IntakeState.SHOOTING);
+      }
       m_roller.setRollerState(RollerState.SHOOTING);
-      m_shooter.setShooterState(ShooterState.SHOOTING);
-      m_hood.setHoodState(HoodState.SHOOTING);
     });
   }
 
@@ -98,6 +83,7 @@ public class Superstructure extends SubsystemBase {
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
       m_hood.setHoodState(HoodState.IDLE);
+      m_intake.setIntakeState(m_intakeState);
     });
   }
 
@@ -175,19 +161,25 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command stopHood() {
-    return this.runOnce(() ->
-    m_hood.setHoodState(HoodState.IDLE));
+    return this.runOnce(() -> m_hood.setHoodState(HoodState.IDLE));
   }
 
   public double turnToTargetSpeed() {
-        double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
-        double rz = m_driveTrain.getAngle();
-        rz = rz < 0 ? rz + 360 : rz;
-        double speed = -(rotationPID.calculate(angleFromTarget - rz));
-        return speed;
-    }
+    double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
+    double rz = m_driveTrain.getAngle();
+    rz = rz < 0 ? rz + 360 : rz;
+    double speed = -(rotationPID.calculate(angleFromTarget - rz));
+    return speed;
+  }
 
-    public boolean pointedAtTarget() {
-      return rotationPID.atSetpoint();
-    }
+  public boolean pointedAtTarget() {
+    return rotationPID.atSetpoint();
+  }
+
+  public boolean isRobotMoving() {
+    ChassisSpeeds speeds = m_driveTrain.getFieldRelativeSpeeds();
+    double linearSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+    return linearSpeed > 0.01;
+
+  }
 }

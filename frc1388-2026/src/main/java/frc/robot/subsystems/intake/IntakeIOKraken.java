@@ -29,6 +29,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -176,21 +177,26 @@ public class IntakeIOKraken implements IntakeIO {
     public void stopRack() {
         m_deployMotor1.setControl(neutralOut);
     }
-
+    
     @Override
     public void stopSpin() {
-        m_rollerMotor.setControl(neutralOut);
+      m_rollerMotor.setControl(neutralOut);
     }
     
     @Override
     public void zeroPosition() {
-        m_deployMotor1.setPosition(0);
+      m_deployMotor1.setPosition(0);
     }
-
+    
+    public double getPosition() {
+      return CANcoder.getAbsolutePosition().getValueAsDouble();
+    }
+    
   private void configureDeployMotors(TalonFX deployMotor1, TalonFX deployMotor2) {
     TalonFXConfiguration deployMotorConfig = new TalonFXConfiguration();
 
-    deployMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    deployMotorConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT_DEPLOY;
+    deployMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
@@ -220,7 +226,8 @@ public class IntakeIOKraken implements IntakeIO {
   private void configureRollerMotor(TalonFX rollerMotor) {
     TalonFXConfiguration rollerMotorConfig = new TalonFXConfiguration();
 
-    rollerMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    rollerMotorConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT_ROLLER;
+    rollerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     rollerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
@@ -246,6 +253,10 @@ public class IntakeIOKraken implements IntakeIO {
 
     //TODO: CHANGE LATER
     CANcoderConfig.MagnetSensor.MagnetOffset = IntakeConstants.INTAKE_OFFSET;
+       
+    // Gives 0.0 to 1.0 range (full rotation, no discontinuity)
+    CANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;
+    CANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     
     CANcoder.getConfigurator().apply(CANcoderConfig);
   }

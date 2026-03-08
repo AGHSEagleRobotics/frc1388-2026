@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
+import frc.robot.generated.TunerConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -29,13 +30,18 @@ public final class Constants {
   }
 
   public static class RollerConstants {
+
+    public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 20.0;
+    public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 20.0;
+
     public static final double bottomRollerIntakeSpeed = 4;
     public static final double bottomRollerShootingSpeed = 4;
     public static final double topRollerShootingSpeed = 4;
   }
 
   public static class DriveTrainConstants {
-    public static final double ROBOT_MAX_SPEED = Units.feetToMeters(14.9); // R1 in meters per second
+    public static final double ROBOT_MAX_SPEED = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     public static final double DT_SECONDS = 0.02; // 20ms per tick
     public static final double DISTANCE_PER_TICK = ROBOT_MAX_SPEED * DT_SECONDS; // 20ms per tick
 
@@ -69,8 +75,11 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
-      public static final int SHOOT_MOTOR1_CANID = 0;
-      public static final int SHOOT_MOTOR2_CANID = 0;
+      public static final int SHOOT_MOTOR1_CANID = 36;
+      public static final int SHOOT_MOTOR2_CANID = 37;
+      public static final int KICKER_MOTOR_CANID = 42;
+
+      public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 60.0;
 
       public static final double TESTING_STATE_VOLTS = 4;
 
@@ -95,6 +104,8 @@ public final class Constants {
     }
 
     public static class HoodConstants {
+      public static final double SUPPLY_CURRENT_LIMIT_HOOD = 20.0;
+
       public static final double HOOD_OFFSET = 0.0;
       public static final double HOOD_CLOSE = 0.0;
       public static final double HOOD_FAR = 0.0;
@@ -111,14 +122,20 @@ public final class Constants {
     }
 
     public static class IntakeConstants {
+      
+      public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 20.0;
+      public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 20.0;
+      
       public static final double INTAKE_OFFSET = 0.0;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 4;
 
+      public static final double POSITION_TOLERANCE = 0.5;
       public static final double DOWN_POSITION = 0;
       public static final double UP_POSITION = 1;
       public static final double HALF_WAY = 0.5;
       public static final double TESTING_VOLTS = 4;
+      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -4;
     }
 
     public static class LimelightConstants {

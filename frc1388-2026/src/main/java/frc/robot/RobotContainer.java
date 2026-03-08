@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.subsystems.shooter.*;
@@ -39,7 +40,6 @@ import frc.robot.subsystems.rollers.Roller;
 import frc.robot.subsystems.rollers.RollerIO;
 import frc.robot.subsystems.rollers.RollerIOKraken;
 import frc.robot.subsystems.rollers.Roller.RollerState;
-import frc.robot.subsystems.superstructure.Superstructure.RobotState;
 
 public class RobotContainer {
     // subsystems
@@ -50,20 +50,15 @@ public class RobotContainer {
     public final Hood hood;
     public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
-    public RobotState robotState;
-
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-    private double m_rotationalVelocity = 0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(DriveTrainConstants.ROBOT_MAX_SPEED * 0.1).withRotationalDeadband(DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(DriveTrainConstants.ROBOT_MAX_SPEED);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -123,8 +118,7 @@ public class RobotContainer {
 
         // sets robot shoot on/off while right trigger is held
         (joystick.rightTrigger().and(superstructure::pointedAtTarget))
-                .whileTrue(superstructure.startShooting());
-        joystick.rightTrigger().onFalse(superstructure.stopShooting());
+                .whileTrue(shootingCommand());
 
         // manual shooting
         joystick.rightBumper().whileTrue(superstructure.shootManually());
@@ -194,20 +188,41 @@ public class RobotContainer {
 
     public double calculateVelocity(double joystick) {
         double leftJoystick = MathUtil.applyDeadband(joystick, 0.1);
-        double velocity = -MaxSpeed * scale(leftJoystick, 2.5);
+        double velocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftJoystick, 2.5);
         return velocity;
     }
 
     public double calculateRotationalVelocity() {
-        double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
-        double omega = -MaxAngularRate * scale(rightX, 2.5);
+        double omega = 0;
         if (joystick.rightTrigger().getAsBoolean()) {
             omega = superstructure.turnToTargetSpeed();
+        } else {
+            double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
+            omega = -DriveTrainConstants.MAX_ANGULAR_RATE * scale(rightX, 2.5);
         }
         return omega;
     }
 
     private double scale(double in, double scale) {
         return Math.tan(in * Math.atan(scale)) / scale;
+    }
+
+    private boolean isJoystickNeutral() {
+        return Math.hypot(joystick.getLeftX(), joystick.getLeftY()) < 0.1;
+    }
+
+    private Command shootingCommand() {
+        return Commands.parallel(
+                superstructure.startShooting(),
+                Commands.run(() -> {
+                    if (!superstructure.isRobotMoving() && isJoystickNeutral()) {
+                        drivetrain.setControl(brake);
+                    } else {
+                        drivetrain.setControl(
+                                drive.withVelocityX(calculateVelocity(joystick.getLeftY()))
+                                        .withVelocityY(calculateVelocity(joystick.getLeftX()))
+                                        .withRotationalRate(calculateRotationalVelocity()));
+                    }
+                }, drivetrain));
     }
 }

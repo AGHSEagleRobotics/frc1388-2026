@@ -54,4 +54,5 @@ public interface IntakeIO {
 
     public void zeroPosition();
 
+    public double getPosition();
 }

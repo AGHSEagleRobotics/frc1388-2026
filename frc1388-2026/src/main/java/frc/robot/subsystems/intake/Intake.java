@@ -105,7 +105,11 @@ public class Intake extends SubsystemBase {
       setPosition(IntakeConstants.DOWN_POSITION);
       setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
     } else if (intakeState == IntakeState.SHOOTING) {
-      setPosition(IntakeConstants.HALF_WAY);
+      if (getPosition() < IntakeConstants.POSITION_TOLERANCE) {
+        setDeployVolts(IntakeConstants.RAISE_INTAKE_SHOOTING_VOLTS);
+      } else {
+        setPosition(getPosition());
+      }
       setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
     } else if (intakeState == IntakeState.TESTINGROLLER) {
       setIntakingRollers(IntakeConstants.TESTING_VOLTS);
@@ -131,6 +135,10 @@ public class Intake extends SubsystemBase {
 
     public void setDeployVolts(double voltage) {
       m_io.setDeployVoltage(voltage);
+    }
+
+    public double getPosition() {
+      return m_io.getPosition();
     }
 
     public void setIntakeState(IntakeState intakeState) {

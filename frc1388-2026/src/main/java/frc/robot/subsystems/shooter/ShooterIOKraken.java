@@ -29,6 +29,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOKraken implements ShooterIO {
 
@@ -73,9 +74,9 @@ public class ShooterIOKraken implements ShooterIO {
   private final Follower followRequest = new Follower(36, MotorAlignmentValue.Opposed);
 
   public ShooterIOKraken() {
-    shootMotor1 = new TalonFX(36);
-    shootMotor2 = new TalonFX(37);
-    kickerMotor = new TalonFX(42);
+    shootMotor1 = new TalonFX(ShooterConstants.SHOOT_MOTOR1_CANID);
+    shootMotor2 = new TalonFX(ShooterConstants.SHOOT_MOTOR2_CANID);
+    kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_CANID);
 
     //PIDS config
     controllerConfig.kP = 0.0;
@@ -87,7 +88,7 @@ public class ShooterIOKraken implements ShooterIO {
     
     // General config
     TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-    shooterConfig.CurrentLimits.SupplyCurrentLimit = 60.0;
+    shooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.SUPPLY_CURRENT_LIMIT_SHOOTER;
     shooterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     shooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     shooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;

@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycle;
+import frc.robot.Constants.RollerConstants;
 
 public class RollerIOKraken implements RollerIO {
   private TalonFX m_bottomRollerMotor;
@@ -132,7 +133,8 @@ public class RollerIOKraken implements RollerIO {
       // invert roller
       TalonFXConfiguration bottomrollerConfig = new TalonFXConfiguration();
 
-      bottomrollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+      bottomrollerConfig.CurrentLimits.SupplyCurrentLimit = RollerConstants.SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER;
+      bottomrollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
       bottomrollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -158,7 +160,8 @@ public class RollerIOKraken implements RollerIO {
     private void configureTopRoller(TalonFX topRoller) {
       TalonFXConfiguration topRollerConfig = new TalonFXConfiguration();
 
-      topRollerConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+      topRollerConfig.CurrentLimits.SupplyCurrentLimit = RollerConstants.SUPPLY_CURRENT_LIMIT_TOP_ROLLER;
+      topRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
       topRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       // TODO: CORRECT LATER

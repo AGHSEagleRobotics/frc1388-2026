@@ -108,7 +108,8 @@ public class HoodIOKraken implements HoodIO {
     TalonFXConfiguration hoodMotorConfig = new TalonFXConfiguration();
 
     hoodMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+    hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = HoodConstants.SUPPLY_CURRENT_LIMIT_HOOD;
+    hoodMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     hoodMotorConfig.Slot0.kA = 0;
     hoodMotorConfig.Slot0.kG = 0;
