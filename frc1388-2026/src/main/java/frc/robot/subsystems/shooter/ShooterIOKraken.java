@@ -114,14 +114,14 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor2VelocitySS = shootMotor2.getVelocity();
     shootMotor2VoltageSS = shootMotor2.getMotorVoltage();
     shootMotor2TorqueCurrentAmpsSS = shootMotor2.getTorqueCurrent();
-    shootMotor2SupplyCurrentAmpsSS = shootMotor2.getTorqueCurrent();
+    shootMotor2SupplyCurrentAmpsSS = shootMotor2.getSupplyCurrent();
     shootMotor2TempCelsiusSS = shootMotor2.getDeviceTemp();
     shootMotor2PositionStatusSignal = shootMotor2.getPosition();
 
     kickerMotorVelocitySS = kickerMotor.getVelocity();
     kickerMotorVoltageSS = kickerMotor.getMotorVoltage();
     kickerMotorTorqueCurrentAmpsSS = kickerMotor.getTorqueCurrent();
-    kickerMotorSupplyCurrentAmpsSS = kickerMotor.getTorqueCurrent();
+    kickerMotorSupplyCurrentAmpsSS = kickerMotor.getSupplyCurrent();
     kickerMotorTempCelsiusSS = kickerMotor.getDeviceTemp();
     kickerPositionStatusSignal = kickerMotor.getPosition();
 
