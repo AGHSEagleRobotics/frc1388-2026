@@ -81,7 +81,7 @@ public class Intake extends SubsystemBase {
               setDeployVolts(volts.in(Volts));
             },
             log -> {
-              log.motor("left")
+              log.motor("intake-deploy")
                   .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.deployMotorVoltage,
                       Volts))
                   .angularPosition(

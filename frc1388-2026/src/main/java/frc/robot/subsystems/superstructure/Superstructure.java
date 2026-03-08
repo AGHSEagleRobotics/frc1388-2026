@@ -102,13 +102,12 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command deployIntakingCommand() {
-    if (m_intake.getIntakeState() == IntakeState.INTAKING) {
-      return this.runOnce(() -> {
-        m_intake.setIntakeState(IntakeState.EXTENDED);
-      });
-    }
     return this.runOnce(() -> {
-      m_intake.setIntakeState(IntakeState.INTAKING);
+        if (m_intake.getIntakeState() == IntakeState.INTAKING) {
+            m_intake.setIntakeState(IntakeState.EXTENDED);
+        } else {
+            m_intake.setIntakeState(IntakeState.INTAKING);
+        }
     });
   }
 
@@ -119,18 +118,15 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command shootManually() {
-    if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
-      return this.runOnce(() -> {
+    return this.runOnce(() -> {
+      if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
         m_roller.setRollerState(RollerState.SHOOTING);
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-      });
-    }
-    else {
-      return this.runOnce(() -> {
+      } else {
         m_roller.setRollerState(RollerState.SHOOTING);
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-      });
-    }
+      }
+    });
   }
 
   public Command setHoodAngleClose() {

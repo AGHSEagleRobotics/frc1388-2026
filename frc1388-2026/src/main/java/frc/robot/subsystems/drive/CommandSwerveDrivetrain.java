@@ -297,7 +297,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         
         LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
         LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
-        
+
         if (getState().Pose != null) {
             if(acceptVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
                 updateVision(LimelightConstants.SHOOTER_LIMELIGHT);
@@ -410,13 +410,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
-    @Override
-    public void resetPose(Pose2d pose) {
-        if (this.mapleSimSwerveDrivetrain != null)
-            mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
-        Timer.delay(0.05); // Wait for simulation to update
-        super.resetPose(pose);
-    }
+    // @Override
+    // public void resetPose(Pose2d pose) {
+    //     if (this.mapleSimSwerveDrivetrain != null)
+    //         mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+    //     Timer.delay(0.05); // Wait for simulation to update
+    //     super.resetPose(pose);
+    // }
 
     public Pose2d getPose() {
         if (getState().Pose != null) {

@@ -24,9 +24,11 @@ import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -60,14 +62,12 @@ public class HoodIOKraken implements HoodIO {
   StatusSignal<Angle> hoodMotorPositionStatusSignal;
   
   private final TalonFX hoodMotor;
-  private final TalonFX secondaryHoodMotor;
   private final CANcoder CANcoder;
 
   private final Follower followRequest = new Follower(38, MotorAlignmentValue.Opposed);
   public HoodIOKraken() {
 
     hoodMotor = new TalonFX(38);
-    secondaryHoodMotor = new TalonFX(39);
     CANcoder = new CANcoder(51);
 
     
@@ -86,8 +86,6 @@ public class HoodIOKraken implements HoodIO {
     
     configureCANcoder(CANcoder);
     configureHoodMotor(hoodMotor);
-    
-    secondaryHoodMotor.setControl(followRequest);
   }
   
   @Override
@@ -121,10 +119,12 @@ public class HoodIOKraken implements HoodIO {
     hoodMotorConfig.Slot0.kS = 0;
 
     // TODO: CORRECT LATER
-    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    hoodMotorConfig.Feedback.FeedbackSensorSource = 
+    FeedbackSensorSourceValue.RemoteCANcoder;
 
     // TODO: CHECK VALUE
-    hoodMotorConfig.Feedback.SensorToMechanismRatio = 1;
+    hoodMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
@@ -139,19 +139,26 @@ public class HoodIOKraken implements HoodIO {
 
     //TODO: CHANGE LATER
     CANcoderConfig.MagnetSensor.MagnetOffset = HoodConstants.HOOD_OFFSET;
+    // Gives 0.0 to 1.0 range (full rotation, no discontinuity)
+    CANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;
+    CANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+
     
     CANcoder.getConfigurator().apply(CANcoderConfig);
   }
 
+  @Override
   public void setPosition(double position){
     hoodMotor.setControl(hoodMotorPositionRequest.withPosition(position));
   }
 
+  @Override
   public void setVoltage(double volts){
     hoodMotor.setControl(hoodMotorVoltageRequest.withOutput(volts));
   }
 
   public double getPosition() {
-    return CANcoder.getAbsolutePosition().getValueAsDouble();
+    return CANcoder.getAbsolutePosition().getValueAsDouble() * 360.0;
+
   }
 }

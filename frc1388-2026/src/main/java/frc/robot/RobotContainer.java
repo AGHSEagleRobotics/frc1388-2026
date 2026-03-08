@@ -81,7 +81,7 @@ public class RobotContainer {
 
         
         configureBindings();
-        drivetrain.resetPose(new Pose2d(3, 3, new Rotation2d()));
+        // drivetrain.resetPose(new Pose2d(3, 3, new Rotation2d()));
     }
 
     private void configureBindings() {
@@ -122,9 +122,8 @@ public class RobotContainer {
         // DRIVER CONTROLLER
 
         // sets robot shoot on/off while right trigger is held
-        if (superstructure.pointedAtTarget()) {
-            joystick.rightTrigger().whileTrue(superstructure.startShooting());
-        }
+        joystick.rightTrigger().and(superstructure::pointedAtTarget)
+                .whileTrue(superstructure.startShooting());
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
 
         // manual shooting

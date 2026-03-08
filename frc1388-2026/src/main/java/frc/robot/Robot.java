@@ -118,8 +118,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-        SimulatedArena.getInstance().simulationPeriodic();
-        DogLog.log("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
+        // SimulatedArena.getInstance().simulationPeriodic();
+        // DogLog.log("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
         
     }
 

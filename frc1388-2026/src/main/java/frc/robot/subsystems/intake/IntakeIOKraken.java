@@ -25,6 +25,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -37,6 +38,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.IntakeConstants;
 
 /** Add your docs here. */
 public class IntakeIOKraken implements IntakeIO {
@@ -202,7 +204,9 @@ public class IntakeIOKraken implements IntakeIO {
 
     //TODO: CHANGE LATER
     deployMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
+    
+    deployMotorConfig.Feedback.FeedbackSensorSource = 
+    FeedbackSensorSourceValue.RemoteCANcoder;
     deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
@@ -241,7 +245,7 @@ public class IntakeIOKraken implements IntakeIO {
     CANcoderConfiguration CANcoderConfig = new CANcoderConfiguration();
 
     //TODO: CHANGE LATER
-    CANcoderConfig.MagnetSensor.MagnetOffset = HoodConstants.HOOD_OFFSET;
+    CANcoderConfig.MagnetSensor.MagnetOffset = IntakeConstants.INTAKE_OFFSET;
     
     CANcoder.getConfigurator().apply(CANcoderConfig);
   }

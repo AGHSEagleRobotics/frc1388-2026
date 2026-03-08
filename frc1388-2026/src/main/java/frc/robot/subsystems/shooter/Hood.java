@@ -54,7 +54,7 @@ public class Hood extends SubsystemBase {
               m_io.setVoltage(volts.in(Volts));
             },
             log -> {
-              log.motor("left")
+              log.motor("hood-pivot")
                   .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.hoodMotorVoltage,
                       Volts))
                   .angularPosition(
@@ -86,10 +86,10 @@ public class Hood extends SubsystemBase {
       m_io.setVoltage(4);
     }
     else if (hoodState == HoodState.MANUAL_CLOSE) {
-      setShootingPosition(0);
+      setShootingPosition(HoodConstants.HOOD_CLOSE);
     }
     else if (hoodState == HoodState.MANUAL_FAR) {
-      setShootingPosition(0);
+      setShootingPosition(HoodConstants.HOOD_FAR);
     }
   }
 

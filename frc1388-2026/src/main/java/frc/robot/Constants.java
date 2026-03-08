@@ -72,18 +72,13 @@ public final class Constants {
       public static final int SHOOT_MOTOR1_CANID = 0;
       public static final int SHOOT_MOTOR2_CANID = 0;
 
-      public static final double SHOOTING_STATE_VELOCITY = 0;
-      public static final double SOTM_STATE_VELOCITY = 0;
-      public static final double IDLE_STATE_VELOCITY = 0;
-      public static final double PASSING_STATE_VELOCITY = 0;
       public static final double TESTING_STATE_VOLTS = 4;
 
-      public static final double KICKER_SHOOTING_VELOCITY = 0;
-      public static final double TESTING_KICKER_VOLTS = 0;
+      public static final double KICKER_SHOOTING_VELOCITY = 1200 / 60;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2000;
+      public static final double MANUAL_SHOOT_CLOSE = 2000 / 60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 4000;
+      public static final double MANUAL_SHOOT_FAR = 4000 / 60.0;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
@@ -116,6 +111,7 @@ public final class Constants {
     }
 
     public static class IntakeConstants {
+      public static final double INTAKE_OFFSET = 0.0;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 4;
 

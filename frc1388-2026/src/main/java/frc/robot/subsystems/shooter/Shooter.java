@@ -61,7 +61,7 @@ public enum ShooterState {
       new SysIdRoutine.Mechanism(
           (Voltage volts) -> setShooterVolts(volts.in(Volts)),
           log -> {
-            log.motor("left")
+            log.motor("shooter-flywheel")
                 .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.shootMotor1Voltage,
                     Volts))
                 .angularPosition(sysidPositionMeasure
@@ -82,19 +82,19 @@ public enum ShooterState {
     }
     else if (shooterState == ShooterState.SHOOTING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub));
-      setKickerVelocity(ShooterConstants.KICKER_SHOOTING_VELOCITY);
+      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub) * (4/3));
     }
     else if (shooterState == ShooterState.PASSING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass));
-      setKickerVelocity(ShooterConstants.KICKER_SHOOTING_VELOCITY);
+      setKickerVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass) * (4/3));
     }
     else if (shooterState == ShooterState.SOTM) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM));
-      setKickerVelocity(ShooterConstants.KICKER_SHOOTING_VELOCITY);
+      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM) * (4/3));
     }
     else if (shooterState == ShooterState.TESTING) {
       setShooterVolts(ShooterConstants.TESTING_STATE_VOLTS);
-      setKickerVolts(ShooterConstants.TESTING_KICKER_VOLTS);
+      setKickerVolts(ShooterConstants.TESTING_STATE_VOLTS);
     }
     else if (shooterState == ShooterState.MANUAL_CLOSE) {
       setShooterVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE);
