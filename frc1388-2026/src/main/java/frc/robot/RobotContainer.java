@@ -122,7 +122,7 @@ public class RobotContainer {
         // DRIVER CONTROLLER
 
         // sets robot shoot on/off while right trigger is held
-        joystick.rightTrigger().and(superstructure::pointedAtTarget)
+        (joystick.rightTrigger().and(superstructure::pointedAtTarget))
                 .whileTrue(superstructure.startShooting());
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
 
