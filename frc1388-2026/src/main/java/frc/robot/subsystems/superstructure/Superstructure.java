@@ -4,16 +4,10 @@
 
 package frc.robot.subsystems.superstructure;
 
-import org.ironmaple.simulation.Goal;
-import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;

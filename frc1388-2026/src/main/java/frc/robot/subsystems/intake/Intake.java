@@ -6,26 +6,13 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.function.BooleanSupplier;
-
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
 // import frc.robot.Constants.intakeConstants;
 import frc.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
@@ -35,17 +22,9 @@ public class Intake extends SubsystemBase {
 
   private final IntakeIO m_io;
 
-  private final IntakeMotor[] m_intakeMotors = {
-    IntakeMotor.DEPLOYMOTOR, IntakeMotor.ROLLERMOTOR,
-  };
-
-  private BooleanSupplier m_isReadyToIntake;
-  
   public IntakeState intakeState;
 
   private final IntakeIOInputs inputs = new IntakeIOInputs();
-
-  private BooleanSupplier coastOverride = () -> false;
 
   enum IntakeMotor {
     DEPLOYMOTOR,
@@ -57,7 +36,6 @@ public class Intake extends SubsystemBase {
     EXTENDED,
     INTAKING,
     SHOOTING,
-    MEDIUS,
     TESTINGROLLER,
     TESTINGDEPLOY,
     STOP

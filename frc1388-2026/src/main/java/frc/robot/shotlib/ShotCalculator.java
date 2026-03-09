@@ -5,16 +5,13 @@ import static edu.wpi.first.units.Units.Meters;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Robot;
 import frc.robot.shotlib.ShootOnTheFlyCalculator.InterceptSolution;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 

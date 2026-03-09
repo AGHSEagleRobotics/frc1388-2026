@@ -6,11 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
@@ -125,7 +123,7 @@ public final class Constants {
       
       public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 20.0;
       public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 20.0;
-      
+
       public static final double INTAKE_OFFSET = 0.0;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 4;

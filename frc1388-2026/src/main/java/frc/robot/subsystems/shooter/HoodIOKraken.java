@@ -4,22 +4,15 @@
 
 package frc.robot.subsystems.shooter;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
-
-import static edu.wpi.first.units.Units.Volts;
-
-import java.util.concurrent.CancellationException;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -29,17 +22,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class HoodIOKraken implements HoodIO {
   
@@ -123,6 +110,7 @@ public class HoodIOKraken implements HoodIO {
     hoodMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     hoodMotorConfig.Feedback.FeedbackSensorSource = 
     FeedbackSensorSourceValue.RemoteCANcoder;
+    hoodMotorConfig.Feedback.FeedbackRemoteSensorID = 51;
 
     // TODO: CHECK VALUE
     hoodMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
@@ -149,8 +137,8 @@ public class HoodIOKraken implements HoodIO {
   }
 
   @Override
-  public void setPosition(double position){
-    hoodMotor.setControl(hoodMotorPositionRequest.withPosition(position));
+  public void setPosition(double degrees){
+    hoodMotor.setControl(hoodMotorPositionRequest.withPosition(degrees / 54.0));
   }
 
   @Override
@@ -159,7 +147,7 @@ public class HoodIOKraken implements HoodIO {
   }
 
   public double getPosition() {
-    return CANcoder.getAbsolutePosition().getValueAsDouble() * 360.0;
+    return CANcoder.getAbsolutePosition().getValueAsDouble() * 54;
 
   }
 }

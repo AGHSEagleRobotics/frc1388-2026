@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.HoodConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.HoodIO.HoodIOInputs;
 
 public class Hood extends SubsystemBase {

@@ -4,10 +4,6 @@
 
 package frc.robot.subsystems.shooter;
 
-import com.ctre.phoenix6.StatusCode;
-
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 public interface ShooterIO {
  public static class ShooterInputs {
   //VelocityRPS is the actual speed of the motor in revolutions per second,

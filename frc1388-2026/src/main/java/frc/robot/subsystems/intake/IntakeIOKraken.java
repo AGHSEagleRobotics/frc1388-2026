@@ -3,22 +3,11 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Second;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -34,11 +23,8 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
-import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.IntakeConstants;
 
 /** Add your docs here. */
@@ -213,6 +199,7 @@ public class IntakeIOKraken implements IntakeIO {
     
     deployMotorConfig.Feedback.FeedbackSensorSource = 
     FeedbackSensorSourceValue.RemoteCANcoder;
+    deployMotorConfig.Feedback.FeedbackRemoteSensorID = 52;
     deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
