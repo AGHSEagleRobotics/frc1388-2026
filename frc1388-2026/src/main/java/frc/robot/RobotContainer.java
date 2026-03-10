@@ -60,25 +60,33 @@ public class RobotContainer {
 
         configureBindings();
         configureAutonomousCommands();
-
-    //       private void configureAutonomousCommands() {
-    //     Command strikeAStillPose = new InstantCommand(() -> System.out.println("This is kinda boring, no?"));
-
-    //      Command moveYourBass = new SequentialCommandGroup(
-    //         new DriveDistanceCommand(drive, .0),   // drive 2 units
-    //         new TurnToAngleCommand(drive, 90)       // turn 90 degrees
-    //     );
-
-
-    //   }
-
-        NamedCommands.registerCommand("startShooting", superstructure.startShooting());
-        NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
-
-
-    }
-
-    private void configureBindings() {
+        
+                NamedCommands.registerCommand("startShooting", superstructure.startShooting());
+                NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
+                NamedCommands.registerCommand("deployIntaking", superstructure.deployIntakingCommand());
+               
+                NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
+                NamedCommands.registerCommand("shootManually", superstructure.shootManually());
+                NamedCommands.registerCommand("setHoodAngleClose", superstructure.setHoodAngleClose());
+                
+                NamedCommands.registerCommand("setHoodAngleFar", superstructure.setHoodAngleFar());
+                NamedCommands.registerCommand("testIntakeDeploy", superstructure.testIntakeDeploy());
+                NamedCommands.registerCommand("testIntakeRollers", superstructure.testIntakeRollers());
+        
+                NamedCommands.registerCommand("testRollers", superstructure.testRollers());
+                NamedCommands.registerCommand("testShooter", superstructure.testShooter());
+                NamedCommands.registerCommand("testHood", superstructure.testHood());
+        
+                NamedCommands.registerCommand("stopHood", superstructure.stopHood());
+        
+            }
+        
+            private void configureAutonomousCommands() {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'configureAutonomousCommands'");
+            }
+        
+            private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
 
