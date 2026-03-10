@@ -79,6 +79,8 @@ public class RobotContainer {
 
     private final CommandXboxController testJoystick = new CommandXboxController(2);
 
+    private SendableChooser<Command> autoChooser = new SendableChooser<>();
+    
 
     public RobotContainer() {        
         intake = new Intake(new IntakeIOKraken());
@@ -90,31 +92,30 @@ public class RobotContainer {
 
 
         
-         autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
         //register commands
 
 
         configureBindings();
-        configureAutonomousCommands();
+        // configureAutonomousCommands();
 
-    //       private void configureAutonomousCommands() {
-    //     Command strikeAStillPose = new InstantCommand(() -> System.out.println("This is kinda boring, no?"));
+        // Command strikeAStillPose = new InstantCommand(() -> System.out.println("This is kinda boring, no?"));
 
-    //      Command moveYourBass = new SequentialCommandGroup(
-    //         new DriveDistanceCommand(drive, .0),   // drive 2 units
-    //         new TurnToAngleCommand(drive, 90)       // turn 90 degrees
-    //     );
-
-
-    //   }
+        //  Command moveYourBass = new SequentialCommandGroup(
+        //     new DriveDistanceCommand(drive, .0),   // drive 2 units
+        //     new TurnToAngleCommand(drive, 90)       // turn 90 degrees
+        // );
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
         NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
 
+      }
 
-    }
+
+
+    
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
