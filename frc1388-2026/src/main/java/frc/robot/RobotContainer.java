@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.RobotConfig;
@@ -21,6 +22,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -52,13 +55,33 @@ public class RobotContainer {
          autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
+        //register commands
+
+
         configureBindings();
+        configureAutonomousCommands();
+
+    //       private void configureAutonomousCommands() {
+    //     Command strikeAStillPose = new InstantCommand(() -> System.out.println("This is kinda boring, no?"));
+
+    //      Command moveYourBass = new SequentialCommandGroup(
+    //         new DriveDistanceCommand(drive, .0),   // drive 2 units
+    //         new TurnToAngleCommand(drive, 90)       // turn 90 degrees
+    //     );
+
+
+    //   }
+
+        NamedCommands.registerCommand("startShooting", superstructure.startShooting());
+        NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
+
 
     }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
+
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
@@ -92,6 +115,8 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
+
+    
 
     public Command getAutonomousCommand() {
     //     System.out.println("before running");
