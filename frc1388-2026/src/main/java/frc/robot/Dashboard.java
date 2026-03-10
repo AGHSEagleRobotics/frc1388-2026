@@ -22,8 +22,6 @@ public class Dashboard extends SubsystemBase {
       m_shuffleboardTab = Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
       Shuffleboard.selectTab(SHUFFLEBOARD_TAB_NAME);
 
-
-
   }
 
   @Override
