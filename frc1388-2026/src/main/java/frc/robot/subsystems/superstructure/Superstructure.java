@@ -173,6 +173,15 @@ public class Superstructure extends SubsystemBase {
     m_shooter.setShooterState(ShooterState.TESTING));
   }
 
+   public Command testHood() {
+    return this.runOnce(() ->
+    m_hood.setHoodState(HoodState.TESTING));
+  }
+
+  public Command stopHood() {
+    return this.runOnce(() -> m_hood.setHoodState(HoodState.IDLE));
+  }
+
   public double turnToTargetSpeed() {
         double angleFromSpeaker = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
         double rz = m_driveTrain.getAngle();

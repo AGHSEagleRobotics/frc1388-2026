@@ -101,6 +101,26 @@ public class RobotContainer {
         configureBindings();
         configureAutonomousCommands();
 
+        NamedCommands.registerCommand("startShooting", superstructure.startShooting());
+        NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
+        NamedCommands.registerCommand("deployIntaking", superstructure.deployIntakingCommand());
+               
+        NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
+        NamedCommands.registerCommand("shootManually", superstructure.shootManually());
+        NamedCommands.registerCommand("setHoodAngleClose", superstructure.setHoodAngleClose());
+                
+        NamedCommands.registerCommand("setHoodAngleFar", superstructure.setHoodAngleFar());
+        NamedCommands.registerCommand("testIntakeDeploy", superstructure.testIntakeDeploy());
+        NamedCommands.registerCommand("testIntakeRollers", superstructure.testIntakeRollers());
+        
+        NamedCommands.registerCommand("testRollers", superstructure.testRollers());
+        NamedCommands.registerCommand("testShooter", superstructure.testShooter());
+        NamedCommands.registerCommand("testHood", superstructure.testHood());
+        
+        NamedCommands.registerCommand("stopHood", superstructure.stopHood());
+        
+            }
+
     //       private void configureAutonomousCommands() {
     //     Command strikeAStillPose = new InstantCommand(() -> System.out.println("This is kinda boring, no?"));
 
