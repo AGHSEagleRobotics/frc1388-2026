@@ -41,7 +41,6 @@ public class RobotContainer {
             .withDeadband(DriveTrainConstants.ROBOT_MAX_SPEED * 0.1).withRotationalDeadband(DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(DriveTrainConstants.ROBOT_MAX_SPEED);
 

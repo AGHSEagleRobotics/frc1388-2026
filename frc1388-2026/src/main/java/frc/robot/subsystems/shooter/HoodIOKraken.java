@@ -11,15 +11,12 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
@@ -29,10 +26,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public class HoodIOKraken implements HoodIO {
-  
-  
-  private VelocityTorqueCurrentFOC hoodMotorVelocityRequest;
-  
+    
   private VoltageOut hoodMotorVoltageRequest;
 
   private MotionMagicVoltage hoodMotorPositionRequest;
@@ -51,7 +45,6 @@ public class HoodIOKraken implements HoodIO {
   private final TalonFX hoodMotor;
   private final CANcoder CANcoder;
 
-  private final Follower followRequest = new Follower(38, MotorAlignmentValue.Opposed);
   public HoodIOKraken() {
 
     hoodMotor = new TalonFX(38);
