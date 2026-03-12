@@ -6,6 +6,7 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.*;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -47,7 +48,7 @@ public class Hood extends SubsystemBase {
     hoodState = HoodState.IDLE;
 
     sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(3), null, null),
+        new SysIdRoutine.Config(Volts.of(0.15).per(Second), Volts.of(0.35), Seconds.of(3.5), null),
         new SysIdRoutine.Mechanism(
             (Voltage volts) -> {
               m_io.setVoltage(volts.in(Volts));
@@ -82,7 +83,7 @@ public class Hood extends SubsystemBase {
       setShootingPosition(HoodConstants.DISTANCE_TO_PASS_HOODANGLE.get(m_distanceFromPass));
     }
     else if (hoodState == HoodState.TESTING) {
-      m_io.setVoltage(4);
+      m_io.setVoltage(1);
     }
     else if (hoodState == HoodState.MANUAL_CLOSE) {
       setShootingPosition(HoodConstants.HOOD_CLOSE);
@@ -90,6 +91,8 @@ public class Hood extends SubsystemBase {
     else if (hoodState == HoodState.MANUAL_FAR) {
       setShootingPosition(HoodConstants.HOOD_FAR);
     }
+
+    DogLog.log("Hood/Absolute Encoder", m_io.getPosition());
   }
 
   public void stop() {

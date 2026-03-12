@@ -189,7 +189,7 @@ public class IntakeIOKraken implements IntakeIO {
     deployMotorConfig.Slot0.kG = 0;
     deployMotorConfig.Slot0.kV = 0;
     deployMotorConfig.Slot0.kA = 0;
-    deployMotorConfig.Slot0.kP = 0;
+    deployMotorConfig.Slot0.kP = 10;
     deployMotorConfig.Slot0.kI = 0;
     deployMotorConfig.Slot0.kD = 0;
     deployMotorConfig.Slot0.kS = 0;

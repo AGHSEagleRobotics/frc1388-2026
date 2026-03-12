@@ -6,6 +6,7 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -37,7 +38,8 @@ public class Intake extends SubsystemBase {
     INTAKING,
     SHOOTING,
     TESTINGROLLER,
-    TESTINGDEPLOY,
+    TESTINGDEPLOYDOWN,
+    TESTINGDEPLOYUP,
     STOP
   }
 
@@ -53,7 +55,7 @@ public class Intake extends SubsystemBase {
     intakeState = IntakeState.RETRACT;
 
     sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(3), null, null),
+        new SysIdRoutine.Config(Volts.of(0.5).per(Second), Volts.of(1.5), Seconds.of(4), null),
         new SysIdRoutine.Mechanism(
             (Voltage volts) -> {
               setDeployVolts(volts.in(Volts));
@@ -83,7 +85,7 @@ public class Intake extends SubsystemBase {
       setPosition(IntakeConstants.DOWN_POSITION);
       setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
     } else if (intakeState == IntakeState.SHOOTING) {
-      if (getPosition() < IntakeConstants.POSITION_TOLERANCE) {
+      if (getPosition() > IntakeConstants.POSITION_TOLERANCE) {
         setDeployVolts(IntakeConstants.RAISE_INTAKE_SHOOTING_VOLTS);
       } else {
         setPosition(getPosition());
@@ -91,11 +93,15 @@ public class Intake extends SubsystemBase {
       setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
     } else if (intakeState == IntakeState.TESTINGROLLER) {
       setIntakingRollers(IntakeConstants.TESTING_VOLTS);
-    } else if (intakeState == IntakeState.TESTINGDEPLOY) {
-      setDeployVolts(4);
+    } else if (intakeState == IntakeState.TESTINGDEPLOYDOWN) {
+      setDeployVolts(1);
+    } else if (intakeState == IntakeState.TESTINGDEPLOYUP) {
+      setDeployVolts(-2);
     } else if (intakeState == IntakeState.STOP) {
       setIntakingRollers(0);
     }
+
+    DogLog.log("Intake/Absolute Encoder", getPosition());
   }
 
     public void stop() {

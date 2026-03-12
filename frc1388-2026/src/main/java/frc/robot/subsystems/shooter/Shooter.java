@@ -51,15 +51,15 @@ public enum ShooterState {
   shooterSysIdRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(),
       new SysIdRoutine.Mechanism(
-          (Voltage volts) -> setShooterVolts(volts.in(Volts)),
+          (Voltage volts) -> setKickerVolts(volts.in(Volts)),
           log -> {
-            log.motor("shooter-flywheel")
-                .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.shootMotor1Voltage,
+            log.motor("kick-flywheel")
+                .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.kickerMotorVoltage,
                     Volts))
                 .angularPosition(sysidPositionMeasure
-                    .mut_replace(inputs.shootMotor1Position, Rotations))
+                    .mut_replace(inputs.kickerPosition, Rotations))
                 .angularVelocity(
-                    sysidVelocityMeasure.mut_replace(inputs.shootMotor1VelocityRPS,
+                    sysidVelocityMeasure.mut_replace(inputs.kickerMotorVelocityRPS,
                         RotationsPerSecond));
           },
           this));

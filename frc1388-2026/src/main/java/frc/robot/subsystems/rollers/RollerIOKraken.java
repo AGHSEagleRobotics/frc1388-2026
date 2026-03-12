@@ -166,7 +166,7 @@ public class RollerIOKraken implements RollerIO {
       topRollerConfig.Slot0.kS = 0;
 
       // TODO: CHANGE LATER
-      topRollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      topRollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
       topRollerConfig.Feedback.SensorToMechanismRatio = 1;
 

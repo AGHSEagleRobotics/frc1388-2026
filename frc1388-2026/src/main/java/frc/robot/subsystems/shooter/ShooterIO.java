@@ -41,9 +41,9 @@ public interface ShooterIO {
   public double shootMotor2TempCelsius = 0.0;
   public double kickerMotorTempCelsius = 0.0;
 
-  public double shootMotor1Position = 0.;
-  public double shootMotor2Position = 0.;
-  public double kickerPosition = 0.;
+  public double shootMotor1Position = 0.0;
+  public double shootMotor2Position = 0.0;
+  public double kickerPosition = 0.0;
  }
 
   public void updateInputs(ShooterInputs inputs);

@@ -32,9 +32,9 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 20.0;
     public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 20.0;
 
-    public static final double bottomRollerIntakeSpeed = 4;
-    public static final double bottomRollerShootingSpeed = 4;
-    public static final double topRollerShootingSpeed = 4;
+    public static final double bottomRollerIntakeSpeed = 6;
+    public static final double bottomRollerShootingSpeed = 8  ;
+    public static final double topRollerShootingSpeed = 10;
   }
 
   public static class DriveTrainConstants {
@@ -83,9 +83,9 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200 / 60;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2000 / 60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 15;
 
-      public static final double MANUAL_SHOOT_FAR = 4000 / 60.0;
+      public static final double MANUAL_SHOOT_FAR = 15;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
@@ -104,9 +104,11 @@ public final class Constants {
     public static class HoodConstants {
       public static final double SUPPLY_CURRENT_LIMIT_HOOD = 20.0;
 
-      public static final double HOOD_OFFSET = 0.0;
-      public static final double HOOD_CLOSE = 0.0;
-      public static final double HOOD_FAR = 0.0;
+      public static final double HOOD_OFFSET = -0.975;
+      public static final double HOOD_CLOSE = 0.07;
+      public static final double HOOD_FAR = 0.833;
+      public static final double HOOD_LIMIT_DOWN = 0.07;
+      public static final double HOOD_LIMIT_UP = 0.833;
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
         DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 1.0);
@@ -122,17 +124,17 @@ public final class Constants {
     public static class IntakeConstants {
       
       public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 20.0;
-      public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 20.0;
+      public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 30.0;
 
-      public static final double INTAKE_OFFSET = 0.0;
+      public static final double INTAKE_OFFSET = -0.172;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 4;
 
-      public static final double POSITION_TOLERANCE = 0.5;
-      public static final double DOWN_POSITION = 0;
-      public static final double UP_POSITION = 1;
-      public static final double HALF_WAY = 0.5;
-      public static final double TESTING_VOLTS = 4;
+      public static final double POSITION_TOLERANCE = 0.258;
+      public static final double DOWN_POSITION = 0.413;
+      public static final double UP_POSITION = 0.03;
+      public static final double HALF_WAY = 0.258;
+      public static final double TESTING_VOLTS = 6;
       public static final double RAISE_INTAKE_SHOOTING_VOLTS = -4;
     }
 

@@ -119,14 +119,18 @@ public class RobotContainer {
         joystick.y().onTrue(superstructure.setHoodAngleFar());
 
         // TESTING JOYSTICK
+
         
         // intake deploy and retract
-        testJoystick.leftBumper().whileTrue(superstructure.testIntakeDeploy());
+        testJoystick.leftBumper().whileTrue(superstructure.testIntakeDeployDown());
         testJoystick.leftBumper().onFalse(superstructure.retractIntake());
 
+        testJoystick.leftTrigger().whileTrue(superstructure.testIntakeDeployUp());
+        testJoystick.leftTrigger().onFalse(superstructure.retractIntake());
+
         // intake rollers test
-        testJoystick.a().whileTrue(superstructure.testIntakeRollers());
-        testJoystick.a().onFalse(superstructure.stopIntakeRollers());
+        // testJoystick.a().whileTrue(superstructure.testIntakeRollers());
+        // testJoystick.a().onFalse(superstructure.stopIntakeRollers());
 
         // roller floor test
         testJoystick.rightBumper().whileTrue(superstructure.testRollers());
@@ -137,19 +141,19 @@ public class RobotContainer {
         testJoystick.rightTrigger().onFalse(superstructure.stopShooting());
 
         // hood test
-        testJoystick.b().whileTrue(superstructure.testHood());
-        testJoystick.b().onFalse(superstructure.stopHood());
+        // testJoystick.b().whileTrue(superstructure.testHood());
+        // testJoystick.b().onFalse(superstructure.stopHood());
 
-        // SYS ID TUNING
+        // // SYS ID TUNING
         // testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
         // testJoystick.y().whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
         // testJoystick.a().whileTrue(shooter.sysIdDynamic(Direction.kForward));
         // testJoystick.b().whileTrue(shooter.sysIdDynamic(Direction.kReverse));
 
-        // testJoystick.pov(0).whileTrue(hood.sysIdQuasistaticCommand(Direction.kForward));
-        // testJoystick.pov(90).whileTrue(hood.sysIdQuasistaticCommand(Direction.kReverse));
-        // testJoystick.pov(180).whileTrue(hood.sysIdDynamicCommand(Direction.kForward));
-        // testJoystick.pov(270).whileTrue(hood.sysIdDynamicCommand(Direction.kReverse));
+        testJoystick.x().whileTrue(intake.sysIdQuasistaticCommand(Direction.kForward));
+        testJoystick.y().whileTrue(intake.sysIdQuasistaticCommand(Direction.kReverse));
+        testJoystick.a().whileTrue(intake.sysIdDynamicCommand(Direction.kForward));
+        testJoystick.b().whileTrue(intake.sysIdDynamicCommand(Direction.kReverse));
     }
 
     public Command getAutonomousCommand() {

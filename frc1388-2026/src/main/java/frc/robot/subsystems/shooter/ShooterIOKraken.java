@@ -60,9 +60,10 @@ public class ShooterIOKraken implements ShooterIO {
 
   // Control
   private final Slot0Configs controllerConfig = new Slot0Configs();
-  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
-  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(0.0);
-  private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0.0);
+  private final Slot0Configs kickerConfig = new Slot0Configs();
+  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(50.0);
+  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(50.0);
+  private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(50.0);
   private final Follower followRequest = new Follower(36, MotorAlignmentValue.Opposed);
 
   public ShooterIOKraken() {
@@ -71,12 +72,20 @@ public class ShooterIOKraken implements ShooterIO {
     kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_CANID);
 
     //PIDS config
-    controllerConfig.kP = 0.0;
+    controllerConfig.kP = 0.034064;
     controllerConfig.kI = 0.0;
     controllerConfig.kD = 0.0;
-    controllerConfig.kS = 0.0;
-    controllerConfig.kV = 0.0;
-    controllerConfig.kA = 0.0;
+    controllerConfig.kS = 0.26106;
+    controllerConfig.kV = 0.13068;
+    controllerConfig.kA = 0.019043;
+
+    // PIDS config
+    kickerConfig.kP = 0.033557;
+    kickerConfig.kI = 0.0;
+    kickerConfig.kD = 0.0;
+    kickerConfig.kS = 0.15273;
+    kickerConfig.kV = 0.11886;
+    kickerConfig.kA = 0.027404;
     
     // General config
     TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
@@ -85,13 +94,19 @@ public class ShooterIOKraken implements ShooterIO {
     shooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     shooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
+    TalonFXConfiguration kickerConfig = new TalonFXConfiguration();
+    kickerConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.SUPPLY_CURRENT_LIMIT_SHOOTER;
+    kickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    kickerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    kickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
     //applying configs
     shootMotor1.getConfigurator().apply(shooterConfig, 1.0);
     shootMotor2.getConfigurator().apply(shooterConfig, 1.0);
     shootMotor1.getConfigurator().apply(controllerConfig, 1.0);
     shootMotor2.getConfigurator().apply(controllerConfig, 1.0);
     
-    kickerMotor.getConfigurator().apply(shooterConfig, 1.0);
+    kickerMotor.getConfigurator().apply(kickerConfig, 1.0);
     kickerMotor.getConfigurator().apply(controllerConfig, 1.0);
    
 
@@ -121,10 +136,7 @@ public class ShooterIOKraken implements ShooterIO {
     BaseStatusSignal.setUpdateFrequencyForAll(50.0,
         shootMotor1VelocitySS,
         shootMotor2VelocitySS,
-        kickerMotorVelocitySS);
-
-    // Everything else - logging only, 10Hz is plenty
-    BaseStatusSignal.setUpdateFrequencyForAll(10.0,
+        kickerMotorVelocitySS,
         shootMotor1VoltageSS,
         shootMotor1TorqueCurrentAmpsSS,
         shootMotor1SupplyCurrentAmpsSS,
@@ -221,8 +233,8 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
     public void stopShooter() {
-      shootMotor1.setControl(neutralControl);
-      kickerMotor.setControl(neutralControl);
+      shootMotor1.setControl(voltageControl.withOutput(0));
+      kickerMotor.setControl(voltageControl.withOutput(0));
     }
   @Override
     public void setCoastMode(boolean coast) {

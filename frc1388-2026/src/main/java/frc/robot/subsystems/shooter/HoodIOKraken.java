@@ -98,16 +98,17 @@ public class HoodIOKraken implements HoodIO {
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = HoodConstants.SUPPLY_CURRENT_LIMIT_HOOD;
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    hoodMotorConfig.Slot0.kA = 0;
-    hoodMotorConfig.Slot0.kG = 0;
-    hoodMotorConfig.Slot0.kV = 0;
-    hoodMotorConfig.Slot0.kP = 0;
-    hoodMotorConfig.Slot0.kI = 0;
-    hoodMotorConfig.Slot0.kD = 0;
-    hoodMotorConfig.Slot0.kS = 0;
+    // hoodMotorConfig.Slot0.kA = 0.9933;
+    // hoodMotorConfig.Slot0.kG = 0.1321;
+    // hoodMotorConfig.Slot0.kV = 0.90283;
+    // hoodMotorConfig.Slot0.kP = 8.3393;
+    // hoodMotorConfig.Slot0.kI = 0;
+    // hoodMotorConfig.Slot0.kD = 4.4911;
+    // hoodMotorConfig.Slot0.kS = 0.041547;
+    hoodMotorConfig.Slot0.kP = 0.5;
 
     // TODO: CORRECT LATER
-    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     hoodMotorConfig.Feedback.FeedbackSensorSource = 
     FeedbackSensorSourceValue.RemoteCANcoder;
     hoodMotorConfig.Feedback.FeedbackRemoteSensorID = 51;
@@ -138,7 +139,7 @@ public class HoodIOKraken implements HoodIO {
 
   @Override
   public void setPosition(double degrees){
-    hoodMotor.setControl(hoodMotorPositionRequest.withPosition(degrees / 54.0));
+    hoodMotor.setControl(hoodMotorPositionRequest.withPosition(degrees));
   }
 
   @Override
@@ -147,7 +148,7 @@ public class HoodIOKraken implements HoodIO {
   }
 
   public double getPosition() {
-    return CANcoder.getAbsolutePosition().getValueAsDouble() * 54;
+    return CANcoder.getAbsolutePosition().getValueAsDouble();
 
   }
 }
