@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
             .withLogExtras(true)
             .withCaptureDs(true)
             .withNtPublish(true)
-            .withCaptureNt(true));
+            .withCaptureNt(false));
 // Causes errors if PDH is not present:
 //        DogLog.setPdh(new PowerDistribution());
 

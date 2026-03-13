@@ -74,7 +74,8 @@ public class RollerIOKraken implements RollerIO {
 
     BaseStatusSignal.setUpdateFrequencyForAll(50.0,
         bottomrollerVelocityStatusSignal,
-        toprollerVelocityStatusSignal,
+        toprollerVelocityStatusSignal);
+        BaseStatusSignal.setUpdateFrequencyForAll(10.0,
         bottomrollerTorqueCurrentStatusSignal,
         toprollerTorqueCurrentStatusSignal,
         bottomrollerSupplyCurrentStatusSignal,

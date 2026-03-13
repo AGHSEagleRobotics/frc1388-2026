@@ -62,7 +62,7 @@ public class HoodIOKraken implements HoodIO {
     
     hoodMotorVoltageStatusSignal = hoodMotor.getMotorVoltage();
     
-    hoodMotorCurrentAmpsStatusSignal = hoodMotor.getStatorCurrent();
+    // hoodMotorCurrentAmpsStatusSignal = hoodMotor.getStatorCurrent();
     
     hoodMotorTempCelsiusStatusSignal = hoodMotor.getDeviceTemp();
     
@@ -75,9 +75,10 @@ public class HoodIOKraken implements HoodIO {
     configureHoodMotor(hoodMotor);
 
     BaseStatusSignal.setUpdateFrequencyForAll(50.0,
-        hoodMotorVelocityStatusSignal,
+        hoodMotorVelocityStatusSignal);
+    BaseStatusSignal.setUpdateFrequencyForAll(10.0,
         hoodMotorVoltageStatusSignal,
-        hoodMotorCurrentAmpsStatusSignal,
+        // hoodMotorCurrentAmpsStatusSignal,
         hoodMotorTempCelsiusStatusSignal,
         hoodMotorPositionStatusSignal);
   }
@@ -87,12 +88,12 @@ public class HoodIOKraken implements HoodIO {
     BaseStatusSignal.refreshAll(
       hoodMotorVelocityStatusSignal,
       hoodMotorVoltageStatusSignal,
-      hoodMotorCurrentAmpsStatusSignal, 
+      // hoodMotorCurrentAmpsStatusSignal, 
       hoodMotorTempCelsiusStatusSignal,
       hoodMotorPositionStatusSignal);
       
       inputs.hoodMotorVelocityRPS = hoodMotorVelocityStatusSignal.getValueAsDouble();
-      inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();
+      // inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();
       inputs.hoodMotorTempCelsius = hoodMotorTempCelsiusStatusSignal.getValueAsDouble();
       inputs.hoodMotorVoltage = hoodMotorVoltageStatusSignal.getValueAsDouble();
       inputs.hoodMotorPosition = hoodMotorPositionStatusSignal.getValueAsDouble();

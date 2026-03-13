@@ -136,7 +136,8 @@ public class ShooterIOKraken implements ShooterIO {
     BaseStatusSignal.setUpdateFrequencyForAll(50.0,
         shootMotor1VelocitySS,
         shootMotor2VelocitySS,
-        kickerMotorVelocitySS,
+        kickerMotorVelocitySS);
+    BaseStatusSignal.setUpdateFrequencyForAll(10.0,
         shootMotor1VoltageSS,
         shootMotor1TorqueCurrentAmpsSS,
         shootMotor1SupplyCurrentAmpsSS,
@@ -153,12 +154,13 @@ public class ShooterIOKraken implements ShooterIO {
         kickerMotorTempCelsiusSS,
         kickerPositionStatusSignal);
 
-      shootMotor2.setControl(followRequest); //same thing as setshootervolts w/ motor inverison, also might wanna look into feedforward constants
+    shootMotor2.setControl(followRequest); // same thing as setshootervolts w/ motor inverison, also might wanna look
+                                           // into feedforward constants
   }
+
   @Override
   public void updateInputs(ShooterInputs inputs) {
-    inputs.shootMotor1Connected = 
-      BaseStatusSignal.refreshAll(
+    inputs.shootMotor1Connected = BaseStatusSignal.refreshAll(
         shootMotor1VelocitySS,
         shootMotor1VoltageSS,
         shootMotor1TorqueCurrentAmpsSS,

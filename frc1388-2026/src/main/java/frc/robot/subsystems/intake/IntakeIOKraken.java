@@ -100,12 +100,13 @@ public class IntakeIOKraken implements IntakeIO {
 
     BaseStatusSignal.setUpdateFrequencyForAll(50.0,
         deployMotorVelocityStatusSignal,
+        rollerMotorVelocityStatusSignal);
+        BaseStatusSignal.setUpdateFrequencyForAll(10.0,
         deployMotorTorqueCurrentStatusSignal,
         deployMotorSupplyCurrentStatusSignal,
         deployMotorTemperatureStatusSignal,
         deployMotorVoltageStatusSignal,
         deployMotorPositionStatusSignal,
-        rollerMotorVelocityStatusSignal,
         rollerMotorTorqueCurrentStatusSignal,
         rollerMotorSupplyCurrentStatusSignal,
         rollerMotorTemperatureStatusSignal,
