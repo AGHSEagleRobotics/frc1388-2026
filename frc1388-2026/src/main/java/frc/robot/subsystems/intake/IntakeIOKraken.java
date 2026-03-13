@@ -118,20 +118,20 @@ public class IntakeIOKraken implements IntakeIO {
    @Override
   public void updateInputs(IntakeIOInputs inputs) {
 
-    // BaseStatusSignal.refreshAll(
-    //     deployMotorVelocityStatusSignal,
-    //     deployMotorTorqueCurrentStatusSignal,
-    //     deployMotorSupplyCurrentStatusSignal,
-    //     deployMotorReferenceVelocityStatusSignal,
-    //     rollerMotorSupplyCurrentStatusSignal,
-    //     rollerMotorTorqueCurrentStatusSignal,
-    //     rollerMotorVelocityStatusSignal,
-    //     rollerMotorReferenceVelocityStatusSignal,
-    //     deployMotorTemperatureStatusSignal,
-    //     rollerMotorTemperatureStatusSignal,
-    //     deployMotorVoltageStatusSignal,
-    //     rollerMotorVoltageStatusSignal,
-    //     deployMotorPositionStatusSignal);
+    BaseStatusSignal.refreshAll(
+        deployMotorVelocityStatusSignal,
+        deployMotorTorqueCurrentStatusSignal,
+        deployMotorSupplyCurrentStatusSignal,
+        deployMotorReferenceVelocityStatusSignal,
+        rollerMotorSupplyCurrentStatusSignal,
+        rollerMotorTorqueCurrentStatusSignal,
+        rollerMotorVelocityStatusSignal,
+        rollerMotorReferenceVelocityStatusSignal,
+        deployMotorTemperatureStatusSignal,
+        rollerMotorTemperatureStatusSignal,
+        deployMotorVoltageStatusSignal,
+        rollerMotorVoltageStatusSignal,
+        deployMotorPositionStatusSignal);
 
 
     inputs.deployMotorTorqueCurrentAmps = deployMotorTorqueCurrentStatusSignal.getValueAsDouble();
@@ -219,11 +219,14 @@ public class IntakeIOKraken implements IntakeIO {
     deployMotorConfig.Feedback.FeedbackRemoteSensorID = 52;
     deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
 
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
+    StatusCode status1 = StatusCode.StatusCodeNotInitialized;
+    StatusCode status2 = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = deployMotor1.getConfigurator().apply(deployMotorConfig);
-      status = deployMotor2.getConfigurator().apply(deployMotorConfig);
-      if (status.isOK()) break;
+      status1 = deployMotor1.getConfigurator().apply(deployMotorConfig);
+      status2 = deployMotor2.getConfigurator().apply(deployMotorConfig);
+      if (status1.isOK() && status2.isOK()) {
+        break;
+      }
     }
   }
 

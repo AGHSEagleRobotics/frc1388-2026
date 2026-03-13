@@ -204,7 +204,7 @@ public class RobotContainer {
         return Commands.parallel(
                 superstructure.startShooting(),
                 Commands.run(() -> {
-                    if (!superstructure.isRobotMoving() && isJoystickNeutral()) {
+                    if (isJoystickNeutral()) {
                         drivetrain.setControl(brake);
                     } else {
                         drivetrain.setControl(

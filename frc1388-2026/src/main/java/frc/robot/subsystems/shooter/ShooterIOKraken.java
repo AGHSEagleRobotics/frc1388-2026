@@ -60,7 +60,7 @@ public class ShooterIOKraken implements ShooterIO {
 
   // Control
   private final Slot0Configs controllerConfig = new Slot0Configs();
-  private final Slot0Configs kickerConfig = new Slot0Configs();
+  private final Slot0Configs kickerController = new Slot0Configs();
   private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(50.0);
   private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(50.0);
   private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(50.0);
@@ -80,12 +80,12 @@ public class ShooterIOKraken implements ShooterIO {
     controllerConfig.kA = 0.019043;
 
     // PIDS config
-    kickerConfig.kP = 0.033557;
-    kickerConfig.kI = 0.0;
-    kickerConfig.kD = 0.0;
-    kickerConfig.kS = 0.15273;
-    kickerConfig.kV = 0.11886;
-    kickerConfig.kA = 0.027404;
+    kickerController.kP = 0.033557;
+    kickerController.kI = 0.0;
+    kickerController.kD = 0.0;
+    kickerController.kS = 0.15273;
+    kickerController.kV = 0.11886;
+    kickerController.kA = 0.027404;
     
     // General config
     TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
@@ -107,7 +107,7 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor2.getConfigurator().apply(controllerConfig, 1.0);
     
     kickerMotor.getConfigurator().apply(kickerConfig, 1.0);
-    kickerMotor.getConfigurator().apply(controllerConfig, 1.0);
+    kickerMotor.getConfigurator().apply(kickerController, 1.0);
    
 
     //SS at the end is just statussignal i was too lazy to write it out all the time

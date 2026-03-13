@@ -45,6 +45,7 @@ public class Superstructure extends SubsystemBase {
     m_shotCalculator = shotCalculator;
 
     rotationPID.enableContinuousInput(0, 360);
+    rotationPID.setTolerance(2);;
     // rotationPID.setIZone(2);
     // rotationPID.setIntegratorRange(-0.36, 0.36);
   }
@@ -206,6 +207,5 @@ public class Superstructure extends SubsystemBase {
     ChassisSpeeds speeds = m_driveTrain.getFieldRelativeSpeeds();
     double linearSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
     return linearSpeed > 0.01;
-
   }
 }

@@ -75,15 +75,15 @@ public enum ShooterState {
     }
     else if (shooterState == ShooterState.SHOOTING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub));
-      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub) * (4.0/3.0));
+      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
     else if (shooterState == ShooterState.PASSING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass));
-      setKickerVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass) * (4.0/3.0));
+      setKickerVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
     else if (shooterState == ShooterState.SOTM) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM));
-      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM) * (4.0/3.0));
+      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
     else if (shooterState == ShooterState.TESTING) {
       setShooterVolts(ShooterConstants.TESTING_STATE_VOLTS);
@@ -91,11 +91,11 @@ public enum ShooterState {
     }
     else if (shooterState == ShooterState.MANUAL_CLOSE) {
       setShooterVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE);
-      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE * (5.0/3.0));
+      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
     else if (shooterState == ShooterState.MANUAL_FAR) {
       setShooterVelocity(ShooterConstants.MANUAL_SHOOT_FAR);
-      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_FAR * (5.0/3.0));
+      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_FAR * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
 
   //Logging
