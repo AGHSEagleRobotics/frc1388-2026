@@ -68,11 +68,18 @@ public class HoodIOKraken implements HoodIO {
     
     hoodMotorPositionStatusSignal = hoodMotor.getPosition();
     
-    hoodMotorVoltageRequest = new VoltageOut(0);
-    hoodMotorPositionRequest = new MotionMagicVoltage(0);
+    hoodMotorVoltageRequest = new VoltageOut(0).withUpdateFreqHz(50);
+    hoodMotorPositionRequest = new MotionMagicVoltage(0).withUpdateFreqHz(50);
     
     configureCANcoder(CANcoder);
     configureHoodMotor(hoodMotor);
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0,
+        hoodMotorVelocityStatusSignal,
+        hoodMotorVoltageStatusSignal,
+        hoodMotorCurrentAmpsStatusSignal,
+        hoodMotorTempCelsiusStatusSignal,
+        hoodMotorPositionStatusSignal);
   }
   
   @Override
@@ -98,14 +105,17 @@ public class HoodIOKraken implements HoodIO {
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = HoodConstants.SUPPLY_CURRENT_LIMIT_HOOD;
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    // hoodMotorConfig.Slot0.kA = 0.9933;
-    // hoodMotorConfig.Slot0.kG = 0.1321;
-    // hoodMotorConfig.Slot0.kV = 0.90283;
-    // hoodMotorConfig.Slot0.kP = 8.3393;
-    // hoodMotorConfig.Slot0.kI = 0;
-    // hoodMotorConfig.Slot0.kD = 4.4911;
-    // hoodMotorConfig.Slot0.kS = 0.041547;
-    hoodMotorConfig.Slot0.kP = 0.5;
+    hoodMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0; 
+    hoodMotorConfig.MotionMagic.MotionMagicAcceleration = 24.0; 
+    hoodMotorConfig.MotionMagic.MotionMagicJerk = 0;
+
+    hoodMotorConfig.Slot0.kA = 0;
+    hoodMotorConfig.Slot0.kG = 0.07; // (-0.22+0.36) / 2
+    hoodMotorConfig.Slot0.kV = 0;
+    hoodMotorConfig.Slot0.kP = 35; // manually tuned
+    hoodMotorConfig.Slot0.kI = 0.4; // 40/100
+    hoodMotorConfig.Slot0.kD = 0;
+    hoodMotorConfig.Slot0.kS = 0.29; // 0.36 - 0.07
 
     // TODO: CORRECT LATER
     hoodMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;

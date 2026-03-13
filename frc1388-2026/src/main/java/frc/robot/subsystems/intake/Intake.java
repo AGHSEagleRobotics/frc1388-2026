@@ -44,33 +44,33 @@ public class Intake extends SubsystemBase {
   }
 
   
-  private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
-  private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
-  private final MutAngularVelocity sysidVelocityMeasure = RotationsPerSecond.mutable(0);
+  // private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
+  // private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
+  // private final MutAngularVelocity sysidVelocityMeasure = RotationsPerSecond.mutable(0);
 
-  private final SysIdRoutine sysIdRoutine;  
+  // private final SysIdRoutine sysIdRoutine;  
 
   public Intake(IntakeIO io) {
     m_io = io;
     intakeState = IntakeState.RETRACT;
 
-    sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(0.5).per(Second), Volts.of(1.5), Seconds.of(4), null),
-        new SysIdRoutine.Mechanism(
-            (Voltage volts) -> {
-              setDeployVolts(volts.in(Volts));
-            },
-            log -> {
-              log.motor("intake-deploy")
-                  .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.deployMotorVoltage,
-                      Volts))
-                  .angularPosition(
-                      sysidPositionMeasure.mut_replace(inputs.deployMotorPosition,
-                          Rotations))
-                  .angularVelocity(sysidVelocityMeasure.mut_replace(inputs.deployMotorReferenceVelocityRPS,
-                      RotationsPerSecond));
-            },
-            this));
+    // sysIdRoutine = new SysIdRoutine(
+    //     new SysIdRoutine.Config(Volts.of(0.5).per(Second), Volts.of(1.5), Seconds.of(4), null),
+    //     new SysIdRoutine.Mechanism(
+    //         (Voltage volts) -> {
+    //           setDeployVolts(volts.in(Volts));
+    //         },
+    //         log -> {
+    //           log.motor("intake-deploy")
+    //               .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.deployMotorVoltage,
+    //                   Volts))
+    //               .angularPosition(
+    //                   sysidPositionMeasure.mut_replace(inputs.deployMotorPosition,
+    //                       Rotations))
+    //               .angularVelocity(sysidVelocityMeasure.mut_replace(inputs.deployMotorReferenceVelocityRPS,
+    //                   RotationsPerSecond));
+    //         },
+    //         this));
   }
 
   public void periodic() {
@@ -133,11 +133,11 @@ public class Intake extends SubsystemBase {
       return intakeState;
     }
 
-    public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.quasistatic(direction).withName("intake.sysIdQuasistatic");
-    }
+    // public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.quasistatic(direction).withName("intake.sysIdQuasistatic");
+    // }
 
-    public Command sysIdDynamicCommand(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.dynamic(direction).withName("intake.sysIdDynamic");
-    }
+    // public Command sysIdDynamicCommand(SysIdRoutine.Direction direction) {
+    //     return sysIdRoutine.dynamic(direction).withName("intake.sysIdDynamic");
+    // }
 }

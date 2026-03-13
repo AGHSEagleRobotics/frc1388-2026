@@ -73,9 +73,9 @@ public class IntakeIOKraken implements IntakeIO {
     configureRollerMotor(m_rollerMotor);
     configureCANcoder(CANcoder);
 
-    deployMotorVoltageRequest = new VoltageOut(0);
-    rollerMotorVoltageRequest = new VoltageOut(0);
-    deployMotorPositionRequest = new MotionMagicVoltage(0);
+    deployMotorVoltageRequest = new VoltageOut(0).withUpdateFreqHz(50);
+    rollerMotorVoltageRequest = new VoltageOut(0).withUpdateFreqHz(50);
+    deployMotorPositionRequest = new MotionMagicVoltage(0).withUpdateFreqHz(50);
 
 
     deployMotorVelocityStatusSignal = m_deployMotor1.getVelocity();
@@ -98,7 +98,19 @@ public class IntakeIOKraken implements IntakeIO {
 
     deployMotorPositionStatusSignal = m_deployMotor1.getPosition();
 
-    
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0,
+        deployMotorVelocityStatusSignal,
+        deployMotorTorqueCurrentStatusSignal,
+        deployMotorSupplyCurrentStatusSignal,
+        deployMotorTemperatureStatusSignal,
+        deployMotorVoltageStatusSignal,
+        deployMotorPositionStatusSignal,
+        rollerMotorVelocityStatusSignal,
+        rollerMotorTorqueCurrentStatusSignal,
+        rollerMotorSupplyCurrentStatusSignal,
+        rollerMotorTemperatureStatusSignal,
+        rollerMotorVoltageStatusSignal);
+
     m_deployMotor2.setControl(followRequest);
   }
 
@@ -184,15 +196,19 @@ public class IntakeIOKraken implements IntakeIO {
     deployMotorConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT_DEPLOY;
     deployMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
+    deployMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0;
+    deployMotorConfig.MotionMagic.MotionMagicAcceleration = 16.0;
+    deployMotorConfig.MotionMagic.MotionMagicJerk = 0;
+
     deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
     deployMotorConfig.Slot0.kG = 0;
     deployMotorConfig.Slot0.kV = 0;
     deployMotorConfig.Slot0.kA = 0;
     deployMotorConfig.Slot0.kP = 10;
-    deployMotorConfig.Slot0.kI = 0;
+    deployMotorConfig.Slot0.kI = 0.01; // P divided by 100
     deployMotorConfig.Slot0.kD = 0;
-    deployMotorConfig.Slot0.kS = 0;
+    deployMotorConfig.Slot0.kS = 0.3; // voltage set
 
     //TODO: CHANGE LATER
     deployMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;

@@ -51,8 +51,8 @@ public class RollerIOKraken implements RollerIO {
     configurebottomRollerMotor(m_bottomRollerMotor);
     configureTopRoller(m_topRollerMotor);
 
-    bottomRollerVoltageSet = new VoltageOut(0);
-    topRollerVoltageSet = new VoltageOut(0);
+    bottomRollerVoltageSet = new VoltageOut(0).withUpdateFreqHz(50);
+    topRollerVoltageSet = new VoltageOut(0).withUpdateFreqHz(50);
 
     bottomrollerVelocityStatusSignal = m_bottomRollerMotor.getVelocity();
     toprollerVelocityStatusSignal = m_topRollerMotor.getVelocity();
@@ -71,6 +71,20 @@ public class RollerIOKraken implements RollerIO {
 
     bottomrollerVoltageStatusSignal = m_bottomRollerMotor.getMotorVoltage();
     toprollerVoltageStatusSignal = m_topRollerMotor.getMotorVoltage();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0,
+        bottomrollerVelocityStatusSignal,
+        toprollerVelocityStatusSignal,
+        bottomrollerTorqueCurrentStatusSignal,
+        toprollerTorqueCurrentStatusSignal,
+        bottomrollerSupplyCurrentStatusSignal,
+        toprollerSupplyCurrentStatusSignal,
+        bottomrollerReferenceVelocityStatusSignal,
+        toprollerReferenceVelocityStatusSignal,
+        bottomrollerTemperatureStatusSignal,
+        toprollerTemperatureStatusSignal,
+        bottomrollerVoltageStatusSignal,
+        toprollerVoltageStatusSignal);
   }
 
   @Override

@@ -18,6 +18,7 @@ import frc.robot.subsystems.shooter.Hood;
 import frc.robot.subsystems.shooter.Hood.HoodState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.Shooter.ShooterState;
+import frc.robot.Constants.IntakeConstants;
 
 public class Superstructure extends SubsystemBase {
 
@@ -59,6 +60,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command startShooting() {
+    m_intakeState = m_intake.getIntakeState();
     return this.run(() -> {
       if (isRobotMoving()) {
         m_shooter.setShooterState(ShooterState.SOTM);
@@ -77,35 +79,44 @@ public class Superstructure extends SubsystemBase {
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
       m_hood.setHoodState(HoodState.IDLE);
-      m_intake.setIntakeState(m_intakeState);
+      m_intake.setIntakeState(IntakeState.INTAKING);
     });
   }
 
   public Command deployIntakingCommand() {
+    m_intakeState = m_intake.getIntakeState();
     return this.runOnce(() -> {
-        // if (m_intake.getIntakeState() == IntakeState.INTAKING) {
-            m_intake.setIntakeState(IntakeState.EXTENDED);
-        // } else {
-        //     m_intake.setIntakeState(IntakeState.INTAKING);
-        // }
+      if ((m_intake.getIntakeState() == IntakeState.INTAKING) || (m_intake.getPosition() < IntakeConstants.POSITION_TOLERANCE)) {
+        m_intake.setIntakeState(IntakeState.EXTENDED);
+        m_roller.setRollerState(RollerState.IDLE);
+      } else {
+        m_intake.setIntakeState(IntakeState.INTAKING);
+        m_roller.setRollerState(RollerState.INTAKING);
+      }
     });
   }
 
   public Command retractIntake() {
     return this.runOnce(() -> {
       m_intake.setIntakeState(IntakeState.RETRACT);
+      m_roller.setRollerState(RollerState.IDLE);
     });
   }
 
   public Command shootManually() {
+    m_intakeState = m_intake.getIntakeState();
     return this.runOnce(() -> {
-      // if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
-        // m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        // m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-      // } else {
+      if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
+        m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
+        m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
+        m_roller.setRollerState(RollerState.SHOOTING);
+        m_intake.setIntakeState(IntakeState.INTAKING);
+      } else {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        // m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-      // }
+        m_shooter.setShooterState(ShooterState.MANUAL_FAR);
+        m_roller.setRollerState(RollerState.SHOOTING);
+        m_intake.setIntakeState(IntakeState.INTAKING);
+      }
     });
   }
 

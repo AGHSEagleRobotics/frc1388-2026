@@ -122,15 +122,15 @@ public class ShotCalculator extends SubsystemBase {
     }
 
     public double getAbsouluteDistanceFromTargetSOTM() {
-        double rX = this.drivetrain.getPose().getX();
-        double tX;
-        double tAngle = getAbsoluteAngleFromTargetSOTM();
-        tX = currentEffectiveTargetPose.getX();
+        // double rX = this.drivetrain.getPose().getX();
+        // double tX;
+        // double tAngle = getAbsoluteAngleFromTargetSOTM();
+        // tX = currentEffectiveTargetPose.getX();
 
-        double adjacent = rX - tX;
-        double distanceFromSpeaker = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
-                                                                                     // cos(angle)
+        // double adjacent = rX - tX;
+        // double distanceFromSpeaker = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
+        //                                                                              // cos(angle)
 
-        return distanceFromSpeaker;
+        return 0;
     }
 }

@@ -28,11 +28,11 @@ public double m_distanceFromHub;
 public double m_distanceFromHubSOTM;
 public double m_distanceFromPass;
 
-private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
-private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
-private final MutAngularVelocity sysidVelocityMeasure = RotationsPerSecond.mutable(0);
+// private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
+// private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
+// private final MutAngularVelocity sysidVelocityMeasure = RotationsPerSecond.mutable(0);
 
-private final SysIdRoutine shooterSysIdRoutine;
+// private final SysIdRoutine shooterSysIdRoutine;
 
 public enum ShooterState {
   IDLE,
@@ -48,21 +48,21 @@ public enum ShooterState {
   this.io = io;
   shooterState = ShooterState.IDLE;
 
-  shooterSysIdRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(),
-      new SysIdRoutine.Mechanism(
-          (Voltage volts) -> setKickerVolts(volts.in(Volts)),
-          log -> {
-            log.motor("kick-flywheel")
-                .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.kickerMotorVoltage,
-                    Volts))
-                .angularPosition(sysidPositionMeasure
-                    .mut_replace(inputs.kickerPosition, Rotations))
-                .angularVelocity(
-                    sysidVelocityMeasure.mut_replace(inputs.kickerMotorVelocityRPS,
-                        RotationsPerSecond));
-          },
-          this));
+  // shooterSysIdRoutine = new SysIdRoutine(
+  //     new SysIdRoutine.Config(),
+  //     new SysIdRoutine.Mechanism(
+  //         (Voltage volts) -> setKickerVolts(volts.in(Volts)),
+  //         log -> {
+  //           log.motor("kick-flywheel")
+  //               .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.kickerMotorVoltage,
+  //                   Volts))
+  //               .angularPosition(sysidPositionMeasure
+  //                   .mut_replace(inputs.kickerPosition, Rotations))
+  //               .angularVelocity(
+  //                   sysidVelocityMeasure.mut_replace(inputs.kickerMotorVelocityRPS,
+  //                       RotationsPerSecond));
+  //         },
+  //         this));
 
 }
 
@@ -98,22 +98,22 @@ public enum ShooterState {
     }
 
   //Logging
-   DogLog.log("Shooter/Motor1/isConnected", inputs.shootMotor1Connected);
-   DogLog.log("Shooter/Motor1/ReferenceVelocity", inputs.shootMotor1ReferenceVelocityRPS);
-   DogLog.log("Shooter/Motor1/ClosedLoopReference", inputs.shootMotor1ClosedLoopReferenceRPS);
-   DogLog.log("Shooter/Motor1/Voltage", inputs.shootMotor1Voltage);
-   DogLog.log("Shooter/Motor1/TorqueCurrentAmps", inputs.shootMotor1TorqueCurrentAmps);
-   DogLog.log("Shooter/Motor1/Velocity", inputs.shootMotor1VelocityRPS);
-   DogLog.log("Shooter/Motor1/SupplyCurrentAmps", inputs.shootMotor1SupplyCurrentAmps);
-   DogLog.log("Shooter/Motor1/TempCelsius", inputs.shootMotor1TempCelsius);
-   DogLog.log("Shooter/Motor2/isConnected", inputs.shootMotor2Connected);
-   DogLog.log("Shooter/Motor2/Velocity", inputs.shootMotor2VelocityRPS);
-   DogLog.log("Shooter/Motor2/ReferenceVelocity", inputs.shootMotor2ReferenceVelocityRPS);
-   DogLog.log("Shooter/Motor2/ClosedLoopReference", inputs.shootMotor2ClosedLoopReferenceRPS);
-   DogLog.log("Shooter/Motor2/Voltage", inputs.shootMotor2Voltage);
-   DogLog.log("Shooter/Motor2/TorqueCurrentAmps", inputs.shootMotor2TorqueCurrentAmps);
-   DogLog.log("Shooter/Motor2/SupplyCurrentAmps", inputs.shootMotor2SupplyCurrentAmps);
-   DogLog.log("Shooter/Motor2/TempCelsius", inputs.shootMotor2TempCelsius);
+  //  DogLog.log("Shooter/Motor1/isConnected", inputs.shootMotor1Connected);
+  //  DogLog.log("Shooter/Motor1/ReferenceVelocity", inputs.shootMotor1ReferenceVelocityRPS);
+  //  DogLog.log("Shooter/Motor1/ClosedLoopReference", inputs.shootMotor1ClosedLoopReferenceRPS);
+  //  DogLog.log("Shooter/Motor1/Voltage", inputs.shootMotor1Voltage);
+  //  DogLog.log("Shooter/Motor1/TorqueCurrentAmps", inputs.shootMotor1TorqueCurrentAmps);
+  //  DogLog.log("Shooter/Motor1/Velocity", inputs.shootMotor1VelocityRPS);
+  //  DogLog.log("Shooter/Motor1/SupplyCurrentAmps", inputs.shootMotor1SupplyCurrentAmps);
+  //  DogLog.log("Shooter/Motor1/TempCelsius", inputs.shootMotor1TempCelsius);
+  //  DogLog.log("Shooter/Motor2/isConnected", inputs.shootMotor2Connected);
+  //  DogLog.log("Shooter/Motor2/Velocity", inputs.shootMotor2VelocityRPS);
+  //  DogLog.log("Shooter/Motor2/ReferenceVelocity", inputs.shootMotor2ReferenceVelocityRPS);
+  //  DogLog.log("Shooter/Motor2/ClosedLoopReference", inputs.shootMotor2ClosedLoopReferenceRPS);
+  //  DogLog.log("Shooter/Motor2/Voltage", inputs.shootMotor2Voltage);
+  //  DogLog.log("Shooter/Motor2/TorqueCurrentAmps", inputs.shootMotor2TorqueCurrentAmps);
+  //  DogLog.log("Shooter/Motor2/SupplyCurrentAmps", inputs.shootMotor2SupplyCurrentAmps);
+  //  DogLog.log("Shooter/Motor2/TempCelsius", inputs.shootMotor2TempCelsius);
 
   }
 
@@ -157,11 +157,11 @@ public enum ShooterState {
     m_distanceFromPass = distanceFromPass;
   }
 
-   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return shooterSysIdRoutine.quasistatic(direction).withName("shooter.sysIdQuasistatic");
-    }
+  //  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+  //       return shooterSysIdRoutine.quasistatic(direction).withName("shooter.sysIdQuasistatic");
+  //   }
 
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return shooterSysIdRoutine.dynamic(direction).withName("shooter.sysIdDynamic");
-    }
+  //   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+  //       return shooterSysIdRoutine.dynamic(direction).withName("shooter.sysIdDynamic");
+  //   }
 }
