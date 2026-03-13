@@ -85,12 +85,12 @@ public class HoodIOKraken implements HoodIO {
   
   @Override
   public void updateInputs(HoodIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-      hoodMotorVelocityStatusSignal,
-      hoodMotorVoltageStatusSignal,
-      // hoodMotorCurrentAmpsStatusSignal, 
-      hoodMotorTempCelsiusStatusSignal,
-      hoodMotorPositionStatusSignal);
+    // BaseStatusSignal.refreshAll(
+    //   hoodMotorVelocityStatusSignal,
+    //   hoodMotorVoltageStatusSignal,
+    //   // hoodMotorCurrentAmpsStatusSignal, 
+    //   hoodMotorTempCelsiusStatusSignal,
+    //   hoodMotorPositionStatusSignal);
       
       inputs.hoodMotorVelocityRPS = hoodMotorVelocityStatusSignal.getValueAsDouble();
       // inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();
@@ -107,7 +107,7 @@ public class HoodIOKraken implements HoodIO {
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     hoodMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0; 
-    hoodMotorConfig.MotionMagic.MotionMagicAcceleration = 24.0; 
+    hoodMotorConfig.MotionMagic.MotionMagicAcceleration = 18.0; 
     hoodMotorConfig.MotionMagic.MotionMagicJerk = 0;
 
     hoodMotorConfig.Slot0.kA = 0;

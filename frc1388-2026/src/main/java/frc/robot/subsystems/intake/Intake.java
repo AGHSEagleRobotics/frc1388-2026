@@ -52,7 +52,7 @@ public class Intake extends SubsystemBase {
 
   public Intake(IntakeIO io) {
     m_io = io;
-    intakeState = IntakeState.RETRACT;
+    intakeState = IntakeState.STOP;
 
     // sysIdRoutine = new SysIdRoutine(
     //     new SysIdRoutine.Config(Volts.of(0.5).per(Second), Volts.of(1.5), Seconds.of(4), null),
@@ -99,6 +99,7 @@ public class Intake extends SubsystemBase {
       setDeployVolts(-2);
     } else if (intakeState == IntakeState.STOP) {
       setIntakingRollers(0);
+      setPosition(getPosition());
     }
 
     DogLog.log("Intake/Absolute Encoder", getPosition());

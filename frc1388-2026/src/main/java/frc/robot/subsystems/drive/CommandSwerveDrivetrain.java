@@ -140,7 +140,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     );
 
     /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -264,53 +264,54 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void periodic() {
         /*
          * Periodically try to apply the operator perspective.
-         * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
-         * This allows us to correct the perspective in case the robot code restarts mid-match.
-         * Otherwise, only check and apply the operator perspective if the DS is disabled.
-         * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
+         * If we haven't applied the operator perspective before, then we should apply
+         * it regardless of DS state.
+         * This allows us to correct the perspective in case the robot code restarts
+         * mid-match.
+         * Otherwise, only check and apply the operator perspective if the DS is
+         * disabled.
+         * This ensures driving behavior doesn't change until an explicit disable event
+         * occurs during testing.
          */
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation
-                );
+                        allianceColor == Alliance.Red
+                                ? kRedAlliancePerspectiveRotation
+                                : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
             });
         }
 
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
-        
+
         LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
         LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
 
         if (getState().Pose != null) {
-            if(acceptVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-                updateVision(LimelightConstants.SHOOTER_LIMELIGHT);
-                if(acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-                    resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
-                    gyroWasAccepted = true;
-                }
+            // Fetch ONCE, use the result for both accept and update
+            processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
+            processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
+            if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+                resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+                gyroWasAccepted = true;
             }
-            if(acceptVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-                updateVision(LimelightConstants.LEFT_LIMELIGHT);
-                if((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-                    resetGyro(LimelightConstants.LEFT_LIMELIGHT);
-                    gyroWasAccepted = true;
-                }
+            if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+                resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+                gyroWasAccepted = true;
             }
+        }
         DogLog.log("Drive/OdometryPose", getState().Pose);
         DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
         DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
-        }
-        if(mapleSimSwerveDrivetrain != null) {
-            DogLog.log("Drive/SimulationPose", mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
-        }
     }
+    // if(mapleSimSwerveDrivetrain != null) {
+    // DogLog.log("Drive/SimulationPose",
+    // mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+    // }
 
     public MapleSimSwerveDrivetrain getSimulationDriveTrain() {
         return mapleSimSwerveDrivetrain;
@@ -456,22 +457,35 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     // _______________________________________ Vision Code _______________________________________
 
-    public boolean acceptVision(VisionAcceptor acceptor, String name) {
-        boolean acceptVisionMeasurement = false;
-        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-        if (currentPose != null) {
-        acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
-        previousPositions.put(name, currentPose.pose);
-        }
-        return acceptVisionMeasurement;
-    }
+    // public boolean acceptVision(VisionAcceptor acceptor, String name) {
+    //     boolean acceptVisionMeasurement = false;
+    //     PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    //     if (currentPose != null) {
+    //     acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
+    //     previousPositions.put(name, currentPose.pose);
+    //     }
+    //     return acceptVisionMeasurement;
+    // }
 
-    public void updateVision(String name) {
-        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-        if (currentPose != null) {
-            addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
-        }
+    // public void updateVision(String name) {
+    //     PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    //     if (currentPose != null) {
+    //         addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
+    //     }
+    // }
+
+    private void processVision(VisionAcceptor acceptor, String name) {
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    if (estimate == null) return;
+    
+    boolean accepted = acceptor.shouldAccept(estimate.pose, previousPositions.get(name), getState().Speeds);
+    previousPositions.put(name, estimate.pose);
+    
+    if (accepted) {
+        addVisionMeasurement(estimate.pose, Utils.currentTimeToFPGATime(estimate.timestampSeconds));
     }
+}
+
 
     public boolean acceptGyro(VisionAcceptor acceptor, String name) {
         boolean acceptGyro = acceptor.shouldResetGyro();

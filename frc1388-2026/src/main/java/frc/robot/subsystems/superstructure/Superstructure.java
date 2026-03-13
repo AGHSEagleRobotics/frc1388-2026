@@ -32,6 +32,7 @@ public class Superstructure extends SubsystemBase {
   public ShooterState m_shooterState;
   public HoodState m_hoodState;
   public IntakeState m_intakeState;
+  public boolean m_isAtSpeed;
 
   public static final PIDController rotationPID = new PIDController(0.01, 0, .0);
   /** Creates a new Superstructure. */
@@ -51,12 +52,20 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_shooter.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
-    m_shooter.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
-    m_shooter.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
-    m_hood.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
-    m_hood.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
-    m_hood.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+    m_isAtSpeed = isAtSpeed();
+  
+    if (m_shooter.getShooterState() == ShooterState.SHOOTING) {
+      m_shooter.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
+      m_hood.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
+    }
+    if (m_shooter.getShooterState() == ShooterState.PASSING) {
+      m_shooter.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+      m_hood.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+    }
+    if (m_shooter.getShooterState() == ShooterState.SOTM) {
+      m_shooter.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+      m_hood.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+    }
   }
 
   public Command startShooting() {
@@ -70,7 +79,9 @@ public class Superstructure extends SubsystemBase {
         m_hood.setHoodState(HoodState.SHOOTING);
         m_intake.setIntakeState(IntakeState.SHOOTING);
       }
+      if (m_isAtSpeed) {
       m_roller.setRollerState(RollerState.SHOOTING);
+      }
     });
   }
 
@@ -78,7 +89,7 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() -> {
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
-      m_hood.setHoodState(HoodState.IDLE);
+      m_hood.setHoodState(m_hood.getHoodState());
       m_intake.setIntakeState(IntakeState.INTAKING);
     });
   }
@@ -105,19 +116,20 @@ public class Superstructure extends SubsystemBase {
 
   public Command shootManually() {
     m_intakeState = m_intake.getIntakeState();
-    return this.runOnce(() -> {
+    return this.run(() -> {
       if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        m_roller.setRollerState(RollerState.SHOOTING);
+        m_hood.setHoodState(HoodState.MANUAL_CLOSE);
         m_intake.setIntakeState(IntakeState.INTAKING);
       } else {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        m_roller.setRollerState(RollerState.SHOOTING);
+        m_hood.setHoodState(HoodState.MANUAL_FAR);
         m_intake.setIntakeState(IntakeState.INTAKING);
       }
-    });
+      if (m_isAtSpeed) {
+        m_roller.setRollerState(RollerState.SHOOTING);
+        }
+    }).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }
 
   public Command setHoodAngleClose() {
@@ -184,6 +196,10 @@ public class Superstructure extends SubsystemBase {
 
   public boolean pointedAtTarget() {
     return rotationPID.atSetpoint();
+  }
+
+  public boolean isAtSpeed() {
+    return m_shooter.isAtSpeed(3);
   }
 
   public boolean isRobotMoving() {

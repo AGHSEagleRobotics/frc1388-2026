@@ -118,20 +118,20 @@ public class IntakeIOKraken implements IntakeIO {
    @Override
   public void updateInputs(IntakeIOInputs inputs) {
 
-    BaseStatusSignal.refreshAll(
-        deployMotorVelocityStatusSignal,
-        deployMotorTorqueCurrentStatusSignal,
-        deployMotorSupplyCurrentStatusSignal,
-        deployMotorReferenceVelocityStatusSignal,
-        rollerMotorSupplyCurrentStatusSignal,
-        rollerMotorTorqueCurrentStatusSignal,
-        rollerMotorVelocityStatusSignal,
-        rollerMotorReferenceVelocityStatusSignal,
-        deployMotorTemperatureStatusSignal,
-        rollerMotorTemperatureStatusSignal,
-        deployMotorVoltageStatusSignal,
-        rollerMotorVoltageStatusSignal,
-        deployMotorPositionStatusSignal);
+    // BaseStatusSignal.refreshAll(
+    //     deployMotorVelocityStatusSignal,
+    //     deployMotorTorqueCurrentStatusSignal,
+    //     deployMotorSupplyCurrentStatusSignal,
+    //     deployMotorReferenceVelocityStatusSignal,
+    //     rollerMotorSupplyCurrentStatusSignal,
+    //     rollerMotorTorqueCurrentStatusSignal,
+    //     rollerMotorVelocityStatusSignal,
+    //     rollerMotorReferenceVelocityStatusSignal,
+    //     deployMotorTemperatureStatusSignal,
+    //     rollerMotorTemperatureStatusSignal,
+    //     deployMotorVoltageStatusSignal,
+    //     rollerMotorVoltageStatusSignal,
+    //     deployMotorPositionStatusSignal);
 
 
     inputs.deployMotorTorqueCurrentAmps = deployMotorTorqueCurrentStatusSignal.getValueAsDouble();

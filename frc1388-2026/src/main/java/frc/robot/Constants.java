@@ -83,9 +83,9 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200 / 60;
 
-      public static final double MANUAL_SHOOT_CLOSE = 3000/60;
+      public static final double MANUAL_SHOOT_CLOSE = 3500/60;
 
-      public static final double MANUAL_SHOOT_FAR = 3000/60;
+      public static final double MANUAL_SHOOT_FAR = 3500/60;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
@@ -105,7 +105,7 @@ public final class Constants {
       public static final double SUPPLY_CURRENT_LIMIT_HOOD = 20.0;
 
       public static final double HOOD_OFFSET = -0.975;
-      public static final double HOOD_CLOSE = 0.1;
+      public static final double HOOD_CLOSE = 0.05;
       public static final double HOOD_FAR = 0.6;
       public static final double HOOD_LIMIT_DOWN = 0.022;
       public static final double HOOD_LIMIT_UP = 0.837;

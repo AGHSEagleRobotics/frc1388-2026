@@ -91,19 +91,19 @@ public class RollerIOKraken implements RollerIO {
   @Override
   public void updateInputs(RollerIOInputs inputs) {
 
-    BaseStatusSignal.refreshAll(
-      bottomrollerVelocityStatusSignal,
-      bottomrollerTorqueCurrentStatusSignal,
-      bottomrollerSupplyCurrentStatusSignal,
-      bottomrollerReferenceVelocityStatusSignal,
-      toprollerSupplyCurrentStatusSignal,
-      toprollerTorqueCurrentStatusSignal,
-      toprollerVelocityStatusSignal,
-      toprollerReferenceVelocityStatusSignal,
-      bottomrollerTemperatureStatusSignal,
-      toprollerTemperatureStatusSignal,
-      bottomrollerVoltageStatusSignal,
-      toprollerVoltageStatusSignal);
+    // BaseStatusSignal.refreshAll(
+    //   bottomrollerVelocityStatusSignal,
+    //   bottomrollerTorqueCurrentStatusSignal,
+    //   bottomrollerSupplyCurrentStatusSignal,
+    //   bottomrollerReferenceVelocityStatusSignal,
+    //   toprollerSupplyCurrentStatusSignal,
+    //   toprollerTorqueCurrentStatusSignal,
+    //   toprollerVelocityStatusSignal,
+    //   toprollerReferenceVelocityStatusSignal,
+    //   bottomrollerTemperatureStatusSignal,
+    //   toprollerTemperatureStatusSignal,
+    //   bottomrollerVoltageStatusSignal,
+    //   toprollerVoltageStatusSignal);
 
     inputs.bottomrollerTorqueCurrentAmps = bottomrollerTorqueCurrentStatusSignal.getValueAsDouble();
     inputs.toprollerTorqueCurrentAmps = toprollerTorqueCurrentStatusSignal.getValueAsDouble();

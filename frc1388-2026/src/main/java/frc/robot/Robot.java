@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        m_timeAndJoystickReplay.update();
+        // m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run(); 
     }
 
@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
         DogLog.setOptions(new DogLogOptions()
             .withLogExtras(true)
             .withCaptureDs(true)
-            .withNtPublish(true)
+            .withNtPublish(false)
             .withCaptureNt(false));
 // Causes errors if PDH is not present:
 //        DogLog.setPdh(new PowerDistribution());
