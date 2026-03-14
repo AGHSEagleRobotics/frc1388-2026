@@ -2,8 +2,15 @@
   "robotWidth": 0.6858,
   "robotLength": 0.6858,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "A Folder",
+    "Alejandro's kool with a k folder",
+    "Another Folder",
+    "shout out finn folder"
+  ],
+  "autoFolders": [
+    "Hopefully finsiehd paths"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
