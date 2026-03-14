@@ -246,7 +246,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         startSimThread();
          configureAutoBuilder();
     }
-    // configureAutoBuilder();
+    configureAutoBuilder();
 }
 
     private void configureAutoBuilder() {

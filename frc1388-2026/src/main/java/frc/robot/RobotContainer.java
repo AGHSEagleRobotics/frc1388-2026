@@ -64,7 +64,7 @@ public class RobotContainer {
 
     private final CommandXboxController testJoystick = new CommandXboxController(2);
 
-    private final SendableChooser<Command> autoChooser;
+    private SendableChooser<Command> autoChooser;
 
 
     public RobotContainer() {
@@ -93,8 +93,8 @@ public class RobotContainer {
 
         configureBindings();
 
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        SmartDashboard.putData("Auto Mode", autoChooser);
+        // autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        // SmartDashboard.putData("Auto Mode", autoChooser);
 
         // register commands
 
