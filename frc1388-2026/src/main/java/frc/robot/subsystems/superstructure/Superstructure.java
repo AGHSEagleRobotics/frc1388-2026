@@ -212,7 +212,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean isAtSpeed() {
-    return m_shooter.isAtSpeed(5);
+    return m_shooter.isAtSpeed(7);
   }
 
   public boolean isRobotMoving() {

@@ -160,6 +160,7 @@ public class RobotContainer {
 
         // sets hood angle for a close shot and far shot
         joystick.a().onTrue(superstructure.setHoodAngleClose());
+        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.y().onTrue(superstructure.setHoodAngleFar());
 
         // TESTING JOYSTICK
