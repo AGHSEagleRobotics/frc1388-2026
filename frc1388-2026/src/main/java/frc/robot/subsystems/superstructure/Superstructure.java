@@ -96,9 +96,10 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() -> {
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
-      m_hood.setHoodState(m_hood.getHoodState());
+      m_hood.setHoodState(HoodState.IDLE);
       m_intake.setIntakeState(IntakeState.INTAKING);
       m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
+      m_isAtSpeed = false;
 
     });
   }
