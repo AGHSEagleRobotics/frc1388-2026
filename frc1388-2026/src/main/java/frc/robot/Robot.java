@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        m_robotContainer.resetGyro();
+        // m_robotContainer.resetGyro();
     }
 
     @Override
@@ -70,13 +70,13 @@ public class Robot extends TimedRobot {
         DataLogManager.log("####### Autonomous Init");
         logMatchInfo();
 
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-System.out.println("getting auton command");
-if (m_autonomousCommand != null) {
-            System.out.println("scheduling auton command");
-            //  new ScheduleCommand(m_autonomousCommand);
-CommandScheduler.getInstance().schedule(m_autonomousCommand);
-        }
+        // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        System.out.println("getting auton command");
+        // if (m_autonomousCommand != null) {
+        //     System.out.println("scheduling auton command");
+        //     // new ScheduleCommand(m_autonomousCommand);
+        //     CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        // }
     }
 
     @Override

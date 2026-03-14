@@ -83,9 +83,9 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200 / 60;
 
-      public static final double MANUAL_SHOOT_CLOSE = 3500/60;
+      public static final double MANUAL_SHOOT_CLOSE = 2500/60;
 
-      public static final double MANUAL_SHOOT_FAR = 3500/60;
+      public static final double MANUAL_SHOOT_FAR = 3000/60;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 5.0/3.0;
 
@@ -112,8 +112,8 @@ public final class Constants {
 
       public static final double HOOD_OFFSET = -0.975;
       public static final double HOOD_CLOSE = 0.05;
-      public static final double HOOD_FAR = 0.2;
-      public static final double HOOD_PASS = 0.6;
+      public static final double HOOD_FAR = 0.6;
+      public static final double HOOD_PASS = 0.55;
       public static final double HOOD_LIMIT_DOWN = 0.022;
       public static final double HOOD_LIMIT_UP = 0.837;
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
@@ -141,12 +141,12 @@ public final class Constants {
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 8;
 
-      public static final double POSITION_TOLERANCE = 0.258;
+      public static final double POSITION_TOLERANCE = 0.23;
       public static final double DOWN_POSITION = 0.413;
       public static final double UP_POSITION = 0.04;
       public static final double HALF_WAY = 0.258;
       public static final double TESTING_VOLTS = 6;
-      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1;
+      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1.5;
     }
 
     public static class LimelightConstants {

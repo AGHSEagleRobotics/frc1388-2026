@@ -369,33 +369,32 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
 
-        LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
-        LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
+        // LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
+        // LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
 
-        if (getState().Pose != null) {
-            // Fetch ONCE, use the result for both accept and update
-            processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
-            processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
-            if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-                resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
-                gyroWasAccepted = true;
-            }
-            if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-                resetGyro(LimelightConstants.LEFT_LIMELIGHT);
-                gyroWasAccepted = true;
-            }
-        DogLog.log("Drive/OdometryPose", getState().Pose);
-        DogLog.log("Drive/TargetStates", getState().ModuleTargets);
-        DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
-        DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
+        // if (getState().Pose != null) {
+        //     // Fetch ONCE, use the result for both accept and update
+        //     processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
+        //     processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
+        //     if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+        //         resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+        //         gyroWasAccepted = true;
+        //     }
+        //     if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+        //         resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+        //         gyroWasAccepted = true;
+        //     }
+        // DogLog.log("Drive/OdometryPose", getState().Pose);
+        // DogLog.log("Drive/TargetStates", getState().ModuleTargets);
+        // DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
+        // DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
 
         
-        SmartDashboard.putNumber("pose/distancefromhub", getAbsouluteDistanceFromHub());
-        SmartDashboard.putNumber("pose/anglefromhub", getAbsoluteAngleFromHub());
-        SmartDashboard.putNumber("pose/X", getState().Pose.getX());
-        SmartDashboard.putNumber("pose/Y", getState().Pose.getY());
-        SmartDashboard.putNumber("pose/Rotation", getState().Pose.getRotation().getDegrees());
-        }
+        // SmartDashboard.putNumber("pose/distancefromhub", getAbsouluteDistanceFromHub());
+        // SmartDashboard.putNumber("pose/anglefromhub", getAbsoluteAngleFromHub());
+        // SmartDashboard.putNumber("pose/X", getState().Pose.getX());
+        // SmartDashboard.putNumber("pose/Y", getState().Pose.getY());
+        // SmartDashboard.putNumber("pose/Rotation", getState().Pose.getRotation().getDegrees());
     }
     // if(mapleSimSwerveDrivetrain != null) {
     // DogLog.log("Drive/SimulationPose",

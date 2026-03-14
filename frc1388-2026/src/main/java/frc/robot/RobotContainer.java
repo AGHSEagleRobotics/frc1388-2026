@@ -200,12 +200,12 @@ public class RobotContainer {
         // testJoystick.b().whileTrue(intake.sysIdDynamicCommand(Direction.kReverse));
     }
 
-    public Command getAutonomousCommand() {
+    // public Command getAutonomousCommand() {
         
 
-        return autoChooser.getSelected();
+    //     // return autoChooser.getSelected();
 
-    }
+    // }
 
     public double calculateVelocity(double joystick) {
         double leftJoystick = MathUtil.applyDeadband(joystick, 0.1);

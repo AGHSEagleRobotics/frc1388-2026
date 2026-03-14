@@ -35,7 +35,7 @@ public class Superstructure extends SubsystemBase {
   public IntakeState m_intakeState;
   public boolean m_isAtSpeed;
 
-  public static final PIDController rotationPID = new PIDController(0.01, 0, .0);
+  public static final PIDController rotationPID = new PIDController(0.2, 0, .0);
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, Hood hood, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
@@ -96,7 +96,7 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() -> {
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
-      m_hood.setHoodState(HoodState.IDLE);
+      m_hood.setHoodState(m_hoodState);
       m_intake.setIntakeState(IntakeState.INTAKING);
       m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       m_isAtSpeed = false;
@@ -125,18 +125,18 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command shootManually() {
-    m_intakeState = m_intake.getIntakeState();
+    m_hoodState = m_hood.getHoodState();
     return this.run(() -> {
       if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
         m_hood.setHoodState(HoodState.MANUAL_CLOSE);
-        m_intake.setIntakeState(IntakeState.INTAKING);
+        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
 
       } else {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
         m_hood.setHoodState(HoodState.MANUAL_FAR);
-        m_intake.setIntakeState(IntakeState.INTAKING);
+        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
       if (m_isAtSpeed) {
