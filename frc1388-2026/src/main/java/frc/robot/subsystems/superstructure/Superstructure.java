@@ -8,7 +8,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.shotlib.ShotCalculator;
+import frc.robot.shotlib.ShotCalculator.ShotCalculatorState;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.Intake.IntakeState;
@@ -75,10 +77,13 @@ public class Superstructure extends SubsystemBase {
       if (isRobotMoving()) {
         m_shooter.setShooterState(ShooterState.SOTM);
         m_hood.setHoodState(HoodState.SOTM);
+        m_intake.setIntakeState(IntakeState.INTAKING);
+        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
       } else {
         m_shooter.setShooterState(ShooterState.SHOOTING);
         m_hood.setHoodState(HoodState.SHOOTING);
         m_intake.setIntakeState(IntakeState.SHOOTING);
+        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
       if (m_isAtSpeed) {
       m_roller.setRollerState(RollerState.SHOOTING);
@@ -92,6 +97,8 @@ public class Superstructure extends SubsystemBase {
       m_shooter.setShooterState(ShooterState.IDLE);
       m_hood.setHoodState(m_hood.getHoodState());
       m_intake.setIntakeState(IntakeState.INTAKING);
+      m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
+
     });
   }
 
@@ -122,10 +129,13 @@ public class Superstructure extends SubsystemBase {
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
         m_hood.setHoodState(HoodState.MANUAL_CLOSE);
         m_intake.setIntakeState(IntakeState.INTAKING);
+        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
+
       } else {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
         m_hood.setHoodState(HoodState.MANUAL_FAR);
         m_intake.setIntakeState(IntakeState.INTAKING);
+        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
       if (m_isAtSpeed) {
         m_roller.setRollerState(RollerState.SHOOTING);

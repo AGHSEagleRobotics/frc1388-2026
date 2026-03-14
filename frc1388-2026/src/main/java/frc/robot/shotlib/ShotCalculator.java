@@ -14,6 +14,7 @@ import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.shotlib.ShootOnTheFlyCalculator.InterceptSolution;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.shooter.Hood.HoodState;
 
 public class ShotCalculator extends SubsystemBase {
     private final CommandSwerveDrivetrain drivetrain;
@@ -30,12 +31,23 @@ public class ShotCalculator extends SubsystemBase {
 
     private double targetSpeedRps = 8;
 
+    public ShotCalculatorState m_shotCalculatorState = ShotCalculatorState.IDLE;
+
     public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
     }
 
+    public enum ShotCalculatorState {
+        IDLE,
+        SOTM
+    }
+
     @Override
     public void periodic() {
+        if (m_shotCalculatorState == ShotCalculatorState.IDLE) {
+            //something here later
+        }
+       else if (m_shotCalculatorState == ShotCalculatorState.SOTM) {
         Pose2d drivetrainPose = this.drivetrain.getPose();
 
         targetDistance = drivetrainPose.getTranslation().getDistance(getTargetLocation().toPose2d().getTranslation());
@@ -52,6 +64,7 @@ public class ShotCalculator extends SubsystemBase {
 
         currentEffectiveTargetPose = currentInterceptSolution.effectiveTargetPose();
         currentEffectiveYaw = currentInterceptSolution.requiredYaw();
+        }
     }
 
     public void setTarget(Pose3d targetLocation, double targetSpeedRps) {
@@ -133,4 +146,13 @@ public class ShotCalculator extends SubsystemBase {
 
         return distanceFromTarget;
     }
+
+      public void setShotCalculatorState(ShotCalculatorState shotCalculatorState) {
+    this.m_shotCalculatorState = shotCalculatorState;
+  }
+
+   
+      public ShotCalculatorState getShotCalculatorState() {
+    return m_shotCalculatorState;
+  }
 }
