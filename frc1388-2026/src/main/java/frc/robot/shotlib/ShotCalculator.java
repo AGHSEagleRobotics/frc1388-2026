@@ -5,18 +5,16 @@ import static edu.wpi.first.units.Units.Meters;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Robot;
 import frc.robot.shotlib.ShootOnTheFlyCalculator.InterceptSolution;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.shooter.Hood.HoodState;
 
 public class ShotCalculator extends SubsystemBase {
     private final CommandSwerveDrivetrain drivetrain;
@@ -33,12 +31,23 @@ public class ShotCalculator extends SubsystemBase {
 
     private double targetSpeedRps = 8;
 
+    public ShotCalculatorState m_shotCalculatorState = ShotCalculatorState.IDLE;
+
     public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
     }
 
+    public enum ShotCalculatorState {
+        IDLE,
+        SOTM
+    }
+
     @Override
     public void periodic() {
+        if (m_shotCalculatorState == ShotCalculatorState.IDLE) {
+            //something here later
+        }
+       else if (m_shotCalculatorState == ShotCalculatorState.SOTM) {
         Pose2d drivetrainPose = this.drivetrain.getPose();
 
         targetDistance = drivetrainPose.getTranslation().getDistance(getTargetLocation().toPose2d().getTranslation());
@@ -55,6 +64,7 @@ public class ShotCalculator extends SubsystemBase {
 
         currentEffectiveTargetPose = currentInterceptSolution.effectiveTargetPose();
         currentEffectiveYaw = currentInterceptSolution.requiredYaw();
+        }
     }
 
     public void setTarget(Pose3d targetLocation, double targetSpeedRps) {
@@ -119,30 +129,30 @@ public class ShotCalculator extends SubsystemBase {
         double rX = this.drivetrain.getPose().getX();
         double rY = this.drivetrain.getPose().getY();
 
-        if (Robot.getAllianceColor() == DriverStation.Alliance.Blue) {
-            return Math.toDegrees(
-                    Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
-                    + 180;
-        } else {
-            return Math.toDegrees(
-                    Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
-                    + 180;
-        }
+        return Math.toDegrees(
+                Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
+                + 180;
     }
 
     public double getAbsouluteDistanceFromTargetSOTM() {
         double rX = this.drivetrain.getPose().getX();
         double tX;
         double tAngle = getAbsoluteAngleFromTargetSOTM();
-        if (Robot.getAllianceColor() == Alliance.Blue) {
-            tX = currentEffectiveTargetPose.getX();
-        } else {
-            tX = currentEffectiveTargetPose.getX();
-        }
+        tX = currentEffectiveTargetPose.getX();
+
         double adjacent = rX - tX;
-        double distanceFromSpeaker = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
+        double distanceFromTarget = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
                                                                                      // cos(angle)
 
-        return distanceFromSpeaker;
+        return distanceFromTarget;
     }
+
+      public void setShotCalculatorState(ShotCalculatorState shotCalculatorState) {
+    this.m_shotCalculatorState = shotCalculatorState;
+  }
+
+   
+      public ShotCalculatorState getShotCalculatorState() {
+    return m_shotCalculatorState;
+  }
 }

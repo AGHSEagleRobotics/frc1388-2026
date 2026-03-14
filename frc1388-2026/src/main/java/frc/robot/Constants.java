@@ -4,16 +4,15 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
+import frc.robot.generated.TunerConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -29,13 +28,18 @@ public final class Constants {
   }
 
   public static class RollerConstants {
-    public static final double bottomRollerIntakeSpeed = 4;
-    public static final double bottomRollerShootingSpeed = 4;
-    public static final double topRollerShootingSpeed = 4;
+
+    public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 40.0;
+    public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 40.0;
+
+    public static final double bottomRollerIntakeSpeed = 2;
+    public static final double bottomRollerShootingSpeed = 8;
+    public static final double topRollerShootingSpeed = 10;
   }
 
   public static class DriveTrainConstants {
-    public static final double ROBOT_MAX_SPEED = Units.feetToMeters(14.9); // R1 in meters per second
+    public static final double ROBOT_MAX_SPEED = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     public static final double DT_SECONDS = 0.02; // 20ms per tick
     public static final double DISTANCE_PER_TICK = ROBOT_MAX_SPEED * DT_SECONDS; // 20ms per tick
 
@@ -69,27 +73,31 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
-      public static final int SHOOT_MOTOR1_CANID = 0;
-      public static final int SHOOT_MOTOR2_CANID = 0;
+      public static final int SHOOT_MOTOR1_CANID = 36;
+      public static final int SHOOT_MOTOR2_CANID = 37;
+      public static final int KICKER_MOTOR_CANID = 42;
 
-      public static final double SHOOTING_STATE_VELOCITY = 0;
-      public static final double SOTM_STATE_VELOCITY = 0;
-      public static final double IDLE_STATE_VELOCITY = 0;
-      public static final double PASSING_STATE_VELOCITY = 0;
+      public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 60.0;
+
       public static final double TESTING_STATE_VOLTS = 4;
 
-      public static final double KICKER_SHOOTING_VELOCITY = 0;
-      public static final double TESTING_KICKER_VOLTS = 0;
+      public static final double KICKER_SHOOTING_VELOCITY = 1200 / 60;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2000;
+      public static final double MANUAL_SHOOT_CLOSE = 3500/60;
 
-      public static final double MANUAL_SHOOT_FAR = 4000;
+      public static final double MANUAL_SHOOT_FAR = 3500/60;
+
+      public static final double KICKER_TO_SHOOTER_RATIO = 5.0/3.0;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_RPM.put(1.0, 1.0);
-        DISTANCE_TO_SHOT_RPM.put(2.0, 2.0);
+        DISTANCE_TO_SHOT_RPM.put(1.0, 42.0); // ~2520 RPM — very close
+        DISTANCE_TO_SHOT_RPM.put(2.0, 50.0); // ~3000 RPM ← anchor near your tuned close shot
+        DISTANCE_TO_SHOT_RPM.put(3.0, 55.0); // ~3300 RPM
+        DISTANCE_TO_SHOT_RPM.put(4.0, 58.3); // ~3500 RPM ← anchor near your tuned far shot
+        DISTANCE_TO_SHOT_RPM.put(5.0, 62.0); // ~3720 RPM
+        DISTANCE_TO_SHOT_RPM.put(6.0, 65.0); // ~3900 RPM
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
       static {
@@ -100,13 +108,22 @@ public final class Constants {
     }
 
     public static class HoodConstants {
-      public static final double HOOD_OFFSET = 0.0;
-      public static final double HOOD_CLOSE = 0.0;
-      public static final double HOOD_FAR = 0.0;
+      public static final double SUPPLY_CURRENT_LIMIT_HOOD = 20.0;
+
+      public static final double HOOD_OFFSET = -0.975;
+      public static final double HOOD_CLOSE = 0.05;
+      public static final double HOOD_FAR = 0.2;
+      public static final double HOOD_PASS = 0.6;
+      public static final double HOOD_LIMIT_DOWN = 0.022;
+      public static final double HOOD_LIMIT_UP = 0.837;
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 1.0);
-        DISTANCE_TO_SHOT_HOODANGLE.put(2.0, 2.0);
+        DISTANCE_TO_SHOT_HOODANGLE.put(1.0, 0.05); // HOOD_CLOSE — flat, close
+        DISTANCE_TO_SHOT_HOODANGLE.put(2.0, 0.12);
+        DISTANCE_TO_SHOT_HOODANGLE.put(3.0, 0.22);
+        DISTANCE_TO_SHOT_HOODANGLE.put(4.0, 0.38);
+        DISTANCE_TO_SHOT_HOODANGLE.put(5.0, 0.52);
+        DISTANCE_TO_SHOT_HOODANGLE.put(6.0, 0.60); // HOOD_FAR — steep, far
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_HOODANGLE = new InterpolatingDoubleTreeMap();
       static {
@@ -116,13 +133,20 @@ public final class Constants {
     }
 
     public static class IntakeConstants {
-      public static final double IDLE_STATE_ROLLER_VOLTS = 0;
-      public static final double INTAKING_ROLLER_STATE_VOLTS = 4;
+      
+      public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 40.0;
+      public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 70.0;
 
-      public static final double DOWN_POSITION = 0;
-      public static final double UP_POSITION = 1;
-      public static final double HALF_WAY = 0.5;
-      public static final double TESTING_VOLTS = 4;
+      public static final double INTAKE_OFFSET = -0.172;
+      public static final double IDLE_STATE_ROLLER_VOLTS = 0;
+      public static final double INTAKING_ROLLER_STATE_VOLTS = 8;
+
+      public static final double POSITION_TOLERANCE = 0.258;
+      public static final double DOWN_POSITION = 0.413;
+      public static final double UP_POSITION = 0.04;
+      public static final double HALF_WAY = 0.258;
+      public static final double TESTING_VOLTS = 6;
+      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1;
     }
 
     public static class LimelightConstants {

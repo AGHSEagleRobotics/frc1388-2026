@@ -4,15 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -24,8 +15,6 @@ import com.pathplanner.lib.controllers.PPLTVController;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -37,19 +26,18 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.vision.LimelightHelpers;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOKraken;
-import frc.robot.subsystems.intake.Intake.IntakeState;
 import frc.robot.subsystems.rollers.Roller;
-import frc.robot.subsystems.rollers.RollerIO;
 import frc.robot.subsystems.rollers.RollerIOKraken;
-import frc.robot.subsystems.rollers.Roller.RollerState;
-import frc.robot.subsystems.superstructure.Superstructure.RobotState;
 
 public class RobotContainer {
     // subsystems
@@ -60,28 +48,24 @@ public class RobotContainer {
     public final Hood hood;
     public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
-    public RobotState robotState;
-
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
-                                                                                        // speed
-    private double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // 3/4 of a rotation per second max
-                                                                                     // angular velocity
-    private double m_rotationalVelocity = 0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+
+            .withDeadband(DriveTrainConstants.ROBOT_MAX_SPEED * 0.1).withRotationalDeadband(DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+
+    private final Telemetry logger = new Telemetry(DriveTrainConstants.ROBOT_MAX_SPEED);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     private final CommandXboxController testJoystick = new CommandXboxController(2);
 
     private final SendableChooser<Command> autoChooser;
+
 
     public RobotContainer() {
         intake = new Intake(new IntakeIOKraken());
@@ -91,7 +75,6 @@ public class RobotContainer {
         shotcalculator = new ShotCalculator(drivetrain);
         superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
 
-        NamedCommands.registerCommand("setRobotState", superstructure.setRobotState(robotState));
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
         NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
@@ -102,15 +85,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("setHoodAngleClose", superstructure.setHoodAngleClose());
 
         NamedCommands.registerCommand("setHoodAngleFar", superstructure.setHoodAngleFar());
-        NamedCommands.registerCommand("testIntakeDeploy", superstructure.testIntakeDeploy());
-        NamedCommands.registerCommand("testIntakeRollers", superstructure.testIntakeRollers());
+
 
         NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
-        NamedCommands.registerCommand("testRollers", superstructure.testRollers());
         NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
-
-        NamedCommands.registerCommand("testShooter", superstructure.testShooter());
-        NamedCommands.registerCommand("testHood", superstructure.testHood());
         NamedCommands.registerCommand("stopHood", superstructure.stopHood());
 
         configureBindings();
@@ -136,28 +114,21 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        double leftX = MathUtil.applyDeadband(joystick.getLeftY(), 0.1);
-        double leftY = MathUtil.applyDeadband(joystick.getLeftX(), 0.1);
-
-        double xVelocity = -MaxSpeed * scale(leftX, 2.5);
-        double yVelocity = -MaxSpeed * scale(leftY, 2.5);
-
         drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(xVelocity) // Drive forward with negative Y (forward)
-                        .withVelocityY(yVelocity) // Drive left with negative X (left)
-                        .withRotationalRate(getRotationalVelocity()) // Drive counterclockwise with negative X (left)
-                ));
+        
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(calculateVelocity(joystick.getLeftY())) // Drive forward with negative Y (forward)
+                    .withVelocityY(calculateVelocity(joystick.getLeftX())) // Drive left with negative X (left)
+                    .withRotationalRate(calculateRotationalVelocity()) // Drive counterclockwise with negative X (left)
+            )
+        );
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled().whileTrue(
-                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(
-                () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -166,18 +137,18 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
+        joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // DRIVER CONTROLLER
 
         // sets robot shoot on/off while right trigger is held
-        if (superstructure.pointedAtTarget()) {
-            joystick.rightTrigger().whileTrue(superstructure.startShooting());
-        }
-        joystick.rightTrigger().onFalse(superstructure.stopShooting());
 
+        (joystick.rightTrigger().and(superstructure::pointedAtTarget))
+                .whileTrue(shootingCommand());
+        joystick.rightTrigger().onFalse(superstructure.stopShooting());
         // manual shooting
         joystick.rightBumper().whileTrue(superstructure.shootManually());
         joystick.rightBumper().onFalse(superstructure.stopShooting());
@@ -194,12 +165,16 @@ public class RobotContainer {
         // TESTING JOYSTICK
 
         // intake deploy and retract
-        testJoystick.leftBumper().onTrue(superstructure.testIntakeDeploy());
-        testJoystick.leftTrigger().onTrue(superstructure.retractIntake());
+    
+        testJoystick.leftBumper().whileTrue(superstructure.testIntakeDeployDown());
+        testJoystick.leftBumper().onFalse(superstructure.retractIntake());
+
+        testJoystick.leftTrigger().whileTrue(superstructure.testIntakeDeployUp());
+        testJoystick.leftTrigger().onFalse(superstructure.retractIntake());
 
         // intake rollers test
-        testJoystick.rightTrigger().whileTrue(superstructure.testIntakeRollers());
-        testJoystick.rightTrigger().onFalse(superstructure.stopIntakeRollers());
+        testJoystick.a().whileTrue(superstructure.testIntakeRollers());
+        testJoystick.a().onFalse(superstructure.stopIntakeRollers());
 
         // roller floor test
         testJoystick.rightBumper().whileTrue(superstructure.testRollers());
@@ -207,18 +182,22 @@ public class RobotContainer {
 
         // shooter test
         testJoystick.rightTrigger().whileTrue(superstructure.testShooter());
-        testJoystick.rightTrigger().onFalse(getAutonomousCommand());
+        testJoystick.rightTrigger().onFalse(superstructure.stopShooting());
 
-        // SYS ID TUNING
-        testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
-        testJoystick.y().whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
-        testJoystick.a().whileTrue(shooter.sysIdDynamic(Direction.kForward));
-        testJoystick.b().whileTrue(shooter.sysIdDynamic(Direction.kReverse));
+        // hood test
+        testJoystick.b().whileTrue(superstructure.testHood());
+        testJoystick.b().onFalse(superstructure.stopHood());
 
-        testJoystick.pov(0).whileTrue(hood.sysIdQuasistaticCommand(Direction.kForward));
-        testJoystick.pov(90).whileTrue(hood.sysIdQuasistaticCommand(Direction.kReverse));
-        testJoystick.pov(180).whileTrue(hood.sysIdDynamicCommand(Direction.kForward));
-        testJoystick.pov(270).whileTrue(hood.sysIdDynamicCommand(Direction.kReverse));
+        // // SYS ID TUNING
+        // testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
+        // testJoystick.y().whileTrue(shooter.sysIdQuasistatic(Direction.kReverse));
+        // testJoystick.a().whileTrue(shooter.sysIdDynamic(Direction.kForward));
+        // testJoystick.b().whileTrue(shooter.sysIdDynamic(Direction.kReverse));
+
+        // testJoystick.x().whileTrue(intake.sysIdQuasistaticCommand(Direction.kForward));
+        // testJoystick.y().whileTrue(intake.sysIdQuasistaticCommand(Direction.kReverse));
+        // testJoystick.a().whileTrue(intake.sysIdDynamicCommand(Direction.kForward));
+        // testJoystick.b().whileTrue(intake.sysIdDynamicCommand(Direction.kReverse));
     }
 
     public Command getAutonomousCommand() {
@@ -228,16 +207,52 @@ public class RobotContainer {
 
     }
 
-    public double getRotationalVelocity() {
-        double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
-        double omega = -MaxAngularRate * scale(rightX, 2.5);
+    public double calculateVelocity(double joystick) {
+        double leftJoystick = MathUtil.applyDeadband(joystick, 0.1);
+        double velocity = -DriveTrainConstants.ROBOT_MAX_SPEED * scale(leftJoystick, 2.5);
+        return velocity;
+    }
+
+    public double calculateRotationalVelocity() {
+        double omega = 0;
         if (joystick.rightTrigger().getAsBoolean()) {
             omega = superstructure.turnToTargetSpeed();
+        } else {
+            double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
+            omega = -DriveTrainConstants.MAX_ANGULAR_RATE * scale(rightX, 2.5);
         }
         return omega;
     }
 
     private double scale(double in, double scale) {
         return Math.tan(in * Math.atan(scale)) / scale;
+    }
+
+    private boolean isJoystickNeutral() {
+        return Math.hypot(joystick.getLeftX(), joystick.getLeftY()) < 0.1;
+    }
+
+    private Command shootingCommand() {
+        return Commands.parallel(
+                superstructure.startShooting(),
+                Commands.run(() -> {
+                    if (isJoystickNeutral()) {
+                        drivetrain.setControl(brake);
+                    } else {
+                        drivetrain.setControl(
+                                drive.withVelocityX(calculateVelocity(joystick.getLeftY()))
+                                        .withVelocityY(calculateVelocity(joystick.getLeftX()))
+                                        .withRotationalRate(calculateRotationalVelocity()));
+                    }
+                }, drivetrain));
+    }
+
+    public void resetGyro() {
+        if(LimelightHelpers.getTV(LimelightConstants.SHOOTER_LIMELIGHT)) {
+            drivetrain.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+        }
+        if(LimelightHelpers.getTV(LimelightConstants.LEFT_LIMELIGHT)) {
+            drivetrain.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+        }
     }
 }

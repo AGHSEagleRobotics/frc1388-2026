@@ -12,15 +12,9 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.controls.compound.Diff_MotionMagicVoltage_Open;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -49,14 +43,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -113,8 +103,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
         new SysIdRoutine.Config(
             null,        // Use default ramp rate (1 V/s)
-            Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-            null,        // Use default timeout (10 s)
+            Volts.of(3), // Reduce dynamic step voltage to 4 V to prevent brownout
+            Seconds.of(5),        // Use default timeout (10 s)
             // Log state with SignalLogger class
             state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
         ),
@@ -169,7 +159,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     );
 
     /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -353,52 +343,54 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void periodic() {
         /*
          * Periodically try to apply the operator perspective.
-         * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
-         * This allows us to correct the perspective in case the robot code restarts mid-match.
-         * Otherwise, only check and apply the operator perspective if the DS is disabled.
-         * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
+         * If we haven't applied the operator perspective before, then we should apply
+         * it regardless of DS state.
+         * This allows us to correct the perspective in case the robot code restarts
+         * mid-match.
+         * Otherwise, only check and apply the operator perspective if the DS is
+         * disabled.
+         * This ensures driving behavior doesn't change until an explicit disable event
+         * occurs during testing.
          */
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation
-                );
+                        allianceColor == Alliance.Red
+                                ? kRedAlliancePerspectiveRotation
+                                : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
             });
         }
 
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
-        
+
         LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
         LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
+
         if (getState().Pose != null) {
-            if(acceptVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-                updateVision(LimelightConstants.SHOOTER_LIMELIGHT);
-                if(acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-                    resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
-                    gyroWasAccepted = true;
-                }
+            // Fetch ONCE, use the result for both accept and update
+            processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
+            processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
+            if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+                resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+                gyroWasAccepted = true;
             }
-            if(acceptVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-                updateVision(LimelightConstants.LEFT_LIMELIGHT);
-                if((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-                    resetGyro(LimelightConstants.LEFT_LIMELIGHT);
-                    gyroWasAccepted = true;
-                }
+            if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+                resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+                gyroWasAccepted = true;
             }
+        }
         DogLog.log("Drive/OdometryPose", getState().Pose);
         DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
         DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
-        }
-        if(mapleSimSwerveDrivetrain != null) {
-            DogLog.log("Drive/SimulationPose", mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
-        }
     }
+    // if(mapleSimSwerveDrivetrain != null) {
+    // DogLog.log("Drive/SimulationPose",
+    // mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+    // }
 
     public MapleSimSwerveDrivetrain getSimulationDriveTrain() {
         return mapleSimSwerveDrivetrain;
@@ -486,14 +478,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
-
-    @Override
-    public void resetPose(Pose2d pose) {
-        if (this.mapleSimSwerveDrivetrain != null)
-            mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
-        Timer.delay(0.05); // Wait for simulation to update
-        super.resetPose(pose);
-    }
+    // @Override
+    // public void resetPose(Pose2d pose) {
+    //     if (this.mapleSimSwerveDrivetrain != null)
+    //         mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+    //     Timer.delay(0.05); // Wait for simulation to update
+    //     super.resetPose(pose);
+    // }
 
     public Pose2d getPose() {
         if (getState().Pose != null) {
@@ -544,22 +535,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     // _______________________________________ Vision Code _______________________________________
 
-    public boolean acceptVision(VisionAcceptor acceptor, String name) {
-        boolean acceptVisionMeasurement = false;
-        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-        if (currentPose != null) {
-        acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
-        previousPositions.put(name, currentPose.pose);
-        }
-        return acceptVisionMeasurement;
-    }
+    // public boolean acceptVision(VisionAcceptor acceptor, String name) {
+    //     boolean acceptVisionMeasurement = false;
+    //     PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    //     if (currentPose != null) {
+    //     acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
+    //     previousPositions.put(name, currentPose.pose);
+    //     }
+    //     return acceptVisionMeasurement;
+    // }
+    // public void updateVision(String name) {
+    //     PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    //     if (currentPose != null) {
+    //         addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
+    //     }
+    // }
 
-    public void updateVision(String name) {
-        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-        if (currentPose != null) {
-            addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
-        }
+    private void processVision(VisionAcceptor acceptor, String name) {
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    if (estimate == null) return;
+    
+    boolean accepted = acceptor.shouldAccept(estimate.pose, previousPositions.get(name), getState().Speeds);
+    previousPositions.put(name, estimate.pose);
+    
+    if (accepted) {
+        addVisionMeasurement(estimate.pose, Utils.currentTimeToFPGATime(estimate.timestampSeconds));
     }
+}
+
 
     public boolean acceptGyro(VisionAcceptor acceptor, String name) {
         boolean acceptGyro = acceptor.shouldResetGyro();

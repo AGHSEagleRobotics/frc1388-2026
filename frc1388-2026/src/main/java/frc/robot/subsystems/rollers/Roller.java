@@ -4,39 +4,18 @@
 
 package frc.robot.subsystems.rollers;
 
-import java.util.function.BooleanSupplier;
-
-import com.ctre.phoenix6.hardware.TalonFX;
-
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.RollerConstants;
 import frc.robot.subsystems.rollers.RollerIO.RollerIOInputs;
-import frc.robot.subsystems.rollers.RollerIO.RollerIOMode;
-import frc.robot.subsystems.rollers.RollerIO.RollerIOOutputs;
 
 public class Roller extends SubsystemBase {
   /** Creates a new RollerSubsystem. */
 
   private final RollerIO m_io;
 
-  private final RollerMotor[] m_rollerMotors = {
-    RollerMotor.BOTTOMROLLER, RollerMotor.TOPROLLER,
-  };
-
-  private BooleanSupplier m_isReadyToShoot;
-  
   public RollerState rollerState;
 
   private final RollerIOInputs inputs = new RollerIOInputs();
-  private final RollerIOOutputs outputs = new RollerIOOutputs();
-
-  private BooleanSupplier coastOverride = () -> false;
 
   enum RollerMotor {
     TOPROLLER,
@@ -59,17 +38,14 @@ public class Roller extends SubsystemBase {
     m_io.updateInputs(inputs);
     if (rollerState == RollerState.IDLE) {
       stop();
-    }
-    else if(rollerState == RollerState.INTAKING) {
+    } else if (rollerState == RollerState.INTAKING) {
       setIntakingRollers();
-    }
-    else if ((rollerState == RollerState.SHOOTING) && (m_isReadyToShoot.getAsBoolean())) {
+    } else if ((rollerState == RollerState.SHOOTING)) {
       setShootingRollers();
-    }
-    else if (rollerState == RollerState.TESTING) {
+    } else if (rollerState == RollerState.TESTING) {
       setTestingRollers();
     }
-    }
+  }
 
     public void stop() {
       m_io.setBottomRollerVoltage(0);
@@ -78,6 +54,7 @@ public class Roller extends SubsystemBase {
 
     public void setIntakingRollers() {
       m_io.setBottomRollerVoltage(RollerConstants.bottomRollerIntakeSpeed);
+      m_io.setTopRollerVoltage(0);
     }
 
     public void setShootingRollers() {
@@ -87,6 +64,7 @@ public class Roller extends SubsystemBase {
 
     public void setTestingRollers() {
       m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
+      m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);
     }
 
     public RollerState getRollerState() {
@@ -96,8 +74,4 @@ public class Roller extends SubsystemBase {
     public void setRollerState(RollerState rollerState) {
       this.rollerState = rollerState;
     }
-
-    public void setShootingReady(BooleanSupplier isReadyToShoot) {
-    m_isReadyToShoot = isReadyToShoot;
-  }
 }

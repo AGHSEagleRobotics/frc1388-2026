@@ -3,18 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Voltage;
-
 /** Add your docs here. */
 public interface IntakeIO {
     public static class IntakeIOInputs {
@@ -54,4 +42,5 @@ public interface IntakeIO {
 
     public void zeroPosition();
 
+    public double getPosition();
 }

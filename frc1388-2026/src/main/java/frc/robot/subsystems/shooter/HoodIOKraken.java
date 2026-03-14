@@ -4,40 +4,29 @@
 
 package frc.robot.subsystems.shooter;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
-
-import static edu.wpi.first.units.Units.Volts;
-
-import java.util.concurrent.CancellationException;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
-
-import edu.wpi.first.math.controller.PIDController;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class HoodIOKraken implements HoodIO {
   
@@ -60,74 +49,83 @@ public class HoodIOKraken implements HoodIO {
   StatusSignal<Angle> hoodMotorPositionStatusSignal;
   
   private final TalonFX hoodMotor;
-  private final TalonFX secondaryHoodMotor;
   private final CANcoder CANcoder;
 
+  private final Follower followRequest = new Follower(38, MotorAlignmentValue.Opposed);
   public HoodIOKraken() {
 
     hoodMotor = new TalonFX(38);
-    secondaryHoodMotor = new TalonFX(39);
     CANcoder = new CANcoder(51);
 
-    secondaryHoodMotor.setControl(new Follower(38, MotorAlignmentValue.Opposed));
-
+    
     hoodMotorVelocityStatusSignal = hoodMotor.getVelocity();
-
+    
     hoodMotorVoltageStatusSignal = hoodMotor.getMotorVoltage();
-
-    hoodMotorCurrentAmpsStatusSignal = hoodMotor.getStatorCurrent();
-
+    
+    // hoodMotorCurrentAmpsStatusSignal = hoodMotor.getStatorCurrent();
+    
     hoodMotorTempCelsiusStatusSignal = hoodMotor.getDeviceTemp();
-
+    
     hoodMotorPositionStatusSignal = hoodMotor.getPosition();
-
-    hoodMotorVoltageRequest = new VoltageOut(0);
-    hoodMotorPositionRequest = new MotionMagicVoltage(0);
-
+    
+    hoodMotorVoltageRequest = new VoltageOut(0).withUpdateFreqHz(50);
+    hoodMotorPositionRequest = new MotionMagicVoltage(0).withUpdateFreqHz(50);
+    
     configureCANcoder(CANcoder);
     configureHoodMotor(hoodMotor);
-  }
 
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0,
+        hoodMotorVelocityStatusSignal);
+    BaseStatusSignal.setUpdateFrequencyForAll(10.0,
+        hoodMotorVoltageStatusSignal,
+        // hoodMotorCurrentAmpsStatusSignal,
+        hoodMotorTempCelsiusStatusSignal,
+        hoodMotorPositionStatusSignal);
+  }
+  
   @Override
   public void updateInputs(HoodIOInputs inputs) {
     BaseStatusSignal.refreshAll(
       hoodMotorVelocityStatusSignal,
       hoodMotorVoltageStatusSignal,
-      hoodMotorCurrentAmpsStatusSignal, 
+      // hoodMotorCurrentAmpsStatusSignal, 
       hoodMotorTempCelsiusStatusSignal,
       hoodMotorPositionStatusSignal);
-
+      
       inputs.hoodMotorVelocityRPS = hoodMotorVelocityStatusSignal.getValueAsDouble();
-      inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();
+      // inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();
       inputs.hoodMotorTempCelsius = hoodMotorTempCelsiusStatusSignal.getValueAsDouble();
       inputs.hoodMotorVoltage = hoodMotorVoltageStatusSignal.getValueAsDouble();
       inputs.hoodMotorPosition = hoodMotorPositionStatusSignal.getValueAsDouble();
-  }
+    }
 
   public void configureHoodMotor(TalonFX hoodMotor) {
     TalonFXConfiguration hoodMotorConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs hoodMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
-
-    // TODO: CHANGE LATER
-    hoodMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40.0;
-    hoodMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40.0;
 
     hoodMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+    hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = HoodConstants.SUPPLY_CURRENT_LIMIT_HOOD;
+    hoodMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    hoodMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0; 
+    hoodMotorConfig.MotionMagic.MotionMagicAcceleration = 18.0; 
+    hoodMotorConfig.MotionMagic.MotionMagicJerk = 180; // accereration * 10
 
     hoodMotorConfig.Slot0.kA = 0;
-    hoodMotorConfig.Slot0.kG = 0;
+    hoodMotorConfig.Slot0.kG = 0.07; // (-0.22+0.36) / 2
     hoodMotorConfig.Slot0.kV = 0;
-    hoodMotorConfig.Slot0.kP = 0;
-    hoodMotorConfig.Slot0.kI = 0;
+    hoodMotorConfig.Slot0.kP = 35; // manually tuned
+    hoodMotorConfig.Slot0.kI = 0.4; // 40/100
     hoodMotorConfig.Slot0.kD = 0;
-    hoodMotorConfig.Slot0.kS = 0;
+    hoodMotorConfig.Slot0.kS = 0.29; // 0.36 - 0.07
 
     // TODO: CORRECT LATER
-    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    hoodMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    hoodMotorConfig.Feedback.FeedbackSensorSource = 
+    FeedbackSensorSourceValue.RemoteCANcoder;
+    hoodMotorConfig.Feedback.FeedbackRemoteSensorID = 51;
 
     // TODO: CHECK VALUE
-    hoodMotorConfig.Feedback.SensorToMechanismRatio = 1;
+    hoodMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
@@ -142,19 +140,26 @@ public class HoodIOKraken implements HoodIO {
 
     //TODO: CHANGE LATER
     CANcoderConfig.MagnetSensor.MagnetOffset = HoodConstants.HOOD_OFFSET;
+    // Gives 0.0 to 1.0 range (full rotation, no discontinuity)
+    CANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;
+    CANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+
     
     CANcoder.getConfigurator().apply(CANcoderConfig);
   }
 
-  public void setPosition(double position){
-    hoodMotor.setControl(hoodMotorPositionRequest.withPosition(position));
+  @Override
+  public void setPosition(double degrees){
+    hoodMotor.setControl(hoodMotorPositionRequest.withPosition(degrees));
   }
 
+  @Override
   public void setVoltage(double volts){
     hoodMotor.setControl(hoodMotorVoltageRequest.withOutput(volts));
   }
 
   public double getPosition() {
     return CANcoder.getAbsolutePosition().getValueAsDouble();
+
   }
 }

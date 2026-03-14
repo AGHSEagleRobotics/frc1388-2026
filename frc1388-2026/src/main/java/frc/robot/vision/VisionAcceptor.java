@@ -103,7 +103,7 @@ public class VisionAcceptor {
 
             double allignmentThreshold = Math.toRadians(15);
 
-            if (m_angle < allignmentThreshold) {
+            if (m_angle > allignmentThreshold) {
                 return false;
             }
         }
@@ -112,7 +112,7 @@ public class VisionAcceptor {
         }
 
         // checks if robot is moving too fast for camera to update
-        if (norm() > 2.5) { //changed from 4
+        if (norm() > 4.0) { //changed from 4
             return false;
         }
         // m_lastPosition = currentPosition;

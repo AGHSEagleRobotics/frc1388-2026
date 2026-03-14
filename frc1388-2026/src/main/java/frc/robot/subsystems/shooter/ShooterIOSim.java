@@ -4,13 +4,6 @@
 
 package frc.robot.subsystems.shooter;
 
-import com.ctre.phoenix6.sim.TalonFXSimState;
-
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 // public class ShooterIOSim implements ShooterIO {
 //   private TalonFXSimState shootMotorSim;
   

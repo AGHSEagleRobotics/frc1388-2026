@@ -3,40 +3,29 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Second;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.Constants;
-import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.IntakeConstants;
 
 /** Add your docs here. */
 public class IntakeIOKraken implements IntakeIO {
@@ -72,6 +61,7 @@ public class IntakeIOKraken implements IntakeIO {
 
   private final NeutralOut neutralOut = new NeutralOut();
 
+  private final Follower followRequest = new Follower(44, MotorAlignmentValue.Opposed);
 
   public IntakeIOKraken() {
     m_deployMotor1 = new TalonFX(44);
@@ -79,15 +69,13 @@ public class IntakeIOKraken implements IntakeIO {
     m_rollerMotor = new TalonFX(43);
     CANcoder = new CANcoder(52);
 
-    m_deployMotor2.setControl(new Follower(44, MotorAlignmentValue.Opposed));
-
     configureDeployMotors(m_deployMotor1, m_deployMotor2);
     configureRollerMotor(m_rollerMotor);
     configureCANcoder(CANcoder);
 
-    deployMotorVoltageRequest = new VoltageOut(0);
-    rollerMotorVoltageRequest = new VoltageOut(0);
-    deployMotorPositionRequest = new MotionMagicVoltage(0);
+    deployMotorVoltageRequest = new VoltageOut(0).withUpdateFreqHz(50);
+    rollerMotorVoltageRequest = new VoltageOut(0).withUpdateFreqHz(50);
+    deployMotorPositionRequest = new MotionMagicVoltage(0).withUpdateFreqHz(50);
 
 
     deployMotorVelocityStatusSignal = m_deployMotor1.getVelocity();
@@ -109,6 +97,22 @@ public class IntakeIOKraken implements IntakeIO {
     rollerMotorVoltageStatusSignal = m_rollerMotor.getMotorVoltage();
 
     deployMotorPositionStatusSignal = m_deployMotor1.getPosition();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0,
+        deployMotorVelocityStatusSignal,
+        rollerMotorVelocityStatusSignal);
+        BaseStatusSignal.setUpdateFrequencyForAll(10.0,
+        deployMotorTorqueCurrentStatusSignal,
+        deployMotorSupplyCurrentStatusSignal,
+        deployMotorTemperatureStatusSignal,
+        deployMotorVoltageStatusSignal,
+        deployMotorPositionStatusSignal,
+        rollerMotorTorqueCurrentStatusSignal,
+        rollerMotorSupplyCurrentStatusSignal,
+        rollerMotorTemperatureStatusSignal,
+        rollerMotorVoltageStatusSignal);
+
+    m_deployMotor2.setControl(followRequest);
   }
 
    @Override
@@ -172,63 +176,65 @@ public class IntakeIOKraken implements IntakeIO {
     public void stopRack() {
         m_deployMotor1.setControl(neutralOut);
     }
-
+    
     @Override
     public void stopSpin() {
-        m_rollerMotor.setControl(neutralOut);
+      m_rollerMotor.setControl(neutralOut);
     }
     
     @Override
     public void zeroPosition() {
-        m_deployMotor1.setPosition(0);
+      m_deployMotor1.setPosition(0);
     }
-
+    
+    public double getPosition() {
+      return CANcoder.getAbsolutePosition().getValueAsDouble();
+    }
+    
   private void configureDeployMotors(TalonFX deployMotor1, TalonFX deployMotor2) {
     TalonFXConfiguration deployMotorConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs deployMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
-    //TODO: CORRECT LATER
-    deployMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40;
-    deployMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40;
+    deployMotorConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT_DEPLOY;
+    deployMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    deployMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
-    deployMotorConfig.TorqueCurrent = deployMotorTorqueCurrentConfigs;
+    deployMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0;
+    deployMotorConfig.MotionMagic.MotionMagicAcceleration = 16.0;
+    deployMotorConfig.MotionMagic.MotionMagicJerk = 160.0; // Acceleration * 10
 
     deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
-    deployMotorConfig.Slot0.kG = 0;
+    deployMotorConfig.Slot0.kG = 0.07;
     deployMotorConfig.Slot0.kV = 0;
     deployMotorConfig.Slot0.kA = 0;
-    deployMotorConfig.Slot0.kP = 0;
-    deployMotorConfig.Slot0.kI = 0;
-    deployMotorConfig.Slot0.kD = 0;
-    deployMotorConfig.Slot0.kS = 0;
+    deployMotorConfig.Slot0.kP = 10;
+    deployMotorConfig.Slot0.kI = 0.01; // P divided by 100
+    deployMotorConfig.Slot0.kD = 0.1; // P divided by 10
+    deployMotorConfig.Slot0.kS = 0.3; // voltage set
 
     //TODO: CHANGE LATER
-    deployMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
+    deployMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    
+    deployMotorConfig.Feedback.FeedbackSensorSource = 
+    FeedbackSensorSourceValue.RemoteCANcoder;
+    deployMotorConfig.Feedback.FeedbackRemoteSensorID = 52;
     deployMotorConfig.Feedback.SensorToMechanismRatio = 1;
 
-    StatusCode status = StatusCode.StatusCodeNotInitialized;
+    StatusCode status1 = StatusCode.StatusCodeNotInitialized;
+    StatusCode status2 = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
-      status = deployMotor1.getConfigurator().apply(deployMotorConfig);
-      status = deployMotor2.getConfigurator().apply(deployMotorConfig);
-      if (status.isOK()) break;
+      status1 = deployMotor1.getConfigurator().apply(deployMotorConfig);
+      status2 = deployMotor2.getConfigurator().apply(deployMotorConfig);
+      if (status1.isOK() && status2.isOK()) {
+        break;
+      }
     }
   }
 
   private void configureRollerMotor(TalonFX rollerMotor) {
     TalonFXConfiguration rollerMotorConfig = new TalonFXConfiguration();
-    TorqueCurrentConfigs rollerMotorTorqueCurrentConfigs = new TorqueCurrentConfigs();
 
-    //TODO: CORRECT LATER
-    rollerMotorTorqueCurrentConfigs.PeakForwardTorqueCurrent = 40;
-    rollerMotorTorqueCurrentConfigs.PeakReverseTorqueCurrent = 40;
-
-    
-    rollerMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
-
-    rollerMotorConfig.TorqueCurrent = rollerMotorTorqueCurrentConfigs;
+    rollerMotorConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT_ROLLER;
+    rollerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     rollerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
@@ -253,7 +259,11 @@ public class IntakeIOKraken implements IntakeIO {
     CANcoderConfiguration CANcoderConfig = new CANcoderConfiguration();
 
     //TODO: CHANGE LATER
-    CANcoderConfig.MagnetSensor.MagnetOffset = HoodConstants.HOOD_OFFSET;
+    CANcoderConfig.MagnetSensor.MagnetOffset = IntakeConstants.INTAKE_OFFSET;
+       
+    // Gives 0.0 to 1.0 range (full rotation, no discontinuity)
+    CANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0;
+    CANcoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     
     CANcoder.getConfigurator().apply(CANcoderConfig);
   }

@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Volts;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -14,21 +12,16 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOKraken implements ShooterIO {
 
@@ -67,30 +60,45 @@ public class ShooterIOKraken implements ShooterIO {
 
   // Control
   private final Slot0Configs controllerConfig = new Slot0Configs();
-  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(0.0);
-  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(0.0);
-  private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(0.0);
+  private final Slot0Configs kickerController = new Slot0Configs();
+  private final VoltageOut voltageControl = new VoltageOut(0).withUpdateFreqHz(50.0);
+  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withUpdateFreqHz(50.0);
+  private final NeutralOut neutralControl = new NeutralOut().withUpdateFreqHz(50.0);
+  private final Follower followRequest = new Follower(36, MotorAlignmentValue.Opposed);
 
   public ShooterIOKraken() {
-    shootMotor1 = new TalonFX(36);
-    shootMotor2 = new TalonFX(37);
-    kickerMotor = new TalonFX(42);
+    shootMotor1 = new TalonFX(ShooterConstants.SHOOT_MOTOR1_CANID);
+    shootMotor2 = new TalonFX(ShooterConstants.SHOOT_MOTOR2_CANID);
+    kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_CANID);
 
-    shootMotor2.setControl(new Follower(36, MotorAlignmentValue.Opposed)); //same thing as setshootervolts w/ motor inverison, also might wanna look into feedforward constants
     //PIDS config
-    controllerConfig.kP = 0.0;
+    controllerConfig.kP = 0.034064;
     controllerConfig.kI = 0.0;
     controllerConfig.kD = 0.0;
-    controllerConfig.kS = 0.0;
-    controllerConfig.kV = 0.0;
-    controllerConfig.kA = 0.0;
+    controllerConfig.kS = 0.26106;
+    controllerConfig.kV = 0.13068;
+    controllerConfig.kA = 0.019043;
+
+    // PIDS config
+    kickerController.kP = 0.033557;
+    kickerController.kI = 0.0;
+    kickerController.kD = 0.0;
+    kickerController.kS = 0.15273;
+    kickerController.kV = 0.11886;
+    kickerController.kA = 0.027404;
     
     // General config
     TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-    shooterConfig.CurrentLimits.SupplyCurrentLimit = 60.0;
+    shooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.SUPPLY_CURRENT_LIMIT_SHOOTER;
     shooterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    shooterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    shooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     shooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+    TalonFXConfiguration kickerConfig = new TalonFXConfiguration();
+    kickerConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.SUPPLY_CURRENT_LIMIT_SHOOTER;
+    kickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    kickerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    kickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     //applying configs
     shootMotor1.getConfigurator().apply(shooterConfig, 1.0);
@@ -98,8 +106,8 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor1.getConfigurator().apply(controllerConfig, 1.0);
     shootMotor2.getConfigurator().apply(controllerConfig, 1.0);
     
-    kickerMotor.getConfigurator().apply(shooterConfig, 1.0);
-    kickerMotor.getConfigurator().apply(controllerConfig, 1.0);
+    kickerMotor.getConfigurator().apply(kickerConfig, 1.0);
+    kickerMotor.getConfigurator().apply(kickerController, 1.0);
    
 
     //SS at the end is just statussignal i was too lazy to write it out all the time
@@ -113,46 +121,46 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor2VelocitySS = shootMotor2.getVelocity();
     shootMotor2VoltageSS = shootMotor2.getMotorVoltage();
     shootMotor2TorqueCurrentAmpsSS = shootMotor2.getTorqueCurrent();
-    shootMotor2SupplyCurrentAmpsSS = shootMotor2.getTorqueCurrent();
+    shootMotor2SupplyCurrentAmpsSS = shootMotor2.getSupplyCurrent();
     shootMotor2TempCelsiusSS = shootMotor2.getDeviceTemp();
     shootMotor2PositionStatusSignal = shootMotor2.getPosition();
 
     kickerMotorVelocitySS = kickerMotor.getVelocity();
     kickerMotorVoltageSS = kickerMotor.getMotorVoltage();
     kickerMotorTorqueCurrentAmpsSS = kickerMotor.getTorqueCurrent();
-    kickerMotorSupplyCurrentAmpsSS = kickerMotor.getTorqueCurrent();
+    kickerMotorSupplyCurrentAmpsSS = kickerMotor.getSupplyCurrent();
     kickerMotorTempCelsiusSS = kickerMotor.getDeviceTemp();
     kickerPositionStatusSignal = kickerMotor.getPosition();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-      100.0, 
-      shootMotor1VelocitySS,
-      shootMotor1VoltageSS,
-      shootMotor1TorqueCurrentAmpsSS,
-      shootMotor1SupplyCurrentAmpsSS,
-      shootMotor1TempCelsiusSS,
-      shootMotor1PositionStatusSignal,
-      
-      shootMotor2VelocitySS,
-      shootMotor2VoltageSS,
-      shootMotor2TorqueCurrentAmpsSS,
-      shootMotor2SupplyCurrentAmpsSS,
-      shootMotor2TempCelsiusSS,
-      shootMotor2PositionStatusSignal,
-      
-      kickerMotorVelocitySS,
-      kickerMotorVoltageSS,
-      kickerMotorTorqueCurrentAmpsSS,
-      kickerMotorSupplyCurrentAmpsSS,
-      kickerMotorTempCelsiusSS,
-      kickerPositionStatusSignal
-      ); 
+    // Keep velocity fast for closed-loop control
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0,
+        shootMotor1VelocitySS,
+        shootMotor2VelocitySS,
+        kickerMotorVelocitySS);
+    BaseStatusSignal.setUpdateFrequencyForAll(10.0,
+        shootMotor1VoltageSS,
+        shootMotor1TorqueCurrentAmpsSS,
+        shootMotor1SupplyCurrentAmpsSS,
+        shootMotor1TempCelsiusSS,
+        shootMotor1PositionStatusSignal,
+        shootMotor2VoltageSS,
+        shootMotor2TorqueCurrentAmpsSS,
+        shootMotor2SupplyCurrentAmpsSS,
+        shootMotor2TempCelsiusSS,
+        shootMotor2PositionStatusSignal,
+        kickerMotorVoltageSS,
+        kickerMotorTorqueCurrentAmpsSS,
+        kickerMotorSupplyCurrentAmpsSS,
+        kickerMotorTempCelsiusSS,
+        kickerPositionStatusSignal);
 
+    shootMotor2.setControl(followRequest); // same thing as setshootervolts w/ motor inverison, also might wanna look
+                                           // into feedforward constants
   }
+
   @Override
   public void updateInputs(ShooterInputs inputs) {
-    inputs.shootMotor1Connected = 
-      BaseStatusSignal.refreshAll(
+    inputs.shootMotor1Connected = BaseStatusSignal.refreshAll(
         shootMotor1VelocitySS,
         shootMotor1VoltageSS,
         shootMotor1TorqueCurrentAmpsSS,
@@ -214,7 +222,6 @@ public class ShooterIOKraken implements ShooterIO {
   @Override
     public void setShooterVolts(double shootMotorVolts) {
       shootMotor1.setControl(voltageControl.withOutput(shootMotorVolts));
-      //have following motor inverted from other motor
     }
   @Override
     public void setKickerVolts(double kickerVolts) {
@@ -228,9 +235,8 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
     public void stopShooter() {
-      shootMotor1.setControl(neutralControl);
-      shootMotor2.setControl(neutralControl);
-      kickerMotor.setControl(neutralControl);
+      shootMotor1.setControl(voltageControl.withOutput(0));
+      kickerMotor.setControl(voltageControl.withOutput(0));
     }
   @Override
     public void setCoastMode(boolean coast) {

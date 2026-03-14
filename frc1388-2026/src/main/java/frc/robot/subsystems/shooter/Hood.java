@@ -6,6 +6,7 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.*;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -14,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.HoodConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.HoodIO.HoodIOInputs;
 
 public class Hood extends SubsystemBase {
@@ -26,11 +26,11 @@ public class Hood extends SubsystemBase {
   public double m_distanceFromHubSOTM;
   public double m_distanceFromPass;
 
-  private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
-  private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
-  private final MutAngularVelocity sysidVelocityMeasure = RotationsPerSecond.mutable(0);
+  // private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
+  // private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
+  // private final MutAngularVelocity sysidVelocityMeasure = RotationsPerSecond.mutable(0);
 
-  private final SysIdRoutine sysIdRoutine;  
+  // private final SysIdRoutine sysIdRoutine;  
   
   public enum HoodState {
     IDLE,
@@ -47,23 +47,23 @@ public class Hood extends SubsystemBase {
     m_io = io;
     hoodState = HoodState.IDLE;
 
-    sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(3), null, null),
-        new SysIdRoutine.Mechanism(
-            (Voltage volts) -> {
-              m_io.setVoltage(volts.in(Volts));
-            },
-            log -> {
-              log.motor("left")
-                  .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.hoodMotorVoltage,
-                      Volts))
-                  .angularPosition(
-                      sysidPositionMeasure.mut_replace(inputs.hoodMotorPosition,
-                          Rotations))
-                  .angularVelocity(sysidVelocityMeasure.mut_replace(inputs.hoodMotorVelocityRPS,
-                      RotationsPerSecond));
-            },
-            this));
+    // sysIdRoutine = new SysIdRoutine(
+    //     new SysIdRoutine.Config(Volts.of(0.15).per(Second), Volts.of(0.35), Seconds.of(3.5), null),
+    //     new SysIdRoutine.Mechanism(
+    //         (Voltage volts) -> {
+    //           m_io.setVoltage(volts.in(Volts));
+    //         },
+    //         log -> {
+    //           log.motor("hood-pivot")
+    //               .voltage(sysidAppliedVoltageMeasure.mut_replace(inputs.hoodMotorVoltage,
+    //                   Volts))
+    //               .angularPosition(
+    //                   sysidPositionMeasure.mut_replace(inputs.hoodMotorPosition,
+    //                       Rotations))
+    //               .angularVelocity(sysidVelocityMeasure.mut_replace(inputs.hoodMotorVelocityRPS,
+    //                   RotationsPerSecond));
+    //         },
+    //         this));
   }
 
   @Override
@@ -80,22 +80,22 @@ public class Hood extends SubsystemBase {
       setShootingPosition(HoodConstants.DISTANCE_TO_SHOT_HOODANGLE.get(m_distanceFromHubSOTM));
     }
     else if (hoodState == HoodState.PASSING) {
-      setShootingPosition(HoodConstants.DISTANCE_TO_PASS_HOODANGLE.get(m_distanceFromPass));
+      setShootingPosition(HoodConstants.HOOD_FAR);
     }
     else if (hoodState == HoodState.TESTING) {
-      setTestingPosition(0);
+      m_io.setVoltage(-0.22);
     }
     else if (hoodState == HoodState.MANUAL_CLOSE) {
-      setShootingPosition(0);
+      setShootingPosition(HoodConstants.HOOD_CLOSE);
     }
     else if (hoodState == HoodState.MANUAL_FAR) {
-      setShootingPosition(0);
+      setShootingPosition(HoodConstants.HOOD_FAR);
     }
 
+    DogLog.log("Hood/Absolute Encoder", m_io.getPosition());
   }
 
   public void stop() {
-    m_io.setVoltage(0);
     m_io.setPosition(m_io.getPosition());
   }
 
@@ -131,11 +131,11 @@ public class Hood extends SubsystemBase {
     return hoodState;
   }
 
-  public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.quasistatic(direction).withName("shooterHood.sysIdQuasistatic");
-    }
+  // public Command sysIdQuasistaticCommand(SysIdRoutine.Direction direction) {
+  //       return sysIdRoutine.quasistatic(direction).withName("shooterHood.sysIdQuasistatic");
+  //   }
 
-    public Command sysIdDynamicCommand(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.dynamic(direction).withName("shooterHood.sysIdDynamic");
-    }
+  //   public Command sysIdDynamicCommand(SysIdRoutine.Direction direction) {
+  //       return sysIdRoutine.dynamic(direction).withName("shooterHood.sysIdDynamic");
+  //   }
 }

@@ -18,17 +18,12 @@ public class BallSimulator {
     private final BallConstants constants;
     private final List<BallState> balls = new ArrayList<>();
 
-    private final double fieldLength;
-    private final double fieldWidth;
-
     public BallSimulator(
             BallConstants constants,
             double fieldLength,
             double fieldWidth) {
 
         this.constants = constants;
-        this.fieldLength = fieldLength;
-        this.fieldWidth = fieldWidth;
     }
 
     public int addBall(BallState initialState) {
