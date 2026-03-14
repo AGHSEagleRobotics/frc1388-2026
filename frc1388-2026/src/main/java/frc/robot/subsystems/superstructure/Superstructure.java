@@ -97,7 +97,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command deployIntakingCommand() {
     m_intakeState = m_intake.getIntakeState();
-    return this.runOnce(() -> {
+    return this.run(() -> {
       if ((m_intake.getIntakeState() == IntakeState.INTAKING) || (m_intake.getPosition() < IntakeConstants.POSITION_TOLERANCE)) {
         m_intake.setIntakeState(IntakeState.EXTENDED);
         m_roller.setRollerState(RollerState.IDLE);
@@ -105,7 +105,7 @@ public class Superstructure extends SubsystemBase {
         m_intake.setIntakeState(IntakeState.INTAKING);
         m_roller.setRollerState(RollerState.INTAKING);
       }
-    });
+    }).until(() -> m_intake.getIntakeState() == IntakeState.INTAKING);
   }
 
   public Command retractIntake() {

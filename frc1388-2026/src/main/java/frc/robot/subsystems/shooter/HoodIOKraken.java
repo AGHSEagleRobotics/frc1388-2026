@@ -108,7 +108,7 @@ public class HoodIOKraken implements HoodIO {
 
     hoodMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0; 
     hoodMotorConfig.MotionMagic.MotionMagicAcceleration = 18.0; 
-    hoodMotorConfig.MotionMagic.MotionMagicJerk = 0;
+    hoodMotorConfig.MotionMagic.MotionMagicJerk = 180; // accereration * 10
 
     hoodMotorConfig.Slot0.kA = 0;
     hoodMotorConfig.Slot0.kG = 0.07; // (-0.22+0.36) / 2
