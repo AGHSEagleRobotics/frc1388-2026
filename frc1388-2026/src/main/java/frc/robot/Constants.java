@@ -79,13 +79,13 @@ public final class Constants {
 
       public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 60.0;
 
-      public static final double TESTING_STATE_VOLTS = 4;
+      public static final double TESTING_STATE_VOLTS = 4.0;
 
-      public static final double KICKER_SHOOTING_VELOCITY = 1200 / 60;
+      public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2500/60;
+      public static final double MANUAL_SHOOT_CLOSE = 2500.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 3000/60;
+      public static final double MANUAL_SHOOT_FAR = 3200.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 5.0/3.0;
 
