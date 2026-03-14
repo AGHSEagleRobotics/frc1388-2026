@@ -127,15 +127,15 @@ public class Superstructure extends SubsystemBase {
   public Command shootManually() {
     m_hoodState = m_hood.getHoodState();
     return this.run(() -> {
-      if (m_hood.getHoodState() == HoodState.MANUAL_CLOSE) {
-        m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        m_hood.setHoodState(HoodState.MANUAL_CLOSE);
+      if (m_hood.getHoodState() == HoodState.MANUAL_FAR) {
+        m_shooter.setShooterState(ShooterState.MANUAL_FAR);
+        m_hood.setHoodState(HoodState.MANUAL_FAR);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
 
       } else {
-        m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        m_hood.setHoodState(HoodState.MANUAL_FAR);
+        m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
+        m_hood.setHoodState(HoodState.MANUAL_CLOSE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
