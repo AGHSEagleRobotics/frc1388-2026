@@ -20,7 +20,6 @@ import frc.robot.subsystems.shooter.Hood;
 import frc.robot.subsystems.shooter.Hood.HoodState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.Shooter.ShooterState;
-import frc.robot.Constants.IntakeConstants;
 
 public class Superstructure extends SubsystemBase {
 
@@ -55,8 +54,10 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if(isInShooterState()) {
     m_isAtSpeed = isAtSpeed();
-  
+    }
+    
     if (m_shooter.getShooterState() == ShooterState.SHOOTING) {
       m_shooter.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
       m_hood.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
@@ -104,7 +105,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command deployIntakingCommand() {
     m_intakeState = m_intake.getIntakeState();
-    return this.runOnce(() -> {
+    return this.run(() -> {
       if ((m_intake.getIntakeState() == IntakeState.INTAKING) || (m_intake.getPosition() < IntakeConstants.POSITION_TOLERANCE)) {
         m_intake.setIntakeState(IntakeState.EXTENDED);
         m_roller.setRollerState(RollerState.IDLE);
@@ -112,7 +113,7 @@ public class Superstructure extends SubsystemBase {
         m_intake.setIntakeState(IntakeState.INTAKING);
         m_roller.setRollerState(RollerState.INTAKING);
       }
-    });
+    }).until(() -> m_intake.getIntakeState() == IntakeState.INTAKING);
   }
 
   public Command retractIntake() {
@@ -217,5 +218,16 @@ public class Superstructure extends SubsystemBase {
     ChassisSpeeds speeds = m_driveTrain.getFieldRelativeSpeeds();
     double linearSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
     return linearSpeed > 0.01;
+  }
+
+  public boolean isInShooterState() {
+    if (m_shooter.getShooterState() == ShooterState.MANUAL_CLOSE
+        || m_shooter.getShooterState() == ShooterState.MANUAL_FAR
+        || m_shooter.getShooterState() == ShooterState.SHOOTING 
+        || m_shooter.getShooterState() == ShooterState.PASSING
+        || m_shooter.getShooterState() == ShooterState.SOTM) {
+      return true;
+    }
+    return false;
   }
 }

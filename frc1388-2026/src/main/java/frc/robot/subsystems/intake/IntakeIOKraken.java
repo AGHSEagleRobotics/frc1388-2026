@@ -199,16 +199,16 @@ public class IntakeIOKraken implements IntakeIO {
 
     deployMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0;
     deployMotorConfig.MotionMagic.MotionMagicAcceleration = 16.0;
-    deployMotorConfig.MotionMagic.MotionMagicJerk = 0;
+    deployMotorConfig.MotionMagic.MotionMagicJerk = 160.0; // Acceleration * 10
 
     deployMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
-    deployMotorConfig.Slot0.kG = 0;
+    deployMotorConfig.Slot0.kG = 0.07;
     deployMotorConfig.Slot0.kV = 0;
     deployMotorConfig.Slot0.kA = 0;
     deployMotorConfig.Slot0.kP = 10;
     deployMotorConfig.Slot0.kI = 0.01; // P divided by 100
-    deployMotorConfig.Slot0.kD = 0;
+    deployMotorConfig.Slot0.kD = 0.1; // P divided by 10
     deployMotorConfig.Slot0.kS = 0.3; // voltage set
 
     //TODO: CHANGE LATER

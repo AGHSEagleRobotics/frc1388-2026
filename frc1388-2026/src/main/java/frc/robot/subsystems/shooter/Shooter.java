@@ -175,11 +175,13 @@ public enum ShooterState {
     } else {
       return false; // IDLE or TESTING — not trying to hold a velocity
     }
-    boolean isAtSpeed = Math.abs(inputs.shootMotor1VelocityRPS - targetRPS) < toleranceRPS;
+    double targetRPSKicker = targetRPS * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
+    boolean isAtSpeedShooter = Math.abs(inputs.shootMotor1VelocityRPS - targetRPS) < toleranceRPS;
+    boolean isAtSpeedKicker = Math.abs(inputs.kickerMotorVelocityRPS - targetRPSKicker) < toleranceRPS;
     SmartDashboard.putNumber("Shooter/TargetRPS", targetRPS);
-    SmartDashboard.putBoolean("Shooter/isAtSpeed", isAtSpeed);
+    SmartDashboard.putBoolean("Shooter/isAtSpeed", isAtSpeedShooter);
 
-    return isAtSpeed;
+    return isAtSpeedShooter && isAtSpeedKicker;
   }
 
   //  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
