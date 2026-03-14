@@ -166,27 +166,27 @@ public class RobotContainer {
 
         // intake deploy and retract
     
-        testJoystick.leftBumper().whileTrue(superstructure.testIntakeDeployDown());
-        testJoystick.leftBumper().onFalse(superstructure.retractIntake());
+        // testJoystick.leftBumper().whileTrue(superstructure.testIntakeDeployDown());
+        // testJoystick.leftBumper().onFalse(superstructure.retractIntake());
 
-        testJoystick.leftTrigger().whileTrue(superstructure.testIntakeDeployUp());
-        testJoystick.leftTrigger().onFalse(superstructure.retractIntake());
+        // testJoystick.leftTrigger().whileTrue(superstructure.testIntakeDeployUp());
+        // testJoystick.leftTrigger().onFalse(superstructure.retractIntake());
 
-        // intake rollers test
-        testJoystick.a().whileTrue(superstructure.testIntakeRollers());
-        testJoystick.a().onFalse(superstructure.stopIntakeRollers());
+        // // intake rollers test
+        // testJoystick.a().whileTrue(superstructure.testIntakeRollers());
+        // testJoystick.a().onFalse(superstructure.stopIntakeRollers());
 
-        // roller floor test
-        testJoystick.rightBumper().whileTrue(superstructure.testRollers());
-        testJoystick.rightBumper().onFalse(superstructure.stopRollers());
+        // // roller floor test
+        // testJoystick.rightBumper().whileTrue(superstructure.testRollers());
+        // testJoystick.rightBumper().onFalse(superstructure.stopRollers());
 
-        // shooter test
-        testJoystick.rightTrigger().whileTrue(superstructure.testShooter());
-        testJoystick.rightTrigger().onFalse(superstructure.stopShooting());
+        // // shooter test
+        // testJoystick.rightTrigger().whileTrue(superstructure.testShooter());
+        // testJoystick.rightTrigger().onFalse(superstructure.stopShooting());
 
-        // hood test
-        testJoystick.b().whileTrue(superstructure.testHood());
-        testJoystick.b().onFalse(superstructure.stopHood());
+        // // hood test
+        // testJoystick.b().whileTrue(superstructure.testHood());
+        // testJoystick.b().onFalse(superstructure.stopHood());
 
         // // SYS ID TUNING
         // testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));
