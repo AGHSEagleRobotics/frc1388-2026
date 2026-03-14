@@ -80,6 +80,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
 
+    public Rotation2d m_gyroOffset = new Rotation2d();
+
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -382,14 +384,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 resetGyro(LimelightConstants.LEFT_LIMELIGHT);
                 gyroWasAccepted = true;
             }
-        }
         DogLog.log("Drive/OdometryPose", getState().Pose);
         DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
         DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
 
+        
         SmartDashboard.putNumber("pose/distancefromhub", getAbsouluteDistanceFromHub());
         SmartDashboard.putNumber("pose/anglefromhub", getAbsoluteAngleFromHub());
+        SmartDashboard.putNumber("pose/X", getState().Pose.getX());
+        SmartDashboard.putNumber("pose/Y", getState().Pose.getY());
+        SmartDashboard.putNumber("pose/Rotation", getState().Pose.getRotation().getDegrees());
+        }
     }
     // if(mapleSimSwerveDrivetrain != null) {
     // DogLog.log("Drive/SimulationPose",
@@ -498,15 +504,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getAngle() {
+        double angle = ((getState().Pose.getRotation().getDegrees()));
         if (getState().Pose != null) {
-        return getState().Pose.getRotation().getDegrees();
+            if (angle < 0) {
+                angle += 360;
+            }
+            return angle;
         }
         return 0;
     }
 
     public double getRadians() {
         if (getState().Pose != null) {
-        return getState().Pose.getRotation().getRadians();
+        return Math.toRadians(getAngle());
         }
         return 0;
     }
@@ -539,31 +549,32 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     // _______________________________________ Vision Code _______________________________________
 
-    // public boolean acceptVision(VisionAcceptor acceptor, String name) {
-    //     boolean acceptVisionMeasurement = false;
-    //     PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-    //     if (currentPose != null) {
-    //     acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
-    //     previousPositions.put(name, currentPose.pose);
-    //     }
-    //     return acceptVisionMeasurement;
-    // }
-    // public void updateVision(String name) {
-    //     PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-    //     if (currentPose != null) {
-    //         addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
-    //     }
-    // }
+    public boolean acceptVision(VisionAcceptor acceptor, String name) {
+        boolean acceptVisionMeasurement = false;
+        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+        if (currentPose != null) {
+        acceptVisionMeasurement = acceptor.shouldAccept(currentPose.pose, previousPositions.get(name), getState().Speeds);
+        previousPositions.put(name, currentPose.pose);
+        }
+        return acceptVisionMeasurement;
+    }
+    public void updateVision(String name) {
+        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+        if (currentPose != null) {
+            addVisionMeasurement(currentPose.pose, Utils.currentTimeToFPGATime(currentPose.timestampSeconds));
+        }
+    }
 
     private void processVision(VisionAcceptor acceptor, String name) {
-    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
     if (estimate == null) return;
     
     boolean accepted = acceptor.shouldAccept(estimate.pose, previousPositions.get(name), getState().Speeds);
     previousPositions.put(name, estimate.pose);
+     SmartDashboard.putBoolean("pose/Accept" + name, accepted);
     
     if (accepted) {
-        addVisionMeasurement(estimate.pose, Utils.currentTimeToFPGATime(estimate.timestampSeconds));
+        addVisionMeasurement(estimate.pose, (estimate.timestampSeconds));
     }
 }
 
@@ -580,6 +591,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void resetGyro(String name) {
         Rotation2d limelightAngle = LimelightHelpers.getBotPose2d_wpiBlue(name).getRotation();
         Rotation2d correctedAngleOffset = new Rotation2d(limelightAngle.getRadians() - getRadians());
+        m_gyroOffset = correctedAngleOffset;
         Rotation2d correctAngle = new Rotation2d(getRadians() + correctedAngleOffset.getRadians());
         resetRotation(correctAngle);
     }
