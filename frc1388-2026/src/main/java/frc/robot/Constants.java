@@ -83,9 +83,9 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2500.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 2700.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 3200.0/60.0;
+      public static final double MANUAL_SHOOT_FAR = 3000.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 5.0/3.0;
 
