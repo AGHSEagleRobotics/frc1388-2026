@@ -146,6 +146,7 @@ public class HoodIOKraken implements HoodIO {
   @Override
   public void setPosition(double degrees){
     // hoodMotor.setControl(hoodMotorPositionRequest.withPosition(degrees));
+    hoodMotor.setControl(hoodMotorVoltageRequest.withOutput(0));
     return;
   }
 
