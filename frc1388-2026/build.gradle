@@ -113,17 +113,11 @@ sourceSets {
    }
 }
 
-def runCommand(String... args) {
-    new ByteArrayOutputStream().withStream { os ->
-        exec {
-            commandLine args
-            standardOutput = os
-        }
-        os.toString().strip()
-    }
+def getCommandOutput(List<String> args) {
+    providers.exec {
+        commandLine args
+    }.standardOutput.asText.get().trim()
 }
-
-
 
 task generateBuildInfo {
     doFirst {
@@ -131,14 +125,14 @@ task generateBuildInfo {
         delete(file(BUILDINFO_FILE_PATH))
     }
     doLast {
-        def gitHash = runCommand 'git', 'log', '-1', '--pretty=format:%h'
+        def gitHash = getCommandOutput(['git', 'log', '-1', '--pretty=format:%h'])
         def gitBranch
         try {
-            gitBranch = runCommand 'git', 'symbolic-ref', '--short', 'HEAD'
+            gitBranch = getCommandOutput(['git', 'symbolic-ref', '--short', 'HEAD'])
         } catch(ignored) {
             gitBranch = "no branch"
         }
-        def gitStatus = runCommand 'git', 'diff', '--shortstat', 'HEAD'
+        def gitStatus = getCommandOutput(['git', 'diff', '--shortstat', 'HEAD'])
         def buildDate = new Date().format('yyyy-MM-dd')
         def buildTime = new Date().format('HH:mm:ss z')
 

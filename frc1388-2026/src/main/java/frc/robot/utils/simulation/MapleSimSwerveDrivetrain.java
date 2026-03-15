@@ -173,14 +173,14 @@ public class MapleSimSwerveDrivetrain {
     }
 
     public static class TalonFXMotorControllerWithRemoteCanCoderSim extends TalonFXMotorControllerSim {
-        private final int encoderId;
+        // private final int encoderId;
         private final CANcoderSimState remoteCancoderSimState;
 
         public TalonFXMotorControllerWithRemoteCanCoderSim(TalonFX talonFX, CANcoder cancoder) {
             super(talonFX);
             this.remoteCancoderSimState = cancoder.getSimState();
 
-            this.encoderId = cancoder.getDeviceID();
+            // this.encoderId = cancoder.getDeviceID();
         }
 
         @Override
