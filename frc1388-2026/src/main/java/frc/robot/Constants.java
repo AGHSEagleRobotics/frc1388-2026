@@ -87,7 +87,7 @@ public final class Constants {
 
       public static final double MANUAL_SHOOT_FAR = 3000.0/60.0;
 
-      public static final double KICKER_TO_SHOOTER_RATIO = 3.0/3.0;
+      public static final double KICKER_TO_SHOOTER_RATIO = 4.0/3.0;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
