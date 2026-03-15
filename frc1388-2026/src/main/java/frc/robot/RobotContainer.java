@@ -248,12 +248,12 @@ public class RobotContainer {
                 }, drivetrain));
     }
 
-    public void resetGyro() {
-        if(LimelightHelpers.getTV(LimelightConstants.SHOOTER_LIMELIGHT)) {
-            drivetrain.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
-        }
-        if(LimelightHelpers.getTV(LimelightConstants.LEFT_LIMELIGHT)) {
-            drivetrain.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
-        }
-    }
+    // public void resetGyro() {
+    //     if(LimelightHelpers.getTV(LimelightConstants.SHOOTER_LIMELIGHT)) {
+    //         drivetrain.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+    //     }
+    //     if(LimelightHelpers.getTV(LimelightConstants.LEFT_LIMELIGHT)) {
+    //         drivetrain.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+    //     }
+    // }
 }
