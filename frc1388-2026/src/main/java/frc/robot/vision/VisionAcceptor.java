@@ -16,6 +16,7 @@ public class VisionAcceptor {
     int m_jumpCountMax = 0;
     double m_angle = 0;
     boolean m_isMegaTag2;
+    private int m_gyroResetCooldown;
 
     public VisionAcceptor(boolean isMegaTag2) {
         m_isMegaTag2 = isMegaTag2;
@@ -120,11 +121,16 @@ public class VisionAcceptor {
     }
 
     public boolean shouldResetGyro() {
+        if (m_gyroResetCooldown > 0) {
+            m_gyroResetCooldown--; 
+            return false;
+        }
         if(norm() == 0.0) {
+            m_gyroResetCooldown = 25; //about half a second at 50 Hz
         return true;
         }
-    return false;
-    }
+        return false;
+        }
 
     public double norm() {
         double dx = m_robotVelocity.vxMetersPerSecond;

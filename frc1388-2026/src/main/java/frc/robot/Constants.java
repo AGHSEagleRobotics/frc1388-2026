@@ -78,6 +78,7 @@ public final class Constants {
       public static final int KICKER_MOTOR_CANID = 42;
 
       public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 60.0;
+      public static final double SUPPLY_CURRENT_LIMIT_KICKER = 50.0;
 
       public static final double TESTING_STATE_VOLTS = 4.0;
 

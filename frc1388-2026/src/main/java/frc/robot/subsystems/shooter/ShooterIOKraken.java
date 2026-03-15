@@ -95,7 +95,7 @@ public class ShooterIOKraken implements ShooterIO {
     shooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     TalonFXConfiguration kickerConfig = new TalonFXConfiguration();
-    kickerConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.SUPPLY_CURRENT_LIMIT_SHOOTER;
+    kickerConfig.CurrentLimits.SupplyCurrentLimit = ShooterConstants.SUPPLY_CURRENT_LIMIT_KICKER;
     kickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     kickerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     kickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;

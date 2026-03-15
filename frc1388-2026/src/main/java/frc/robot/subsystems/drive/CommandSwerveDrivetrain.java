@@ -371,34 +371,35 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
         // LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
 
-        // if (getState().Pose != null) {
-        //     // Fetch ONCE, use the result for both accept and update
-        //     processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
-        //     processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
-        //     if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-        //         resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
-        //         gyroWasAccepted = true;
-        //     }
-        //     if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-        //         resetGyro(LimelightConstants.LEFT_LIMELIGHT);
-        //         gyroWasAccepted = true;
-        //     }
+        if (getState().Pose != null) {
+            // Fetch ONCE, use the result for both accept and update
+            PoseEstimate shooterEstimate = processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
+            PoseEstimate leftEstimate = processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
+            if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+                resetGyro(shooterEstimate);
+                gyroWasAccepted = true;
+            }
+            if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+                resetGyro(leftEstimate);
+                gyroWasAccepted = true;
+            }
         // DogLog.log("Drive/OdometryPose", getState().Pose);
         // DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         // DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
         // DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
 
         
-        // SmartDashboard.putNumber("pose/distancefromhub", getAbsouluteDistanceFromHub());
-        // SmartDashboard.putNumber("pose/anglefromhub", getAbsoluteAngleFromHub());
-        // SmartDashboard.putNumber("pose/X", getState().Pose.getX());
-        // SmartDashboard.putNumber("pose/Y", getState().Pose.getY());
-        // SmartDashboard.putNumber("pose/Rotation", getState().Pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("pose/distancefromhub", getAbsouluteDistanceFromHub());
+        SmartDashboard.putNumber("pose/anglefromhub", getAbsoluteAngleFromHub());
+        SmartDashboard.putNumber("pose/X", getState().Pose.getX());
+        SmartDashboard.putNumber("pose/Y", getState().Pose.getY());
+        SmartDashboard.putNumber("pose/Rotation", getState().Pose.getRotation().getDegrees());
+        }
+        // if(mapleSimSwerveDrivetrain != null) {
+            // DogLog.log("Drive/SimulationPose",
+            // mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+            // }
     }
-    // if(mapleSimSwerveDrivetrain != null) {
-    // DogLog.log("Drive/SimulationPose",
-    // mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
-    // }
 
     public MapleSimSwerveDrivetrain getSimulationDriveTrain() {
         return mapleSimSwerveDrivetrain;
@@ -587,13 +588,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return false;
     }
 
-    public void resetGyro(String name) {
-        Rotation2d limelightAngle = LimelightHelpers.getBotPose2d_wpiBlue(name).getRotation();
-        Rotation2d correctedAngleOffset = new Rotation2d(limelightAngle.getRadians() - getRadians());
-        m_gyroOffset = correctedAngleOffset;
-        Rotation2d correctAngle = new Rotation2d(getRadians() + correctedAngleOffset.getRadians());
-        resetRotation(correctAngle);
-    }
+    public void resetGyro(PoseEstimate estimate) {
+    // public void resetGyro(String name) {
+        // Rotation2d limelightAngle = LimelightHelpers.getBotPose2d_wpiBlue(name).getRotation();
+        // Rotation2d correctedAngleOffset = new Rotation2d(limelightAngle.getRadians() - getRadians());
+        // m_gyroOffset = correctedAngleOffset;
+        // Rotation2d correctAngle = new Rotation2d(getRadians() + correctedAngleOffset.getRadians());
+        // resetRotation(correctAngle);
+        if (estimate == null) return;
+        resetRotation(estimate.pose.getRotation());
+        }
+    
 
 
     public double getTurnToSpeakerSpeed(PIDController turnPidController) {
