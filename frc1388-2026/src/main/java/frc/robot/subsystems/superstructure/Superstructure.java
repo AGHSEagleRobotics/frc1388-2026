@@ -131,17 +131,15 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> {
 
       if (m_shooter.getShooterState() == ShooterState.MANUAL_FAR) {
-        // m_shooter.setShooterState(ShooterState.MANUAL_FAR);
+        m_shooter.setShooterState(ShooterState.MANUAL_FAR);
         //m_hood.setHoodState(HoodState.MANUAL_FAR);
         m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
-
-    
-      } else if (m_shooter.getShooterState() == ShooterState.MANUAL_CLOSE) {
-        // m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
+      } else {
+        m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
         //m_hood.setHoodState(HoodState.MANUAL_CLOSE);
-        m_hood.setHoodState(HoodState.IDLE);
+        // m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
