@@ -135,7 +135,7 @@ public final class Constants {
 
     public static class IntakeConstants {
       
-      public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 35.0;
+      public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 30.0;
       public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 50.0;
 
       public static final double INTAKE_OFFSET = -0.172;
