@@ -95,13 +95,15 @@ public class HoodIOKraken implements HoodIO {
   public void configureHoodMotor(TalonFX hoodMotor) {
     TalonFXConfiguration hoodMotorConfig = new TalonFXConfiguration();
 
-    hoodMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    // hoodMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    hoodMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimit = HoodConstants.SUPPLY_CURRENT_LIMIT_HOOD;
     hoodMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     hoodMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0; 
     hoodMotorConfig.MotionMagic.MotionMagicAcceleration = 18.0; 
     hoodMotorConfig.MotionMagic.MotionMagicJerk = 180; // accereration * 10
+
 
     hoodMotorConfig.Slot0.kA = 0;
     hoodMotorConfig.Slot0.kG = 0.07; // (-0.22+0.36) / 2
@@ -143,12 +145,14 @@ public class HoodIOKraken implements HoodIO {
 
   @Override
   public void setPosition(double degrees){
-    hoodMotor.setControl(hoodMotorPositionRequest.withPosition(degrees));
+    // hoodMotor.setControl(hoodMotorPositionRequest.withPosition(degrees));
+    return;
   }
 
   @Override
   public void setVoltage(double volts){
-    hoodMotor.setControl(hoodMotorVoltageRequest.withOutput(volts));
+    // hoodMotor.setControl(hoodMotorVoltageRequest.withOutput(volts));
+    hoodMotor.setControl(hoodMotorVoltageRequest.withOutput(0));
   }
 
   public double getPosition() {

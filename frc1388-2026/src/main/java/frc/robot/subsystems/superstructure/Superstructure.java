@@ -77,12 +77,12 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> {
       if (isRobotMoving()) {
         m_shooter.setShooterState(ShooterState.SOTM);
-        m_hood.setHoodState(HoodState.SOTM);
+        m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.INTAKING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
       } else {
         m_shooter.setShooterState(ShooterState.SHOOTING);
-        m_hood.setHoodState(HoodState.SHOOTING);
+        m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
@@ -129,13 +129,13 @@ public class Superstructure extends SubsystemBase {
     return this.run(() -> {
       if (m_hood.getHoodState() == HoodState.MANUAL_FAR) {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        m_hood.setHoodState(HoodState.MANUAL_FAR);
+        m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
 
       } else {
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        m_hood.setHoodState(HoodState.MANUAL_CLOSE);
+        m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
@@ -147,12 +147,12 @@ public class Superstructure extends SubsystemBase {
 
   public Command setHoodAngleClose() {
     return this.runOnce(() -> 
-    m_hood.setHoodState(HoodState.MANUAL_CLOSE));
+    m_hood.setHoodState(HoodState.IDLE));
   }
 
   public Command setHoodAngleFar() {
     return this.runOnce(() -> 
-    m_hood.setHoodState(HoodState.MANUAL_FAR));
+    m_hood.setHoodState(HoodState.IDLE));
   }
   
   public Command testIntakeDeployDown() {
@@ -192,7 +192,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command testHood() {
     return this.runOnce(() ->
-    m_hood.setHoodState(HoodState.TESTING));
+    m_hood.setHoodState(HoodState.IDLE));
   }
 
   public Command stopHood() {
