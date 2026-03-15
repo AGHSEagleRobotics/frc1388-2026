@@ -368,21 +368,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
         boolean gyroWasAccepted = false;
 
+        // =====================================================
+        //Add this back in after match66
+
         // LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
         // LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
 
-        if (getState().Pose != null) {
-            // Fetch ONCE, use the result for both accept and update
-            PoseEstimate shooterEstimate = processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
-            PoseEstimate leftEstimate = processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
-            if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-                resetGyro(shooterEstimate);
-                gyroWasAccepted = true;
-            }
-            if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-                resetGyro(leftEstimate);
-                gyroWasAccepted = true;
-            }
+        // if (getState().Pose != null) {
+        //     // Fetch ONCE, use the result for both accept and update
+        //     PoseEstimate shooterEstimate = processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
+        //     PoseEstimate leftEstimate = processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
+        //     if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+        //         resetGyro(shooterEstimate);
+        //         gyroWasAccepted = true;
+        //     }
+        //     if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+        //         resetGyro(leftEstimate);
+        //         gyroWasAccepted = true;
+        //     }
+        //===========================================================
+
         // DogLog.log("Drive/OdometryPose", getState().Pose);
         // DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         // DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
@@ -399,7 +404,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // DogLog.log("Drive/SimulationPose",
             // mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
             // }
-    }
+    // }
 
     public MapleSimSwerveDrivetrain getSimulationDriveTrain() {
         return mapleSimSwerveDrivetrain;
@@ -565,7 +570,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     private PoseEstimate processVision(VisionAcceptor acceptor, String name) {
-    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
     if (estimate == null) return null;
     
     boolean accepted = acceptor.shouldAccept(estimate.pose, previousPositions.get(name), getState().Speeds);
