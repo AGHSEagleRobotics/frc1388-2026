@@ -161,7 +161,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // );
 
     /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
+    // private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -326,9 +326,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param direction Direction of the SysId Quasistatic test
      * @return Command to run
      */
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineToApply.quasistatic(direction);
-    }
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return m_sysIdRoutineToApply.quasistatic(direction);
+    // }
 
     /**
      * Runs the SysId Dynamic test in the given direction for the routine
@@ -337,9 +337,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param direction Direction of the SysId Dynamic test
      * @return Command to run
      */
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineToApply.dynamic(direction);
-    }
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return m_sysIdRoutineToApply.dynamic(direction);
+    // }
 
     @Override
     public void periodic() {
