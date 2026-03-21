@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6865836298932395,
-        "y": 2.630925266903914
+        "x": 3.587342715231788,
+        "y": 4.049519867549668
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.686583629893238,
-        "y": 2.630925266903914
+        "x": 3.8445747850891316,
+        "y": 4.056020952402627
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.430177935943061,
-        "y": 2.630925266903914
+        "x": 2.492,
+        "y": 4.049519867549668
       },
       "prevControl": {
-        "x": 5.430177935943061,
-        "y": 2.630925266903914
+        "x": 2.2420053255185253,
+        "y": 4.0478880799098205
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,17 +30,21 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.228723404255324,
-      "rotationDegrees": 45.0
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0,
       "maxWaypointRelativePos": 0,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 3.0,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -50,7 +54,19 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "startShooting",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "stopShooting"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.39,
     "maxAcceleration": 9.76,
@@ -61,10 +77,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -0.7345210342547515
   },
   "reversed": false,
-  "folder": "Competition Autos",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

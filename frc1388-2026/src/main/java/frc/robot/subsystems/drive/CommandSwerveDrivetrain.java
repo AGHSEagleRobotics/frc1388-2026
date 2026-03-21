@@ -208,8 +208,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
     if (Utils.isSimulation()) {
         startSimThread();
-         configureAutoBuilder();
+        configureAutoBuilder();
     }
+    configureAutoBuilder();
 }
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -266,9 +267,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(10, 0, 0),
+                    new PIDConstants(0, 0, 0), //prev 10
                     // PID constants for rotation
-                    new PIDConstants(7, 0, 0)
+                    new PIDConstants(0, 0, 0) //prev 7
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
@@ -282,30 +283,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Create a list of waypoints from poses. Each pose represents one waypoint.
         // The rotation component of the pose should be the direction of travel. Do not
         // use holonomic rotation.
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
-                new Pose2d(3.0, 1.0, Rotation2d.fromDegrees(0)),
-                new Pose2d(5.0, 3.0, Rotation2d.fromDegrees(90)));
+        // List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        //         new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
+        //         new Pose2d(3.0, 1.0, Rotation2d.fromDegrees(0)),
+        //         new Pose2d(5.0, 3.0, Rotation2d.fromDegrees(90)));
 
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for
+        // PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for
                                                                                                // this path.
         // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
         // You can also use unlimited constraints, only limited by motor torque and
         // nominal battery voltage
 
         // Create the path using the waypoints created above
-        PathPlannerPath path = new PathPlannerPath(
-                waypoints,
-                constraints,
-                null, // The ideal starting state, this is only relevant for pre-planned paths, so can
-                      // be null for on-the-fly paths.
-                new GoalEndState(0.0, Rotation2d.fromDegrees(-90)) // Goal end state. You can set a holonomic rotation
-                                                                   // here. If using a differential drivetrain, the
-                                                                   // rotation will have no effect.
-        );
+        // PathPlannerPath path = new PathPlannerPath(
+        //         waypoints,
+        //         constraints,
+        //         null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+        //               // be null for on-the-fly paths.
+        //         new GoalEndState(0.0, Rotation2d.fromDegrees(-90)) // Goal end state. You can set a holonomic rotation
+        //                                                            // here. If using a differential drivetrain, the
+        //                                                            // rotation will have no effect.
+        // );
 
         // Prevent the path from being flipped if the coordinates are already correct
-        path.preventFlipping = true;
+        // path.preventFlipping = true;
     }
 
 
@@ -366,32 +367,32 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
-        boolean gyroWasAccepted = false;
-
+        
         // =====================================================
-        //Add this back in after match66
+        // Add this back in after match66
+        
+        LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
+        boolean gyroWasAccepted = false;
+        
+        if (getState().Pose != null) {
+            // Fetch ONCE, use the result for both accept and update
+            PoseEstimate shooterEstimate = processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
+            PoseEstimate leftEstimate = processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
+            if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
+                resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+                gyroWasAccepted = true;
+            }
+            if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
+                resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+                gyroWasAccepted = true;
+            }
+        // ===========================================================
 
-        // LimelightHelpers.SetRobotOrientation(LimelightConstants.SHOOTER_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
-        // LimelightHelpers.SetRobotOrientation(LimelightConstants.LEFT_LIMELIGHT, getAngle(), 0, 0, 0, 0, 0);
-
-        // if (getState().Pose != null) {
-        //     // Fetch ONCE, use the result for both accept and update
-        //     PoseEstimate shooterEstimate = processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
-        //     PoseEstimate leftEstimate = processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
-        //     if (acceptGyro(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT)) {
-        //         resetGyro(shooterEstimate);
-        //         gyroWasAccepted = true;
-        //     }
-        //     if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT)) {
-        //         resetGyro(leftEstimate);
-        //         gyroWasAccepted = true;
-        //     }
-        //===========================================================
-
-        // DogLog.log("Drive/OdometryPose", getState().Pose);
-        // DogLog.log("Drive/TargetStates", getState().ModuleTargets);
-        // DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
-        // DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
+        DogLog.log("Drive/OdometryPose", getState().Pose);
+        DogLog.log("Drive/TargetStates", getState().ModuleTargets);
+        DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
+        DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
 
         
         SmartDashboard.putNumber("pose/distancefromhub", getAbsouluteDistanceFromHub());
@@ -400,6 +401,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("pose/Y", getState().Pose.getY());
         SmartDashboard.putNumber("pose/Rotation", getState().Pose.getRotation().getDegrees());
         }
+    }
         // if(mapleSimSwerveDrivetrain != null) {
             // DogLog.log("Drive/SimulationPose",
             // mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
@@ -423,6 +425,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //     updateSimState(deltaTime, RobotController.getBatteryVoltage());
         // });
         // m_simNotifier.startPeriodic(kSimLoopPeriod);
+
         SimulatedArena.overrideInstance(new Arena2026Rebuilt(false));
 
         mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
@@ -583,7 +586,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return estimate;
 }
 
-
     public boolean acceptGyro(VisionAcceptor acceptor, String name) {
         boolean acceptGyro = acceptor.shouldResetGyro();
         if ((acceptGyro == true) && 
@@ -593,13 +595,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return false;
     }
 
-    public void resetGyro(PoseEstimate estimate) {
+    public void resetGyro(String name) {
     // public void resetGyro(String name) {
         // Rotation2d limelightAngle = LimelightHelpers.getBotPose2d_wpiBlue(name).getRotation();
         // Rotation2d correctedAngleOffset = new Rotation2d(limelightAngle.getRadians() - getRadians());
         // m_gyroOffset = correctedAngleOffset;
         // Rotation2d correctAngle = new Rotation2d(getRadians() + correctedAngleOffset.getRadians());
         // resetRotation(correctAngle);
+        PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
         if (estimate == null) return;
         resetRotation(estimate.pose.getRotation());
         }

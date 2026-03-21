@@ -33,6 +33,7 @@ import frc.robot.shotlib.ShotCalculator;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.vision.LimelightHelpers;
+import frc.robot.vision.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOKraken;
@@ -93,13 +94,15 @@ public class RobotContainer {
         configureBindings();
 
         // autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        // SmartDashboard.putData("Auto Mode", autoChooser);
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Mode", autoChooser);
 
         // register commands
 
     }
 
-    // private void configureAutonomousCommands() {
+    private void configureAutonomousCommands() {
     // Command strikeAStillPose = new InstantCommand(() -> System.out.println("This
     // is kinda boring, no?"));
 
@@ -108,7 +111,7 @@ public class RobotContainer {
     // new TurnToAngleCommand(drive, 90) // turn 90 degrees
     // );
 
-    // }
+    }
 //I'm putting this comment here to make it push maybe somehow 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -200,12 +203,12 @@ public class RobotContainer {
         // testJoystick.b().whileTrue(intake.sysIdDynamicCommand(Direction.kReverse));
     }
 
-    // public Command getAutonomousCommand() {
+    public Command getAutonomousCommand() {
         
 
-    //     // return autoChooser.getSelected();
+        return autoChooser.getSelected();
 
-    // }
+    }
 
     public double calculateVelocity(double joystick) {
         double leftJoystick = MathUtil.applyDeadband(joystick, 0.1);
@@ -247,12 +250,12 @@ public class RobotContainer {
                 }, drivetrain));
     }
 
-    // public void resetGyro() {
-    //     if(LimelightHelpers.getTV(LimelightConstants.SHOOTER_LIMELIGHT)) {
-    //         drivetrain.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
-    //     }
-    //     if(LimelightHelpers.getTV(LimelightConstants.LEFT_LIMELIGHT)) {
-    //         drivetrain.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
-    //     }
-    // }
+    public void resetGyro() {
+        if(LimelightHelpers.getTV(LimelightConstants.SHOOTER_LIMELIGHT)) {
+            drivetrain.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
+        }
+        if(LimelightHelpers.getTV(LimelightConstants.LEFT_LIMELIGHT)) {
+            drivetrain.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+        }
+    }
 }
