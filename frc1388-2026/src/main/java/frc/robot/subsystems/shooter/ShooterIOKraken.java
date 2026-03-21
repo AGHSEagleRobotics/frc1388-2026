@@ -135,7 +135,6 @@ public class ShooterIOKraken implements ShooterIO {
     // Keep velocity fast for closed-loop control
     BaseStatusSignal.setUpdateFrequencyForAll(50.0,
         shootMotor1VelocitySS,
-        shootMotor2VelocitySS,
         kickerMotorVelocitySS);
     BaseStatusSignal.setUpdateFrequencyForAll(10.0,
         shootMotor1VoltageSS,
@@ -143,11 +142,6 @@ public class ShooterIOKraken implements ShooterIO {
         shootMotor1SupplyCurrentAmpsSS,
         shootMotor1TempCelsiusSS,
         shootMotor1PositionStatusSignal,
-        shootMotor2VoltageSS,
-        shootMotor2TorqueCurrentAmpsSS,
-        shootMotor2SupplyCurrentAmpsSS,
-        shootMotor2TempCelsiusSS,
-        shootMotor2PositionStatusSignal,
         kickerMotorVoltageSS,
         kickerMotorTorqueCurrentAmpsSS,
         kickerMotorSupplyCurrentAmpsSS,
@@ -160,32 +154,32 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterInputs inputs) {
-    inputs.shootMotor1Connected = BaseStatusSignal.refreshAll(
-        shootMotor1VelocitySS,
-        shootMotor1VoltageSS,
-        shootMotor1TorqueCurrentAmpsSS,
-        shootMotor1SupplyCurrentAmpsSS,
-        shootMotor1TempCelsiusSS,
-        shootMotor1PositionStatusSignal)
-      .isOK();
-    inputs.shootMotor2Connected = 
-      BaseStatusSignal.refreshAll(
-        shootMotor2VelocitySS,
-        shootMotor2VoltageSS,
-        shootMotor2TorqueCurrentAmpsSS,
-        shootMotor2SupplyCurrentAmpsSS,
-        shootMotor2TempCelsiusSS,
-        shootMotor2PositionStatusSignal)
-      .isOK();
-    inputs.kickerMotorConnected =
-      BaseStatusSignal.refreshAll(
-        kickerMotorVelocitySS,
-        kickerMotorVoltageSS,
-        kickerMotorTorqueCurrentAmpsSS,
-        kickerMotorSupplyCurrentAmpsSS,
-        kickerMotorTempCelsiusSS,
-        kickerPositionStatusSignal)
-      .isOK();
+    // inputs.shootMotor1Connected = BaseStatusSignal.refreshAll(
+    //     shootMotor1VelocitySS,
+    //     shootMotor1VoltageSS,
+    //     shootMotor1TorqueCurrentAmpsSS,
+    //     shootMotor1SupplyCurrentAmpsSS,
+    //     shootMotor1TempCelsiusSS,
+    //     shootMotor1PositionStatusSignal)
+    //   .isOK();
+    // inputs.shootMotor2Connected = 
+    //   BaseStatusSignal.refreshAll(
+    //     shootMotor2VelocitySS,
+    //     shootMotor2VoltageSS,
+    //     shootMotor2TorqueCurrentAmpsSS,
+    //     shootMotor2SupplyCurrentAmpsSS,
+    //     shootMotor2TempCelsiusSS,
+    //     shootMotor2PositionStatusSignal)
+    //   .isOK();
+    // inputs.kickerMotorConnected =
+    //   BaseStatusSignal.refreshAll(
+    //     kickerMotorVelocitySS,
+    //     kickerMotorVoltageSS,
+    //     kickerMotorTorqueCurrentAmpsSS,
+    //     kickerMotorSupplyCurrentAmpsSS,
+    //     kickerMotorTempCelsiusSS,
+    //     kickerPositionStatusSignal)
+    //   .isOK();
 
     //setting signals / updating motor inputs
     inputs.shootMotor1VelocityRPS = shootMotor1VelocitySS.getValueAsDouble();
@@ -196,15 +190,6 @@ public class ShooterIOKraken implements ShooterIO {
     inputs.shootMotor1SupplyCurrentAmps = shootMotor1SupplyCurrentAmpsSS.getValueAsDouble();
     inputs.shootMotor1TempCelsius = shootMotor1TempCelsiusSS.getValueAsDouble();
     inputs.shootMotor1Position = shootMotor1PositionStatusSignal.getValueAsDouble();
-
-    inputs.shootMotor2VelocityRPS = shootMotor2VelocitySS.getValueAsDouble();
-    inputs.shootMotor2ReferenceVelocityRPS = this.shootMotor2Velocity;
-    inputs.shootMotor2ClosedLoopReferenceRPS = shootMotor2.getClosedLoopReference().getValueAsDouble();
-    inputs.shootMotor2Voltage = shootMotor2VoltageSS.getValueAsDouble();
-    inputs.shootMotor2TorqueCurrentAmps = shootMotor2TorqueCurrentAmpsSS.getValueAsDouble();
-    inputs.shootMotor2SupplyCurrentAmps = shootMotor2SupplyCurrentAmpsSS.getValueAsDouble();
-    inputs.shootMotor2TempCelsius = shootMotor2TempCelsiusSS.getValueAsDouble();
-    inputs.shootMotor2Position = shootMotor2PositionStatusSignal.getValueAsDouble();
     
     inputs.kickerMotorVelocityRPS = kickerMotorVelocitySS.getValueAsDouble();
     inputs.kickerMotorReferenceVelocityRPS = this.kickerMotorVelocity;

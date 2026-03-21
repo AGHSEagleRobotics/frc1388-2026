@@ -73,6 +73,7 @@ public class Intake extends SubsystemBase {
     //         this));
   }
 
+  @Override
   public void periodic() {
     m_io.updateInputs(inputs);
     if (intakeState == IntakeState.RETRACT) {

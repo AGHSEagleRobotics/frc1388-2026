@@ -14,6 +14,7 @@ public class Roller extends SubsystemBase {
   private final RollerIO m_io;
 
   public RollerState rollerState;
+  private RollerState previousState = RollerState.IDLE;
 
   private final RollerIOInputs inputs = new RollerIOInputs();
 
@@ -34,22 +35,29 @@ public class Roller extends SubsystemBase {
     rollerState = RollerState.IDLE;
   }
 
+  @Override
   public void periodic() {
     m_io.updateInputs(inputs);
-    if (rollerState == RollerState.IDLE) {
-      stop();
-    } else if (rollerState == RollerState.INTAKING) {
-      setIntakingRollers();
+    if (rollerState != previousState) {
+      if (rollerState == RollerState.IDLE) {
+        stop();
+      }
+      previousState = rollerState;
+    } 
+    else if (rollerState == RollerState.INTAKING) {
+      m_io.setBottomRollerVoltage(RollerConstants.bottomRollerIntakeSpeed);
+      m_io.setTopRollerVoltage(0);
     } else if ((rollerState == RollerState.SHOOTING)) {
-      setShootingRollers();
+      m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
+      m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);
     } else if (rollerState == RollerState.TESTING) {
-      setTestingRollers();
+      m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
+      m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);
     }
   }
 
     public void stop() {
-      m_io.setBottomRollerVoltage(0);
-      m_io.setTopRollerVoltage(0);
+      m_io.stopShooter();
     }
 
     public void setIntakingRollers() {

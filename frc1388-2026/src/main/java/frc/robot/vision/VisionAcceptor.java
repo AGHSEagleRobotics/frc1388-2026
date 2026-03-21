@@ -125,7 +125,7 @@ public class VisionAcceptor {
             m_gyroResetCooldown--; 
             return false;
         }
-        if(norm() == 0.0) {
+        if(norm() < 0.01) {
             m_gyroResetCooldown = 25; //about half a second at 50 Hz
         return true;
         }

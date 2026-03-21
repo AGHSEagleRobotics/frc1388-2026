@@ -57,7 +57,7 @@ public final class Constants {
                 Units.inchesToMeters(72), Rotation3d.kZero);
 
       public static final double BLUE_ALLIANCE_ZONE = Units.inchesToMeters(156.61);
-      public static final double RED_ALLIANCE_ZONE = Units.inchesToMeters(FIELD_LENGTH - BLUE_ALLIANCE_ZONE);
+      public static final double RED_ALLIANCE_ZONE = FIELD_LENGTH - BLUE_ALLIANCE_ZONE;
 
       public static final Translation3d BLUE_PASSING_SPOT_LEFT = new Translation3d(
         Meters.of(Units.inchesToMeters(90)), Meters.of(FieldLayout.FIELD_WIDTH).div(2).plus(Meters.of(Units.inchesToMeters(85))), Meters.zero());
@@ -66,10 +66,10 @@ public final class Constants {
           Meters.of(Units.inchesToMeters(90)), Meters.of(FieldLayout.FIELD_WIDTH).div(2).minus(Meters.of(Units.inchesToMeters(85))), Meters.zero());
 
       public static final Translation3d RED_PASSING_SPOT_LEFT = new Translation3d(
-        Meters.of(BLUE_PASSING_SPOT_LEFT.getX() - FIELD_LENGTH), Meters.of(FIELD_WIDTH).div(2).plus(Meters.of(FIELD_WIDTH - BLUE_PASSING_SPOT_LEFT.getY())), Meters.zero());
+        Meters.of(FIELD_LENGTH - BLUE_PASSING_SPOT_LEFT.getX()), Meters.of(FieldLayout.FIELD_WIDTH - BLUE_PASSING_SPOT_LEFT.getY()), Meters.zero());
 
        public static final Translation3d RED_PASSING_SPOT_RIGHT = new Translation3d(
-        Meters.of(BLUE_PASSING_SPOT_RIGHT.getX() - FIELD_LENGTH), Meters.of(FIELD_WIDTH).div(2).minus(Meters.of(FIELD_WIDTH - BLUE_PASSING_SPOT_RIGHT.getY())), Meters.zero());
+        Meters.of(FIELD_LENGTH - BLUE_PASSING_SPOT_RIGHT.getX()), Meters.of(FieldLayout.FIELD_WIDTH - BLUE_PASSING_SPOT_RIGHT.getY()) , Meters.zero());
     }
 
     public static class ShooterConstants {

@@ -109,7 +109,7 @@ public class Superstructure extends SubsystemBase {
   public Command deployIntakingCommand() {
     m_intakeState = m_intake.getIntakeState();
     return this.run(() -> {
-      if ((m_intake.getIntakeState() == IntakeState.INTAKING) || (m_intake.getPosition() < IntakeConstants.POSITION_TOLERANCE)) {
+      if ((m_intake.getPosition() < IntakeConstants.POSITION_TOLERANCE)) {
         m_intake.setIntakeState(IntakeState.EXTENDED);
         m_roller.setRollerState(RollerState.IDLE);
       } else {
@@ -210,7 +210,7 @@ public class Superstructure extends SubsystemBase {
     double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
     double rz = m_driveTrain.getAngle();
     rz = rz < 0 ? rz + 360 : rz;
-    double speed = -(rotationPID.calculate(angleFromTarget - rz));
+    double speed = -(rotationPID.calculate(rz, angleFromTarget));
     return speed;
   }
 
@@ -225,7 +225,7 @@ public class Superstructure extends SubsystemBase {
   public boolean isRobotMoving() {
     ChassisSpeeds speeds = m_driveTrain.getFieldRelativeSpeeds();
     double linearSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-    return linearSpeed > 0.01;
+    return linearSpeed > 0.05;
   }
 
   public boolean isInShooterState() {

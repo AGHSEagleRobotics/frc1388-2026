@@ -180,6 +180,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
+            configureAutoBuilder();
         }
          configureAutoBuilder();
     }
@@ -637,17 +638,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public double getAbsouluteDistanceFromHub() {
         double rX = getPose().getX();
+        double rY = getPose().getY();
         double tX;
-        double tAngle = getAbsoluteAngleFromHub();
+        double tY;
+        // double tAngle = getAbsoluteAngleFromHub();
         if (Robot.getAllianceColor() == Alliance.Blue) {
             tX = FieldLayout.CENTER_OF_HUB_BLUE.getX();
+            tY = FieldLayout.CENTER_OF_HUB_BLUE.getY();
         } else {
             tX = FieldLayout.CENTER_OF_HUB_RED.getX();
+            tY = FieldLayout.CENTER_OF_HUB_RED.getY();
         }
-        double adjacent = rX - tX;
-        double distanceFromSpeaker = -(adjacent / Math.cos(Math.toRadians(tAngle))); // hypotenuse = adjacent /
+        // double adjacent = rX - tX;
+        double distanceFromHub = Math.hypot(rX - tX, rY - tY); // hypotenuse = adjacent /
                                                                                      // cos(angle)
 
-        return distanceFromSpeaker;
+        return distanceFromHub;
     }
 }

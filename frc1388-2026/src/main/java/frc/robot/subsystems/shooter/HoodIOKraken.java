@@ -78,12 +78,12 @@ public class HoodIOKraken implements HoodIO {
   
   @Override
   public void updateInputs(HoodIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-      hoodMotorVelocityStatusSignal,
-      hoodMotorVoltageStatusSignal,
-      // hoodMotorCurrentAmpsStatusSignal, 
-      hoodMotorTempCelsiusStatusSignal,
-      hoodMotorPositionStatusSignal);
+    // BaseStatusSignal.refreshAll(
+    //   hoodMotorVelocityStatusSignal,
+    //   hoodMotorVoltageStatusSignal,
+    //   // hoodMotorCurrentAmpsStatusSignal, 
+    //   hoodMotorTempCelsiusStatusSignal,
+    //   hoodMotorPositionStatusSignal);
       
       inputs.hoodMotorVelocityRPS = hoodMotorVelocityStatusSignal.getValueAsDouble();
       // inputs.hoodMotorCurrentAmps = hoodMotorCurrentAmpsStatusSignal.getValueAsDouble();

@@ -28,6 +28,7 @@ public ShooterState shooterState;
 public double m_distanceFromHub;
 public double m_distanceFromHubSOTM;
 public double m_distanceFromPass;
+private ShooterState previousShooterState = ShooterState.IDLE;
 
 // private final MutVoltage sysidAppliedVoltageMeasure = Volts.mutable(0);
 // private final MutAngle sysidPositionMeasure = Rotations.mutable(0);
@@ -70,8 +71,11 @@ public enum ShooterState {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    if (shooterState == ShooterState.IDLE) {
-      stopShooter();
+    if (previousShooterState != shooterState) {
+      if (shooterState == ShooterState.IDLE) {
+        stopShooter();
+      }
+      previousShooterState = shooterState;
     }
     else if (shooterState == ShooterState.SHOOTING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub));

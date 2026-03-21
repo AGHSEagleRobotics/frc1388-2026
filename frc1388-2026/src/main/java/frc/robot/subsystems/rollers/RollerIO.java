@@ -53,4 +53,6 @@ public interface RollerIO {
   public void setBottomRollerVoltage(double rps);
 
   public void setTopRollerVoltage(double rps);
+
+  public void stopShooter();
 }
