@@ -62,7 +62,7 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    private final CommandXboxController testJoystick = new CommandXboxController(2);
+    // private final CommandXboxController testJoystick = new CommandXboxController(2);
 
     private SendableChooser<Command> autoChooser;
 

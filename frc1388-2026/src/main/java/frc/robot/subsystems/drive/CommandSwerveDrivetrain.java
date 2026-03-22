@@ -1,6 +1,8 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -90,8 +92,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
-    /* Swerve requests to apply during SysId characterization */
-    private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
+    // /* Swerve requests to apply during SysId characterization */
+    // private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     // private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     // private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
@@ -102,20 +104,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     HashMap<String,Pose2d> previousPositions = new HashMap<>();
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
-    private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,        // Use default ramp rate (1 V/s)
-            Volts.of(3), // Reduce dynamic step voltage to 4 V to prevent brownout
-            Seconds.of(5),        // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> setControl(m_translationCharacterization.withVolts(output)),
-            null,
-            this
-        )
-    );
+//     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
+//     new SysIdRoutine.Config(
+//         null,
+//         Volts.of(3),
+//         Seconds.of(5),
+//         state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
+//     ),
+//     new SysIdRoutine.Mechanism(
+//         output -> setControl(m_translationCharacterization.withVolts(output)),
+//         log -> {
+//             var driveMotor = getModule(0).getDriveMotor(); // front left, CAN ID 22
+
+//             double positionMeters = driveMotor.getPosition().getValueAsDouble()
+//                 * (2.0 * Math.PI * TunerConstants.kWheelRadius.in(Meters))
+//                 / TunerConstants.kDriveGearRatio;
+
+//             double velocityMetersPerSec = driveMotor.getVelocity().getValueAsDouble()
+//                 * (2.0 * Math.PI * TunerConstants.kWheelRadius.in(Meters))
+//                 / TunerConstants.kDriveGearRatio;
+
+//             log.motor("drive-front-left")
+//                 .voltage(Volts.of(driveMotor.getMotorVoltage().getValueAsDouble()))
+//                 .linearPosition(Meters.of(positionMeters))
+//                 .linearVelocity(MetersPerSecond.of(velocityMetersPerSec));
+//         },
+//         this
+//     )
+// );
 
     /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
     // private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
@@ -161,7 +177,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // );
 
     /* The SysId routine to test */
-    // private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
+    // private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -208,7 +224,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
     if (Utils.isSimulation()) {
         startSimThread();
-        configureAutoBuilder();
     }
     configureAutoBuilder();
 }
@@ -247,7 +262,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
     if (Utils.isSimulation()) {
         startSimThread();
-         configureAutoBuilder();
     }
     configureAutoBuilder();
 }
