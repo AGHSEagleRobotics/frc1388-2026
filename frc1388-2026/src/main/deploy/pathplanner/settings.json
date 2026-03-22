@@ -11,8 +11,8 @@
   "autoFolders": [
     "Hopefully finsiehd paths"
   ],
-  "defaultMaxVel": 4.39,
-  "defaultMaxAccel": 9.76,
+  "defaultMaxVel": 4.0,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

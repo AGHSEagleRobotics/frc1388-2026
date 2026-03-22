@@ -15,6 +15,7 @@ import com.pathplanner.lib.controllers.PPLTVController;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -82,14 +83,9 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
         NamedCommands.registerCommand("shootManually", superstructure.shootManually());
-        NamedCommands.registerCommand("setHoodAngleClose", superstructure.setHoodAngleClose());
-
-        NamedCommands.registerCommand("setHoodAngleFar", superstructure.setHoodAngleFar());
-
 
         NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
         NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
-        NamedCommands.registerCommand("stopHood", superstructure.stopHood());
 
         configureBindings();
 
@@ -164,6 +160,8 @@ public class RobotContainer {
         joystick.a().onTrue(superstructure.setHoodAngleClose());
         joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.y().onTrue(superstructure.setHoodAngleFar());
+
+        joystick.back().onTrue(new InstantCommand(() -> drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d()))));
 
         // TESTING JOYSTICK
 

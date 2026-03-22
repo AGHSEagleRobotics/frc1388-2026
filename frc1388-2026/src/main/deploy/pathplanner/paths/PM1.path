@@ -176,7 +176,7 @@
       "command": null
     },
     {
-      "name": "setHoodAngleClose",
+      "name": "",
       "waypointRelativePos": 6.166784452296815,
       "endWaypointRelativePos": null,
       "command": null
@@ -188,14 +188,14 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "testRollers"
+          "name": null
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.39,
-    "maxAcceleration": 9.76,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

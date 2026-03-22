@@ -8,36 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8445747850891316,
-        "y": 4.056020952402627
+        "x": 3.891928922360939,
+        "y": 4.039308505483731
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.492,
+        "x": 1.9973902728351134,
         "y": 4.049519867549668
       },
       "prevControl": {
-        "x": 2.2420053255185253,
-        "y": 4.0478880799098205
+        "x": 1.7473940619891286,
+        "y": 4.050896298677602
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 180.0
-    },
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -56,20 +47,21 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "startShooting",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": 1.0,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "stopShooting"
-        }
-      }
+      "name": "deployIntaking",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "shootManually",
+      "waypointRelativePos": 0.9155485398579337,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.39,
-    "maxAcceleration": 9.76,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -77,13 +69,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -0.7345210342547515
+    "rotation": 177.85225103349367
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 179.86690771134906
   },
   "useDefaultConstraints": true
 }
