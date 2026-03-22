@@ -84,9 +84,9 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2000.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 2500.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 2000.0/60.0;
+      public static final double MANUAL_SHOOT_FAR = 2500.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 4.0/3.0;
 
@@ -94,7 +94,7 @@ public final class Constants {
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
         DISTANCE_TO_SHOT_RPM.put(1.0, 42.0); // ~2520 RPM — very close
-        DISTANCE_TO_SHOT_RPM.put(2.0, 50.0); // ~3000 RPM ← anchor near your tuned close shot
+        DISTANCE_TO_SHOT_RPM.put(2.72, 2500.0/60.0); // ~3000 RPM ← anchor near your tuned close shot
         DISTANCE_TO_SHOT_RPM.put(3.0, 55.0); // ~3300 RPM
         DISTANCE_TO_SHOT_RPM.put(4.0, 58.3); // ~3500 RPM ← anchor near your tuned far shot
         DISTANCE_TO_SHOT_RPM.put(5.0, 62.0); // ~3720 RPM

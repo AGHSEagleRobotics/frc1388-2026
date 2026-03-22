@@ -154,8 +154,8 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterInputs inputs) {
-    // inputs.shootMotor1Connected = BaseStatusSignal.refreshAll(
-    //     shootMotor1VelocitySS,
+    inputs.shootMotor1Connected = BaseStatusSignal.refreshAll(
+        shootMotor1VelocitySS).isOK();
     //     shootMotor1VoltageSS,
     //     shootMotor1TorqueCurrentAmpsSS,
     //     shootMotor1SupplyCurrentAmpsSS,
@@ -171,9 +171,9 @@ public class ShooterIOKraken implements ShooterIO {
     //     shootMotor2TempCelsiusSS,
     //     shootMotor2PositionStatusSignal)
     //   .isOK();
-    // inputs.kickerMotorConnected =
-    //   BaseStatusSignal.refreshAll(
-    //     kickerMotorVelocitySS,
+    inputs.kickerMotorConnected =
+      BaseStatusSignal.refreshAll(
+        kickerMotorVelocitySS).isOK();
     //     kickerMotorVoltageSS,
     //     kickerMotorTorqueCurrentAmpsSS,
     //     kickerMotorSupplyCurrentAmpsSS,

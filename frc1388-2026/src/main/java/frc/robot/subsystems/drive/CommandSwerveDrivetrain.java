@@ -196,9 +196,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
-            configureAutoBuilder();
         }
-         configureAutoBuilder();
     }
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -226,7 +224,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
         startSimThread();
     }
-    configureAutoBuilder();
 }
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -264,10 +261,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
         startSimThread();
     }
-    configureAutoBuilder();
 }
 
-    private void configureAutoBuilder() {
+    public void configureAutoBuilder() {
          try {
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(

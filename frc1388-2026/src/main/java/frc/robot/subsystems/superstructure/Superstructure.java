@@ -4,9 +4,14 @@
 
 package frc.robot.subsystems.superstructure;
 
+import java.util.Set;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.shotlib.ShotCalculator;
@@ -35,7 +40,7 @@ public class Superstructure extends SubsystemBase {
   public IntakeState m_intakeState;
   public boolean m_isAtSpeed;
 
-  public static final PIDController rotationPID = new PIDController(0.2, 0, .0);
+  public static final PIDController rotationPID = new PIDController(0, 0, .0);
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, Hood hood, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
@@ -45,8 +50,8 @@ public class Superstructure extends SubsystemBase {
     m_hood = hood;
     m_shotCalculator = shotCalculator;
 
-    rotationPID.enableContinuousInput(0, 360);
-    rotationPID.setTolerance(2);;
+    rotationPID.enableContinuousInput(-180, 180);
+    rotationPID.setTolerance(5);
     // rotationPID.setIZone(2);
     // rotationPID.setIntegratorRange(-0.36, 0.36);
   }
@@ -70,32 +75,30 @@ public class Superstructure extends SubsystemBase {
       m_shooter.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
       m_hood.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
     }
+    double angleFromTarget = m_driveTrain.getAbsoluteAngleFromHub();
+    angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
+
+    SmartDashboard.putNumber("turnTo/Angle From Hub", angleFromTarget);
+    SmartDashboard.putBoolean("turnTo/atSetpoint", pointedAtTarget());
   }
 
   public Command startShooting() {
     m_intakeState = m_intake.getIntakeState();
-    return this.run(() -> {
-      if (isRobotMoving()) {
-        m_shooter.setShooterState(ShooterState.SOTM);
-        //m_hood.setHoodState(HoodState.SOTM);
-        m_hood.setHoodState(HoodState.IDLE);
-        m_intake.setIntakeState(IntakeState.INTAKING);
-        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
-      } else {
+    return Commands.run(() -> {
         m_shooter.setShooterState(ShooterState.SHOOTING);
         //m_hood.setHoodState(HoodState.SHOOTING);
         m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
-      }
       if (m_isAtSpeed) {
       m_roller.setRollerState(RollerState.SHOOTING);
       }
-    });
+    },
+    m_roller, m_shooter, m_hood, m_intake, m_shotCalculator);
   }
 
   public Command stopShooting() {
-    return this.runOnce(() -> {
+    return Commands.runOnce(() -> {
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
       m_hood.setHoodState(m_hoodState);
@@ -103,32 +106,40 @@ public class Superstructure extends SubsystemBase {
       m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       m_isAtSpeed = false;
 
-    });
+    },
+    m_roller, m_shooter, m_hood, m_intake, m_shotCalculator);
   }
 
   public Command deployIntakingCommand() {
     m_intakeState = m_intake.getIntakeState();
-    return this.run(() -> {
+    return Commands.defer(() ->
+      Commands.run(() -> {
       if ((m_intake.getPosition() < IntakeConstants.POSITION_TOLERANCE)) {
         m_intake.setIntakeState(IntakeState.EXTENDED);
         m_roller.setRollerState(RollerState.IDLE);
       } else {
         m_intake.setIntakeState(IntakeState.INTAKING);
         m_roller.setRollerState(RollerState.INTAKING);
-      }
-    }).until(() -> m_intake.getIntakeState() == IntakeState.INTAKING);
+      }},
+      m_roller,
+      m_intake).until(() -> m_intake.getIntakeState() == IntakeState.INTAKING)
+    , Set.of(m_roller, m_intake)
+    
+    );
+    
   }
 
   public Command retractIntake() {
-    return this.runOnce(() -> {
+    return Commands.runOnce(() -> {
       m_intake.setIntakeState(IntakeState.RETRACT);
       m_roller.setRollerState(RollerState.IDLE);
-    });
+    },
+    m_roller, m_intake);
   }
 
   public Command shootManually() {
     m_hoodState = m_hood.getHoodState();
-    return this.run(() -> {
+    return Commands.run(() -> {
 
       if (m_shooter.getShooterState() == ShooterState.MANUAL_FAR) {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
@@ -146,7 +157,8 @@ public class Superstructure extends SubsystemBase {
       if (m_isAtSpeed) {
         m_roller.setRollerState(RollerState.SHOOTING);
         }
-    }).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
+    },
+    m_roller, m_shooter, m_hood, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }
 
   public Command setHoodAngleClose() {
@@ -207,10 +219,11 @@ public class Superstructure extends SubsystemBase {
   }
 
   public double turnToTargetSpeed() {
-    double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
+    double angleFromTarget = m_driveTrain.getAbsoluteAngleFromHub();
+    angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
     double rz = m_driveTrain.getAngle();
-    rz = rz < 0 ? rz + 360 : rz;
     double speed = -(rotationPID.calculate(rz, angleFromTarget));
+    SmartDashboard.putNumber("turnTo/speed", speed);
     return speed;
   }
 

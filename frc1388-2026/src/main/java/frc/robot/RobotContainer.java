@@ -76,9 +76,10 @@ public class RobotContainer {
         shotcalculator = new ShotCalculator(drivetrain);
         superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
 
-
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
+
         NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
+
         NamedCommands.registerCommand("deployIntaking", superstructure.deployIntakingCommand());
 
         NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
@@ -86,13 +87,15 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
         NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
+        
+        drivetrain.configureAutoBuilder();
 
-        configureBindings();
-
+        
         // autoChooser = AutoBuilder.buildAutoChooser("Tests");
         autoChooser = AutoBuilder.buildAutoChooser();
-
+        
         SmartDashboard.putData("Auto Mode", autoChooser);
+        configureBindings();
 
         // register commands
 

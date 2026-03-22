@@ -48,15 +48,14 @@
   "eventMarkers": [
     {
       "name": "deployIntaking",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.044198895027622094,
       "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "shootManually",
-      "waypointRelativePos": 0.9155485398579337,
-      "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "deployIntaking"
+        }
+      }
     }
   ],
   "globalConstraints": {
