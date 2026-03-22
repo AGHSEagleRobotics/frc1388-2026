@@ -11,6 +11,7 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -103,7 +104,7 @@ public class Intake extends SubsystemBase {
       setPosition(getPosition());
     }
 
-    DogLog.log("Intake/Absolute Encoder", getPosition());
+    SmartDashboard.putNumber("Intake/Absolute Encoder", getPosition());
   }
 
     public void stop() {
