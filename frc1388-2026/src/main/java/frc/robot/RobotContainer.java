@@ -54,7 +54,8 @@ public class RobotContainer {
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
 
-            .withDeadband(DriveTrainConstants.ROBOT_MAX_SPEED * 0.1).withRotationalDeadband(DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
+            // NOTE deadband changed to 0.01 from 0.1
+            .withDeadband(DriveTrainConstants.ROBOT_MAX_SPEED * 0.01).withRotationalDeadband(DriveTrainConstants.MAX_ANGULAR_RATE * 0.01) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
@@ -220,9 +221,11 @@ public class RobotContainer {
     public double calculateRotationalVelocity() {
         double omega = 0;
         if (joystick.rightTrigger().getAsBoolean()) {
-            omega = superstructure.turnToTargetSpeed();
+            if (!superstructure.pointedAtTarget()) {
+                omega = superstructure.turnToTargetSpeed();
+            }
         } else {
-            double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.1);
+            double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.05);
             omega = -DriveTrainConstants.MAX_ANGULAR_RATE * scale(rightX, 2.5);
         }
         return omega;
@@ -252,11 +255,5 @@ public class RobotContainer {
     }
 
     public void resetGyro() {
-        if(LimelightHelpers.getTV(LimelightConstants.SHOOTER_LIMELIGHT)) {
-            drivetrain.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
-        }
-        if(LimelightHelpers.getTV(LimelightConstants.LEFT_LIMELIGHT)) {
-            drivetrain.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
-        }
     }
 }

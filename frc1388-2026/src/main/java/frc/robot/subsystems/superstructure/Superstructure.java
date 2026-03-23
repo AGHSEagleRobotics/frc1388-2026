@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.shotlib.ShotCalculator.ShotCalculatorState;
@@ -40,7 +41,7 @@ public class Superstructure extends SubsystemBase {
   public IntakeState m_intakeState;
   public boolean m_isAtSpeed;
 
-  public static final PIDController rotationPID = new PIDController(0, 0, .0);
+  public static final PIDController rotationPID = new PIDController(0.075, 0, 0);
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, Hood hood, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
@@ -51,7 +52,7 @@ public class Superstructure extends SubsystemBase {
     m_shotCalculator = shotCalculator;
 
     rotationPID.enableContinuousInput(-180, 180);
-    rotationPID.setTolerance(5);
+    rotationPID.setTolerance(4);
     // rotationPID.setIZone(2);
     // rotationPID.setIntegratorRange(-0.36, 0.36);
   }
@@ -75,11 +76,6 @@ public class Superstructure extends SubsystemBase {
       m_shooter.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
       m_hood.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
     }
-    double angleFromTarget = m_driveTrain.getAbsoluteAngleFromHub();
-    angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
-
-    SmartDashboard.putNumber("turnTo/Angle From Hub", angleFromTarget);
-    SmartDashboard.putBoolean("turnTo/atSetpoint", pointedAtTarget());
   }
 
   public Command startShooting() {
@@ -221,18 +217,22 @@ public class Superstructure extends SubsystemBase {
   public double turnToTargetSpeed() {
     double angleFromTarget = m_driveTrain.getAbsoluteAngleFromHub();
     angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
-    double rz = m_driveTrain.getAngle();
-    double speed = -(rotationPID.calculate(rz, angleFromTarget));
-    SmartDashboard.putNumber("turnTo/speed", speed);
+    double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
+    double speed = (rotationPID.calculate(rz, angleFromTarget));
+    speed = MathUtil.clamp(speed, -DriveTrainConstants.MAX_ANGULAR_RATE, DriveTrainConstants.MAX_ANGULAR_RATE);
+
     return speed;
   }
 
   public boolean pointedAtTarget() {
-    return rotationPID.atSetpoint();
+    double angleFromTarget = m_driveTrain.getAbsoluteAngleFromHub();
+    angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
+    double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
+    return Math.abs(rz - angleFromTarget) < 4;
   }
 
   public boolean isAtSpeed() {
-    return m_shooter.isAtSpeed(6.5);
+    return m_shooter.isAtSpeed(5);
   }
 
   public boolean isRobotMoving() {

@@ -41,21 +41,21 @@ public class VisionAcceptor {
             return true;
         }
 
-        SmartDashboard.putNumber("difference of x", Math.abs(currentPosition.getX() - lastPosition.getX()));
-        SmartDashboard.putNumber("difference of y", Math.abs(currentPosition.getY() - lastPosition.getY()));
+        // SmartDashboard.putNumber("difference of x", Math.abs(currentPosition.getX() - lastPosition.getX()));
+        // SmartDashboard.putNumber("difference of y", Math.abs(currentPosition.getY() - lastPosition.getY()));
 
-        double velocityPerTick =  DriveTrainConstants.DISTANCE_PER_TICK;
+        // double velocityPerTick =  DriveTrainConstants.DISTANCE_PER_TICK;
 
-        double velocityPerTickClamped = MathUtil.clamp(velocityPerTick, 0.05, velocityPerTick);
+        // double velocityPerTickClamped = MathUtil.clamp(velocityPerTick, 0.05, velocityPerTick);
 
-        double clamedJumpCount = MathUtil.clamp(m_jumpCount, 0, 1000);
+        // double clamedJumpCount = MathUtil.clamp(m_jumpCount, 0, 1000);
 
-        double velocityTimesJumpCount = velocityPerTickClamped * (clamedJumpCount + 1);
+        // double velocityTimesJumpCount = velocityPerTickClamped * (clamedJumpCount + 1);
 
-        SmartDashboard.putNumber("normalizedVelocity", norm());
-        SmartDashboard.putNumber("velocityPerTick", velocityPerTick);
-        SmartDashboard.putNumber("velocityPerTickClamped", velocityPerTickClamped);
-        SmartDashboard.putNumber("jumpCountVelocity", velocityTimesJumpCount);
+        // SmartDashboard.putNumber("normalizedVelocity", norm());
+        // SmartDashboard.putNumber("velocityPerTick", velocityPerTick);
+        // SmartDashboard.putNumber("velocityPerTickClamped", velocityPerTickClamped);
+        // SmartDashboard.putNumber("jumpCountVelocity", velocityTimesJumpCount);
 
         // check if the current position compared to the last position is greater than the velocity per tick of the robot
         
@@ -99,7 +99,7 @@ public class VisionAcceptor {
 
             m_angle = Math.acos(dotProduct);
 
-            SmartDashboard.putNumber("VisionAcceptor/angleBetweenRobotAndCamera", Math.toDegrees(m_angle));
+            // SmartDashboard.putNumber("VisionAcceptor/angleBetweenRobotAndCamera", Math.toDegrees(m_angle));
 
             double allignmentThreshold = Math.toRadians(15);
 
@@ -115,6 +115,10 @@ public class VisionAcceptor {
         if (norm() > 4.0) { //changed from 4
             return false;
         }
+
+        if(m_robotVelocity.omegaRadiansPerSecond > 0.5) {
+            return false;
+        }
         // m_lastPosition = currentPosition;
         
         return true;      
@@ -125,7 +129,7 @@ public class VisionAcceptor {
             m_gyroResetCooldown--; 
             return false;
         }
-        if(norm() < 0.01) {
+        if(norm() < 0.01 && m_robotVelocity.omegaRadiansPerSecond < 0.01) {
             m_gyroResetCooldown = 25; //about half a second at 50 Hz
         return true;
         }

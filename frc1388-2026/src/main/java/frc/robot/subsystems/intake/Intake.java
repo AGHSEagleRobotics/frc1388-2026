@@ -92,7 +92,7 @@ public class Intake extends SubsystemBase {
       } else {
         setPosition(getPosition());
       }
-      setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
+      setIntakingRollers(-8);
     } else if (intakeState == IntakeState.TESTINGROLLER) {
       setIntakingRollers(IntakeConstants.TESTING_VOLTS);
     } else if (intakeState == IntakeState.TESTINGDEPLOYDOWN) {
