@@ -7,7 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TowerFreeThrowRegular"
+            "pathName": "PickupShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "startShooting"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopShooting"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GoBackPickupShoot"
           }
         },
         {

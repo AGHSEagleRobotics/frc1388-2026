@@ -9,6 +9,24 @@
           "data": {
             "pathName": "OutpostFreeThrowRegular"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "startShooting"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopShooting"
+          }
         }
       ]
     }

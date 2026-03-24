@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 2.492,
+        "x": 1.997,
         "y": 4.049519867549668
       },
       "prevControl": {
-        "x": 2.2420020610856155,
+        "x": 1.7470020610856156,
         "y": 4.050535022000828
       },
       "nextControl": null,
@@ -31,19 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "startShooting",
-      "waypointRelativePos": 0.8155844155844212,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "startShooting"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
@@ -57,7 +45,7 @@
     "rotation": -0.7345210342547515
   },
   "reversed": false,
-  "folder": "Competition Autos",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

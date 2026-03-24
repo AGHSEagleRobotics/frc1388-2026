@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MoveOutMiddleShoot"
+            "pathName": "PickupShoot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shootManually"
+            "name": "startShooting"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopShooting"
           }
         }
       ]
