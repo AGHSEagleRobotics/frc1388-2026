@@ -83,11 +83,11 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("deployIntaking", superstructure.deployIntakingCommand());
 
-        NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
+        // NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
         NamedCommands.registerCommand("shootManually", superstructure.shootManually());
 
-        NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
-        NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
+        // NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
+        // NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
         
         drivetrain.configureAutoBuilder();
 
@@ -161,9 +161,10 @@ public class RobotContainer {
         joystick.leftTrigger().onTrue(superstructure.retractIntake());
 
         // sets hood angle for a close shot and far shot
-        joystick.a().onTrue(superstructure.setHoodAngleClose());
         joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.y().onTrue(superstructure.setHoodAngleFar());
+
+        joystick.a().whileTrue(superstructure.outTake());
+        joystick.a().onFalse(superstructure.deployIntakingCommand());
 
         joystick.back().onTrue(new InstantCommand(() -> drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d()))));
 

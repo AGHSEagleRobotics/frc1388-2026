@@ -41,7 +41,8 @@ public class Intake extends SubsystemBase {
     TESTINGROLLER,
     TESTINGDEPLOYDOWN,
     TESTINGDEPLOYUP,
-    STOP
+    STOP,
+    REVERSE
   }
 
   
@@ -92,7 +93,7 @@ public class Intake extends SubsystemBase {
       } else {
         setPosition(getPosition());
       }
-      setIntakingRollers(-8);
+      setIntakingRollers(4);
     } else if (intakeState == IntakeState.TESTINGROLLER) {
       setIntakingRollers(IntakeConstants.TESTING_VOLTS);
     } else if (intakeState == IntakeState.TESTINGDEPLOYDOWN) {
@@ -102,6 +103,9 @@ public class Intake extends SubsystemBase {
     } else if (intakeState == IntakeState.STOP) {
       setIntakingRollers(0);
       setPosition(getPosition());
+    } else if (intakeState == IntakeState.REVERSE) {
+      setIntakingRollers(-6);
+      setPosition(IntakeConstants.DOWN_POSITION);
     }
 
     SmartDashboard.putNumber("Intake/Absolute Encoder", getPosition());

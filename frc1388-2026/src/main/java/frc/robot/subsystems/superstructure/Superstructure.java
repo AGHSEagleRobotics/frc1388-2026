@@ -6,6 +6,10 @@ package frc.robot.subsystems.superstructure;
 
 import java.util.Set;
 
+import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
+
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -214,6 +218,39 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() -> m_hood.setHoodState(HoodState.IDLE));
   }
 
+  public Command outTake() {
+    return Commands.runOnce(() -> {
+      m_intake.setIntakeState(IntakeState.REVERSE);
+      m_roller.setRollerState(RollerState.REVERSE);
+    });
+  }
+
+  public Command rotateToHub() {
+    return Commands.run(() -> {
+      m_driveTrain.setControl(
+          new SwerveRequest.FieldCentric()
+              .withVelocityX(0)
+              .withVelocityY(0)
+              .withRotationalRate(turnToTargetSpeed()));
+    }, m_driveTrain)
+        .until(() -> pointedAtTarget())
+        .withName("rotateToHub");
+  }
+
+  public Command startShootingAuto() {
+    return Commands.runOnce(() -> {
+      m_shooter.setShooterState(ShooterState.SHOOTING);
+    })
+        .andThen(rotateToHub())
+        .andThen(Commands.run(() -> {
+          if (m_isAtSpeed) {
+            m_intake.setIntakeState(IntakeState.SHOOTING);
+            m_roller.setRollerState(RollerState.SHOOTING);
+          }
+        }, m_driveTrain))
+        .withName("startShootingAuto");
+  }
+
   public double turnToTargetSpeed() {
     double angleFromTarget = m_driveTrain.getAbsoluteAngleFromHub();
     angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
@@ -232,7 +269,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean isAtSpeed() {
-    return m_shooter.isAtSpeed(5);
+    return m_shooter.isAtSpeed(3);
   }
 
   public boolean isRobotMoving() {
@@ -244,7 +281,7 @@ public class Superstructure extends SubsystemBase {
   public boolean isInShooterState() {
     if (m_shooter.getShooterState() == ShooterState.MANUAL_CLOSE
         || m_shooter.getShooterState() == ShooterState.MANUAL_FAR
-        || m_shooter.getShooterState() == ShooterState.SHOOTING 
+        || m_shooter.getShooterState() == ShooterState.SHOOTING
         || m_shooter.getShooterState() == ShooterState.PASSING
         || m_shooter.getShooterState() == ShooterState.SOTM) {
       return true;

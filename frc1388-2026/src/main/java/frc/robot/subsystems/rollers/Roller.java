@@ -27,6 +27,7 @@ public class Roller extends SubsystemBase {
     IDLE,
     INTAKING,
     SHOOTING,
+    REVERSE,
     TESTING
   }
 
@@ -53,6 +54,9 @@ public class Roller extends SubsystemBase {
     } else if (rollerState == RollerState.TESTING) {
       m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
       m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);
+    } else if (rollerState == RollerState.REVERSE) {
+      m_io.setBottomRollerVoltage(-8);
+      m_io.setTopRollerVoltage(-8);
     }
   }
 

@@ -5,15 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "PickupShoot"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "PickupShootLeft"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "deployIntaking"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "startShooting"
+            "name": "startShootingAuto"
           }
         },
         {
@@ -31,13 +44,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GoBackPickupShoot"
+            "pathName": "GoBackPickupShootLeft"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "startShooting"
+            "name": "startShootingAuto"
           }
         },
         {

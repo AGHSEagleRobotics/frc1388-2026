@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "PickupShoot"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "PickupShootRight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "deployIntaking"
+                }
+              }
+            ]
           }
         },
         {
@@ -25,13 +38,13 @@
         {
           "type": "named",
           "data": {
-            "name": "stopShooting"
+            "name": "startShootingAuto"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

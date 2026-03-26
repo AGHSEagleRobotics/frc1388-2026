@@ -53,7 +53,7 @@ public final class Constants {
       public static final Pose3d CENTER_OF_HUB_BLUE = new Pose3d(Units.inchesToMeters(182.11), Units.inchesToMeters(158.84),
                 Units.inchesToMeters(72), Rotation3d.kZero);
 
-      public static Pose3d CENTER_OF_HUB_RED =  new Pose3d(Units.inchesToMeters(534.72), Units.inchesToMeters(158.84),
+      public static Pose3d CENTER_OF_HUB_RED =  new Pose3d(FIELD_LENGTH - CENTER_OF_HUB_BLUE.getX(), Units.inchesToMeters(158.84),
                 Units.inchesToMeters(72), Rotation3d.kZero);
 
       public static final double BLUE_ALLIANCE_ZONE = Units.inchesToMeters(156.61);
@@ -84,9 +84,9 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 3400.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 2500.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 3400.0/60.0;
+      public static final double MANUAL_SHOOT_FAR = 2500.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 4.0/3.0;
 
@@ -138,14 +138,14 @@ public final class Constants {
 
       public static final double INTAKE_OFFSET = -0.985;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
-      public static final double INTAKING_ROLLER_STATE_VOLTS = 8;
+      public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
 
       public static final double POSITION_TOLERANCE = 0.185;
-      public static final double DOWN_POSITION = 0.413;
+      public static final double DOWN_POSITION = 0.407;
       public static final double UP_POSITION = 0.04;
       public static final double HALF_WAY = 0.258;
       public static final double TESTING_VOLTS = 6;
-      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1.5;
+      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1;
     }
 
     public static class LimelightConstants {
