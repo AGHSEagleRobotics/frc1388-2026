@@ -47,7 +47,8 @@ public class Intake extends SubsystemBase {
     INTAKING,
     SHOOTING,
     MEDIUS,
-    TESTING
+    TESTING,
+    STOP
   }
 
   public Intake(IntakeIO io) {
@@ -94,4 +95,10 @@ public class Intake extends SubsystemBase {
     public void setIntakeState(IntakeState intakeState) {
       this.intakeState = intakeState;
     }
+
+    public IntakeState getIntakeState() {
+      return intakeState;
+    }
+      
+    
 }

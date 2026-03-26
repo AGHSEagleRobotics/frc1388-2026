@@ -94,10 +94,25 @@ public class RobotContainer {
 
         
         configureBindings();
+
+        NamedCommands.registerCommand("startShooting", superstructure.startShooting());
+        NamedCommands.registerCommand("stopShooting", superstructure.stopShooting());
+        NamedCommands.registerCommand("deployIntaking", superstructure.deployIntakingCommand());
+               
+        NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
+        NamedCommands.registerCommand("testIntakeRollers", superstructure.testIntakeRollers());
+        
+        NamedCommands.registerCommand("testRollers", superstructure.testRollers());
+        NamedCommands.registerCommand("testShooter", superstructure.testShooter());
+        NamedCommands.registerCommand("testHood", superstructure.testHood());
+        
+        NamedCommands.registerCommand("stopHood", superstructure.stopHood());
+
         drivetrain.resetPose(new Pose2d(3, 3, new Rotation2d()));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
+        
 
     }
 

@@ -41,7 +41,8 @@ public class Superstructure extends SubsystemBase {
     SHOOTING,
     PASSING,
     SOTM,
-    TESTING
+    TESTING,
+    STOP
   }
 
   /** Creates a new Superstructure. */
@@ -111,4 +112,73 @@ public class Superstructure extends SubsystemBase {
     return this.runOnce(() ->
     this.robotState = robotState);
   }
+
+ public Command startShooting() {
+    return this.runOnce(() -> {
+      m_roller.setRollerState(RollerState.SHOOTING);
+      m_shooter.setShooterState(ShooterState.SHOOTING);
+      m_hood.setHoodState(HoodState.SHOOTING);
+    });
+  }
+
+  public Command stopShooting() {
+    return this.runOnce(() -> {
+      m_roller.setRollerState(RollerState.IDLE);
+      m_shooter.setShooterState(ShooterState.IDLE);
+      m_hood.setHoodState(HoodState.IDLE);
+    });
+  }
+
+  public Command deployIntakingCommand() {
+    if (m_intake.getIntakeState() == IntakeState.INTAKING) {
+      return this.runOnce(() -> {
+        m_intake.setIntakeState(IntakeState.EXTENDED);
+      });
+    }
+    return this.runOnce(() -> {
+      m_intake.setIntakeState(IntakeState.INTAKING);
+    });
+  }
+
+  public Command retractIntake() {
+    return this.runOnce(() -> {
+      m_intake.setIntakeState(IntakeState.RETRACT);
+    });
+  }
+
+  public Command testIntakeRollers() {
+    return this.runOnce(() -> 
+    m_intake.setIntakeState(IntakeState.TESTING));
+  }
+
+  public Command stopIntakeRollers() {
+    return this.runOnce(() ->
+    m_intake.setIntakeState(IntakeState.STOP));
+  }
+
+  public Command testRollers() {
+    return this.runOnce(() ->
+    m_roller.setRollerState(RollerState.TESTING));
+  }
+
+  public Command stopRollers() {
+    return this.runOnce(() -> 
+    m_roller.setRollerState(RollerState.IDLE));
+  }
+
+  public Command testShooter() {
+    return this.runOnce(() ->
+    m_shooter.setShooterState(ShooterState.TESTING));
+  }
+
+   public Command testHood() {
+    return this.runOnce(() ->
+    m_hood.setHoodState(HoodState.TESTING));
+  }
+
+  public Command stopHood() {
+    return this.runOnce(() -> m_hood.setHoodState(HoodState.IDLE));
+  }
+
+
 }
