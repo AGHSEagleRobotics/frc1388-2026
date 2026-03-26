@@ -47,7 +47,7 @@ public class Roller extends SubsystemBase {
     } 
     else if (rollerState == RollerState.INTAKING) {
       m_io.setBottomRollerVoltage(RollerConstants.bottomRollerIntakeSpeed);
-      m_io.setTopRollerVoltage(0);
+      m_io.setTopRollerVoltage(-1);
     } else if ((rollerState == RollerState.SHOOTING)) {
       m_io.setBottomRollerVoltage(RollerConstants.bottomRollerShootingSpeed);
       m_io.setTopRollerVoltage(RollerConstants.topRollerShootingSpeed);

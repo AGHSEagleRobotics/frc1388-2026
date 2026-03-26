@@ -90,8 +90,8 @@ public class Intake extends SubsystemBase {
     } else if (intakeState == IntakeState.SHOOTING) {
       if (getPosition() > IntakeConstants.POSITION_TOLERANCE) {
         setDeployVolts(IntakeConstants.RAISE_INTAKE_SHOOTING_VOLTS);
-      } else {
-        setPosition(getPosition());
+      } else if (getPosition() < IntakeConstants.POSITION_TOLERANCE) {
+        setDeployVolts(2);
       }
       setIntakingRollers(4);
     } else if (intakeState == IntakeState.TESTINGROLLER) {

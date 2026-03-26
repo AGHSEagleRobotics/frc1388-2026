@@ -241,7 +241,7 @@ public class Superstructure extends SubsystemBase {
     return Commands.runOnce(() -> {
       m_shooter.setShooterState(ShooterState.SHOOTING);
     })
-        .andThen(rotateToHub())
+        .andThen(rotateToHub()).until(() -> pointedAtTarget())
         .andThen(Commands.run(() -> {
           if (m_isAtSpeed) {
             m_intake.setIntakeState(IntakeState.SHOOTING);

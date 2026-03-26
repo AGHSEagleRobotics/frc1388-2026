@@ -32,7 +32,7 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 35.0;
     public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 35.0;
 
-    public static final double bottomRollerIntakeSpeed = 1;
+    public static final double bottomRollerIntakeSpeed = 2;
     public static final double bottomRollerShootingSpeed = 8;
     public static final double topRollerShootingSpeed = 10;
   }
@@ -84,18 +84,18 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2500.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 2900.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 2500.0/60.0;
+      public static final double MANUAL_SHOOT_FAR = 2900.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 4.0/3.0;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_RPM.put(2.08, 2100.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(2.43, 2300.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(2.72, 2500.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.08, 2000.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.43, 2200.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.72, 2400.0/60.0);
         DISTANCE_TO_SHOT_RPM.put(4.0, 3400.0/60.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
@@ -138,14 +138,14 @@ public final class Constants {
 
       public static final double INTAKE_OFFSET = -0.985;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
-      public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
+      public static final double INTAKING_ROLLER_STATE_VOLTS = 6;
 
       public static final double POSITION_TOLERANCE = 0.185;
       public static final double DOWN_POSITION = 0.407;
       public static final double UP_POSITION = 0.04;
       public static final double HALF_WAY = 0.258;
       public static final double TESTING_VOLTS = 6;
-      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1;
+      public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1.5;
     }
 
     public static class LimelightConstants {

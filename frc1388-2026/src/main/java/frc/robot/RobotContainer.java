@@ -86,6 +86,8 @@ public class RobotContainer {
         // NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
         NamedCommands.registerCommand("shootManually", superstructure.shootManually());
 
+        NamedCommands.registerCommand("startShootingAuto", superstructure.startShootingAuto());
+
         // NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
         // NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
         

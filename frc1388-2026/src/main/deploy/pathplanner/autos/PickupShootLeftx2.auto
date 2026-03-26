@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "PickupShootLeft"
+                  "pathName": "GoOverBump"
                 }
               },
               {
@@ -24,15 +24,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "startShootingAuto"
+            "pathName": "PickupShootLeft"
           }
         },
         {
-          "type": "wait",
+          "type": "deadline",
           "data": {
-            "waitTime": 5.0
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "startShootingAuto"
+                }
+              }
+            ]
           }
         },
         {
@@ -44,19 +57,32 @@
         {
           "type": "path",
           "data": {
+            "pathName": "GoOverBumpx2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "GoBackPickupShootLeft"
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "startShootingAuto"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 5.0
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "startShootingAuto"
+                }
+              }
+            ]
           }
         },
         {
