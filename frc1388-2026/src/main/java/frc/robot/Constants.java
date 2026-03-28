@@ -96,7 +96,7 @@ public final class Constants {
         DISTANCE_TO_SHOT_RPM.put(2.08, 2000.0/60.0);
         DISTANCE_TO_SHOT_RPM.put(2.43, 2200.0/60.0);
         DISTANCE_TO_SHOT_RPM.put(2.72, 2400.0/60.0);
-        // DISTANCE_TO_SHOT_RPM.put(4.0, 3400.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(4.0, 3300.0/60.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
       static {
