@@ -29,8 +29,8 @@ public final class Constants {
 
   public static class RollerConstants {
 
-    public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 60.0;
-    public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 60.0;
+    public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 40.0;
+    public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 40.0;
 
     public static final double bottomRollerIntakeSpeed = 0;
     public static final double bottomRollerShootingSpeed = 8;
@@ -77,8 +77,8 @@ public final class Constants {
       public static final int SHOOT_MOTOR2_CANID = 37;
       public static final int KICKER_MOTOR_CANID = 42;
 
-      public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 60.0;
-      public static final double SUPPLY_CURRENT_LIMIT_KICKER = 50.0;
+      public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 40.0;
+      public static final double SUPPLY_CURRENT_LIMIT_KICKER = 40.0;
 
       public static final double TESTING_STATE_VOLTS = 4.0;
 
@@ -133,17 +133,17 @@ public final class Constants {
 
     public static class IntakeConstants {
       
-      public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 60.0;
-      public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 60.0;
+      public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 40.0;
+      public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 40.0;
 
-      public static final double INTAKE_OFFSET = -0.975;
+      public static final double INTAKE_OFFSET = -0.765;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
 
-      public static final double POSITION_TOLERANCE = 0.185;
-      public static final double DOWN_POSITION = 0.407;
-      public static final double UP_POSITION = 0.04;
-      public static final double HALF_WAY = 0.258;
+      public static final double POSITION_TOLERANCE = 0.385;
+      public static final double DOWN_POSITION = 0.62;
+      public static final double UP_POSITION = 0.22;
+      // public static final double HALF_WAY = 0.258;
       public static final double TESTING_VOLTS = 6;
       public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1.5;
     }
