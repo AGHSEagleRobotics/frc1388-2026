@@ -45,6 +45,8 @@ public class Superstructure extends SubsystemBase {
   public IntakeState m_intakeState;
   public boolean m_isAtSpeed;
 
+  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+
   public static final PIDController rotationPID = new PIDController(0.075, 0, 0);
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, Hood hood, ShotCalculator shotCalculator) {
@@ -225,24 +227,38 @@ public class Superstructure extends SubsystemBase {
     });
   }
 
-  public Command rotateToHub() {
-    return Commands.run(() -> {
-      m_driveTrain.setControl(
-          new SwerveRequest.FieldCentric()
-              .withVelocityX(0)
-              .withVelocityY(0)
-              .withRotationalRate(turnToTargetSpeed()));
-    }, m_driveTrain)
-        .until(() -> pointedAtTarget())
-        .withName("rotateToHub");
-  }
+  // public Command rotateToHub() {
+  //   return Commands.run(() -> {
+  //     m_driveTrain.setControl(
+  //         new SwerveRequest.FieldCentric()
+  //             .withVelocityX(0)
+  //             .withVelocityY(0)
+  //             .withRotationalRate(turnToTargetSpeed()));
+  //   }, m_driveTrain)
+  //       .until(() -> pointedAtTarget())
+  //       .withName("rotateToHub");
+  // }
 
   public Command startShootingAuto() {
     return Commands.runOnce(() -> {
       m_shooter.setShooterState(ShooterState.SHOOTING);
     })
-        .andThen(rotateToHub()).until(() -> pointedAtTarget())
         .andThen(Commands.run(() -> {
+          m_driveTrain.setControl(
+              new SwerveRequest.FieldCentric()
+                  .withVelocityX(0)
+                  .withVelocityY(0)
+                  .withRotationalRate(turnToTargetSpeed()));
+        }, m_driveTrain)
+            .until(() -> pointedAtTarget())
+            .withName("rotateToHub"))
+        .andThen(Commands.run(() -> {
+          m_driveTrain.applyRequest(() -> brake);
+          m_driveTrain.setControl(
+              new SwerveRequest.FieldCentric()
+                  .withVelocityX(0)
+                  .withVelocityY(0)
+                  .withRotationalRate(0));
           if (m_isAtSpeed) {
             m_intake.setIntakeState(IntakeState.SHOOTING);
             m_roller.setRollerState(RollerState.SHOOTING);

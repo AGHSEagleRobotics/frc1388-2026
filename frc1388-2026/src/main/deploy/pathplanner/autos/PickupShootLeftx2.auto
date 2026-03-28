@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GoOverBump"
+                  "pathName": "GoOverBumpLeft"
                 }
               },
               {
@@ -57,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GoOverBumpx2"
+            "pathName": "GoOverBumpLeftx2"
           }
         },
         {

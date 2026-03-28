@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "PickupShootRight"
+                  "pathName": "GoOverBumpRight"
                 }
               },
               {
@@ -24,21 +24,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "startShooting"
+            "pathName": "PickupShootRight"
           }
         },
         {
-          "type": "wait",
+          "type": "deadline",
           "data": {
-            "waitTime": 5.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "startShootingAuto"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "startShootingAuto"
+                }
+              }
+            ]
           }
         }
       ]
