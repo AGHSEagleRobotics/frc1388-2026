@@ -140,7 +140,7 @@ public final class Constants {
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
 
-      public static final double POSITION_TOLERANCE = 0.385;
+      public static final double POSITION_TOLERANCE = 0.404;
       public static final double DOWN_POSITION = 0.62;
       public static final double UP_POSITION = 0.22;
       // public static final double HALF_WAY = 0.258;
