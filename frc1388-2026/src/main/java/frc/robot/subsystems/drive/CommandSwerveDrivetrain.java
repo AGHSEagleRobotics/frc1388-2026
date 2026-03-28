@@ -394,14 +394,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             
             processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
             processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
-            if (acceptGyro(visionAcceptorShooter, shooterEstimate)) {
-                resetGyro(shooterEstimate);
-                gyroWasAccepted = true;
-            }
-            if ((!gyroWasAccepted) && acceptGyro(visionAcceptorLeft, lefEstimate)) {
-                resetGyro(lefEstimate);
-                gyroWasAccepted = true;
-            }
         // ===========================================================
 
         // DogLog.log("Drive/OdometryPose", getState().Pose);
@@ -588,18 +580,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     private PoseEstimate processVision(VisionAcceptor acceptor, String name) {
-    PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-    if (estimate == null) return null;
-    
-    boolean accepted = acceptor.shouldAccept(estimate.pose, previousPositions.get(name), getState().Speeds);
-    previousPositions.put(name, estimate.pose);
-    //  SmartDashboard.putBoolean("pose/Accept" + name, accepted);
-    
-    if (accepted) {
-        addVisionMeasurement(estimate.pose, (estimate.timestampSeconds));
+        PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+        PoseEstimate estimate2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        if (estimate == null)
+            return null;
+
+        boolean accepted = acceptor.shouldAccept(estimate.pose, previousPositions.get(name), getState().Speeds);
+        previousPositions.put(name, estimate.pose);
+        // SmartDashboard.putBoolean("pose/Accept" + name, accepted);
+
+        if (accepted) {
+            addVisionMeasurement(estimate.pose, (estimate.timestampSeconds));
+            if (acceptGyro(acceptor, estimate2)) {
+                resetRotation(estimate2.pose.getRotation());
+            }
+        }
+        return estimate;
     }
-    return estimate;
-}
 
     public boolean acceptGyro(VisionAcceptor acceptor, PoseEstimate estimate) {
         return acceptor.shouldResetGyro() && estimate != null && estimate.tagCount > 0;
