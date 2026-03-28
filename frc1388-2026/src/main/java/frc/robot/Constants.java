@@ -136,7 +136,7 @@ public final class Constants {
       public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 60.0;
       public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 60.0;
 
-      public static final double INTAKE_OFFSET = -0.985;
+      public static final double INTAKE_OFFSET = -0.975;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
 
