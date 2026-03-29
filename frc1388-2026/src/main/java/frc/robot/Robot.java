@@ -91,10 +91,13 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
+        
     }
 
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        // DriverStation.getGameSpecificMessage();
+    }
 
     @Override
     public void teleopExit() {}

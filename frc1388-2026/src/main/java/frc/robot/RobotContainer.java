@@ -35,6 +35,7 @@ import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.vision.LimelightHelpers;
 import frc.robot.vision.LimelightHelpers.PoseEstimate;
+import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOKraken;
@@ -50,6 +51,7 @@ public class RobotContainer {
     public final Hood hood;
     public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
+    public final Dashboard dashboard;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -76,6 +78,7 @@ public class RobotContainer {
         hood = new Hood(new HoodIOKraken());
         shotcalculator = new ShotCalculator(drivetrain);
         superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
+        dashboard = new Dashboard();
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
 
