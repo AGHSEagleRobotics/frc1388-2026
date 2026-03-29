@@ -12,13 +12,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Dashboard extends SubsystemBase {
   private final ShuffleboardTab m_shuffleboardTab;
     private final static String SHUFFLEBOARD_TAB_NAME = "Competition";
-    private final GenericEntry dashboardTest;
-    private final GenericEntry shootingTimer;
+    private final GenericEntry isHubActive;
+    private final GenericEntry hubEnabledTimer;
 
     // private final static String shuffleboardAutonomous = "Autonomous";
     
@@ -29,17 +30,16 @@ public class Dashboard extends SubsystemBase {
 
       Shuffleboard.selectTab(SHUFFLEBOARD_TAB_NAME);
       m_shuffleboardTab = Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
-      ShuffleboardTab TimerTab = Shuffleboard.getTab("Autonomous");
-      ShuffleboardTab CanWeShoot = Shuffleboard.getTab("Autonomous");
+      ShuffleboardTab AutoTab = Shuffleboard.getTab("Autonomous");
 
-       dashboardTest =  TimerTab
+       hubEnabledTimer =  AutoTab
           .add("ShiftCountdown", "Default")
           .withWidget(BuiltInWidgets.kTextView)
           .withPosition(0, 0)
           .getEntry();
 
-       shootingTimer = CanWeShoot
-          .add("Can We Shoot", false)
+       isHubActive = AutoTab
+          .add("Hub Enabled?", false)
           .withWidget(BuiltInWidgets.kBooleanBox)
           .withPosition(4, 0)
           .getEntry();
@@ -139,7 +139,8 @@ public int timeLeftToShoot() {
   
   if ((alliance.get() == Alliance.Red) && (gameData.charAt(0) == 'R')
       || (alliance.get() == Alliance.Blue) && (gameData.charAt(0) == 'B')) {
-    if (matchTime >= 130 && matchTime <= 140) {
+    //timer for if we won auto
+    if (matchTime >= 130 && matchTime <= 140) { 
       return (int) matchTime - 130;
     }
     if (matchTime >= 105 && matchTime <= 130) {
@@ -154,7 +155,8 @@ public int timeLeftToShoot() {
     if (matchTime <= 55) {
       return (int) matchTime;
     }
-  } else {
+    //timer for if we lost uto
+  } else { 
     if (matchTime >= 105 && matchTime <= 140) {
       return (int) matchTime - 105;
     }
@@ -176,7 +178,8 @@ public int timeLeftToShoot() {
 
 @Override
   public void periodic() {
-dashboardTest.setString(String.valueOf(timeLeftToShoot()));
-shootingTimer.setBoolean(isHubActive());
+hubEnabledTimer.setString(String.valueOf(timeLeftToShoot()));
+isHubActive.setBoolean(isHubActive());
+SmartDashboard.putNumber("Match Timer", DriverStation.getMatchTime());
 }
 }
