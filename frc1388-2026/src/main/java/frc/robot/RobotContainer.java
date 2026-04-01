@@ -47,7 +47,6 @@ public class RobotContainer {
     public final Intake intake;
     public final Roller roller;
     public final Shooter shooter;
-    public final Hood hood;
     public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
     // public final Dashboard dashboard;
@@ -74,9 +73,8 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOKraken());
         roller = new Roller(new RollerIOKraken());
         shooter = new Shooter(new ShooterIOKraken());
-        hood = new Hood(new HoodIOKraken());
         shotcalculator = new ShotCalculator(drivetrain);
-        superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
+        superstructure = new Superstructure(drivetrain, intake, roller, shooter, shotcalculator);
         // dashboard = new Dashboard();
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
@@ -164,7 +162,6 @@ public class RobotContainer {
         // retracts intake
         joystick.leftTrigger().onTrue(superstructure.retractIntake());
 
-        // sets hood angle for a close shot and far shot
         joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
 
         joystick.a().whileTrue(superstructure.outTake());
@@ -193,10 +190,6 @@ public class RobotContainer {
         // // shooter test
         // testJoystick.rightTrigger().whileTrue(superstructure.testShooter());
         // testJoystick.rightTrigger().onFalse(superstructure.stopShooting());
-
-        // // hood test
-        // testJoystick.b().whileTrue(superstructure.testHood());
-        // testJoystick.b().onFalse(superstructure.stopHood());
 
         // // SYS ID TUNING
         // testJoystick.x().whileTrue(shooter.sysIdQuasistatic(Direction.kForward));

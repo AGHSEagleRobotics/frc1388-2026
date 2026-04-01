@@ -14,7 +14,6 @@ import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.shotlib.ShootOnTheFlyCalculator.InterceptSolution;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.shooter.Hood.HoodState;
 
 public class ShotCalculator extends SubsystemBase {
     private final CommandSwerveDrivetrain drivetrain;
