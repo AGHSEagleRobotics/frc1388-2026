@@ -32,7 +32,7 @@ public class Dashboard extends SubsystemBase {
       m_shuffleboardTab = Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
       ShuffleboardTab AutoTab = Shuffleboard.getTab("Autonomous");
 
-       hubEnabledTimer =  AutoTab
+       hubEnabledTimer = AutoTab
           .add("ShiftCountdown", "Default")
           .withWidget(BuiltInWidgets.kTextView)
           .withPosition(0, 0)
@@ -135,8 +135,11 @@ public int timeLeftToShoot() {
 
   double matchTime = DriverStation.getMatchTime();
   String gameData = DriverStation.getGameSpecificMessage();
-  // If we have no game data, we cannot compute, assume hub is
-  
+
+  if (gameData.isEmpty()) {
+    return 0;
+  }
+
   if ((alliance.get() == Alliance.Red) && (gameData.charAt(0) == 'R')
       || (alliance.get() == Alliance.Blue) && (gameData.charAt(0) == 'B')) {
     //timer for if we won auto
