@@ -47,7 +47,6 @@ public class RobotContainer {
     public final Intake intake;
     public final Roller roller;
     public final Shooter shooter;
-    public final Hood hood;
     public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
 
@@ -73,9 +72,8 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOKraken());
         roller = new Roller(new RollerIOKraken());
         shooter = new Shooter(new ShooterIOKraken());
-        hood = new Hood(new HoodIOKraken());
         shotcalculator = new ShotCalculator(drivetrain);
-        superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
+        superstructure = new Superstructure(drivetrain, intake, roller, shooter, shotcalculator);
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
 

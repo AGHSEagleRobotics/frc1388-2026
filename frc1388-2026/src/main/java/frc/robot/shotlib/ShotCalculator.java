@@ -14,7 +14,6 @@ import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.shotlib.ShootOnTheFlyCalculator.InterceptSolution;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
-import frc.robot.subsystems.shooter.Hood.HoodState;
 
 public class ShotCalculator extends SubsystemBase {
     private final CommandSwerveDrivetrain drivetrain;
@@ -51,7 +50,7 @@ public class ShotCalculator extends SubsystemBase {
         Pose2d drivetrainPose = this.drivetrain.getPose();
 
         targetDistance = drivetrainPose.getTranslation().getDistance(getTargetLocation().toPose2d().getTranslation());
-        targetSpeedRps = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(targetDistance);
+        targetSpeedRps = ShooterConstants.DISTANCE_TO_SHOT_SPEED.get(targetDistance);
 
         Pose3d shooterPose = new Pose3d(drivetrainPose).plus(ShooterConstants.BALL_TRANSFORM_CENTER);
 

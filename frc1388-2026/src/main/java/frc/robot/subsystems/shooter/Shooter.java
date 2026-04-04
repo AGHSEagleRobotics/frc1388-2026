@@ -26,7 +26,7 @@ private final ShooterInputs inputs = new ShooterInputs();
 
 public ShooterState shooterState;
 public double m_distanceFromHub;
-public double m_distanceFromHubSOTM;
+public double m_distanceFromTargetSOTM;
 public double m_distanceFromPass;
 private ShooterState previousShooterState = ShooterState.IDLE;
 
@@ -81,13 +81,9 @@ public enum ShooterState {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub));
       setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
-    else if (shooterState == ShooterState.PASSING) {
-      setShooterVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass));
-      setKickerVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
-    }
     else if (shooterState == ShooterState.SOTM) {
-      setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM));
-      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
+      setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM));
+      setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
     else if (shooterState == ShooterState.TESTING) {
       setShooterVolts(ShooterConstants.TESTING_STATE_VOLTS);
@@ -155,8 +151,8 @@ public enum ShooterState {
     m_distanceFromHub = distanceFromHub;
   }
 
-  public void setDistanceFromHubSOTM(double distanceFromHubSOTM) {
-    m_distanceFromHubSOTM = distanceFromHubSOTM;
+  public void setDistanceFromTargetSOTM(double distanceFromHubSOTM) {
+    m_distanceFromTargetSOTM = distanceFromHubSOTM;
   }
 
   public void setDistanceFromPass(double distanceFromPass) {
@@ -168,10 +164,8 @@ public enum ShooterState {
 
     if (shooterState == ShooterState.SHOOTING) {
       targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub);
-    } else if (shooterState == ShooterState.PASSING) {
-      targetRPS = ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass);
     } else if (shooterState == ShooterState.SOTM) {
-      targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM);
+      targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM);
     } else if (shooterState == ShooterState.MANUAL_CLOSE) {
       targetRPS = ShooterConstants.MANUAL_SHOOT_CLOSE;
     } else if (shooterState == ShooterState.MANUAL_FAR) {

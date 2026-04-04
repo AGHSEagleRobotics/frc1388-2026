@@ -104,6 +104,11 @@ public final class Constants {
         DISTANCE_TO_PASS_RPM.put(2.0, 2.0);
       }
       
+      public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
+      static {
+        DISTANCE_TO_SHOT_SPEED.put(2.08, 8.51153657991);
+        DISTANCE_TO_SHOT_SPEED.put(2.72, 10.2139460354);
+      }
     }
 
     public static class HoodConstants {
