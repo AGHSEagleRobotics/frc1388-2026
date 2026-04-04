@@ -222,8 +222,11 @@ public class RobotContainer {
     public double calculateRotationalVelocity() {
         double omega = 0;
         if (joystick.rightTrigger().getAsBoolean()) {
-            if (!superstructure.pointedAtTarget()) {
+            if (!superstructure.pointedAtTarget() && !superstructure.isRobotMoving()) {
                 omega = superstructure.turnToTargetSpeed();
+            }
+            else if (!superstructure.pointedAtTargetSOTM() && superstructure.isRobotMoving()) {
+                omega = superstructure.turnToTargetSpeedSOTM();
             }
         } else {
             double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.05);

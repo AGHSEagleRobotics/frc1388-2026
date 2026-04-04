@@ -86,10 +86,13 @@ public class ShotCalculator extends SubsystemBase {
     public boolean inAllianceZone() {
         Pose2d pose = drivetrain.getPose();
         boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
-        return isBlue && pose.getMeasureX().lt(Meters.of(FieldLayout.BLUE_ALLIANCE_ZONE).plus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)))
-                || !isBlue
-                        && pose.getMeasureX()
-                                .gt(Meters.of(FieldLayout.RED_ALLIANCE_ZONE).plus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)));
+        return isBlue
+                && pose.getMeasureX()
+                        .lt(Meters.of(FieldLayout.BLUE_ALLIANCE_ZONE)
+                                .plus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)))
+                || !isBlue && pose.getMeasureX()
+                        .gt(Meters.of(FieldLayout.RED_ALLIANCE_ZONE)
+                                .minus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)));
     }
 
     public Pose3d getTargetLocation() {
