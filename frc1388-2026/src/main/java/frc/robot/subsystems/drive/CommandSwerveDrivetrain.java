@@ -76,8 +76,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
 
-    public ChassisSpeeds m_previousSpeed = new ChassisSpeeds(0, 0, 0);
-    private ChassisSpeeds prevFieldRelVelocities = new ChassisSpeeds();
+    private ChassisSpeeds m_prevFieldRelVelocities = new ChassisSpeeds();
+    private ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
 
     private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
 
@@ -535,19 +535,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return 0;
     }
 
-    public ChassisAccelerations getAccelerations() {
-        if (getState() != null) {
-        ChassisAccelerations chassisAccelerations = new ChassisAccelerations(getState().Speeds, m_previousSpeed, 0.02);
-        m_previousSpeed = getState().Speeds;
-        return chassisAccelerations;
-        }
-        return new ChassisAccelerations(0, 0, 0);
-    }
-
     public ChassisSpeeds getFieldRelativeSpeeds() {
         if (getState() != null) {
-         ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
-         prevFieldRelVelocities = fieldRelativeSpeeds;
+        m_prevFieldRelVelocities = fieldRelativeSpeeds;
+        fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
          return fieldRelativeSpeeds;
         }
         return new ChassisSpeeds(0, 0, 0);
@@ -555,7 +546,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public ChassisAccelerations getFieldRelativeAccelerations() {
         if (getState() != null) {
-        return new ChassisAccelerations(getFieldRelativeSpeeds(), prevFieldRelVelocities, 0.020);
+        return new ChassisAccelerations(getFieldRelativeSpeeds(), m_prevFieldRelVelocities, 0.020);
         }
         return new ChassisAccelerations(new ChassisSpeeds(0, 0, 0), new ChassisSpeeds(0,0,0), 0);
     }

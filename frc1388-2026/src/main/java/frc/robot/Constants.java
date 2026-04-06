@@ -106,8 +106,8 @@ public final class Constants {
       
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_SPEED.put(2.08, 8.51153657991);
-        DISTANCE_TO_SHOT_SPEED.put(2.72, 10.2139460354);
+        DISTANCE_TO_SHOT_SPEED.put(2.08, 3.0);
+        DISTANCE_TO_SHOT_SPEED.put(2.72, 6.0);
       }
     }
 
