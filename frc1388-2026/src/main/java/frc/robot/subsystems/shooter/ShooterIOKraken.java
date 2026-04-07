@@ -220,7 +220,8 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
     public void stopShooter() {
-      shootMotor1.setControl(voltageControl.withOutput(0));
+      //changed from 0 to 2 for shooter to be active when in idle state
+      shootMotor1.setControl(voltageControl.withOutput(2)); 
       kickerMotor.setControl(voltageControl.withOutput(0));
     }
   @Override

@@ -78,7 +78,7 @@ public class RobotContainer {
         hood = new Hood(new HoodIOKraken());
         shotcalculator = new ShotCalculator(drivetrain);
         superstructure = new Superstructure(drivetrain, intake, roller, shooter, hood, shotcalculator);
-        dashboard = new Dashboard();
+        dashboard = new Dashboard(shooter, intake);
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
 

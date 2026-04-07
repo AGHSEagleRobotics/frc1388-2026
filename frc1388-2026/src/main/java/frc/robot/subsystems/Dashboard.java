@@ -14,23 +14,37 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.Intake.IntakeState;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.Shooter.ShooterState;
+import frc.robot.subsystems.superstructure.Superstructure;
 
 public class Dashboard extends SubsystemBase {
   private final ShuffleboardTab m_shuffleboardTab;
     private final static String SHUFFLEBOARD_TAB_NAME = "Competition";
     private final GenericEntry isHubActive;
     private final GenericEntry hubEnabledTimer;
+    private final GenericEntry shooterState;
+    private final GenericEntry intakeState;
+    private final Shooter m_shooter;
+    private final Intake m_intake;
+
 
     // private final static String shuffleboardAutonomous = "Autonomous";
     
     // private static SendableChooser<Objective> m_autoObjective = new SendableChooser<>();
     
     /** Creates a new Dashboard. */
-    public Dashboard() {
+    public Dashboard(Shooter shooter, Intake intake) {
+
+m_shooter = shooter;
+m_intake = intake;
 
       Shuffleboard.selectTab(SHUFFLEBOARD_TAB_NAME);
       m_shuffleboardTab = Shuffleboard.getTab(SHUFFLEBOARD_TAB_NAME);
       ShuffleboardTab AutoTab = Shuffleboard.getTab("Autonomous");
+
 
        hubEnabledTimer = AutoTab
           .add("ShiftCountdown", "Default")
@@ -41,6 +55,18 @@ public class Dashboard extends SubsystemBase {
        isHubActive = AutoTab
           .add("Hub Enabled?", false)
           .withWidget(BuiltInWidgets.kBooleanBox)
+          .withPosition(4, 0)
+          .getEntry();
+
+       shooterState = AutoTab
+          .add("Shooter State", "Default")
+          .withWidget(BuiltInWidgets.kTextView)
+          .withPosition(4, 0)
+          .getEntry();
+
+       intakeState = AutoTab
+          .add("Intake State", "Default")
+          .withWidget(BuiltInWidgets.kTextView)
           .withPosition(4, 0)
           .getEntry();
 
@@ -179,10 +205,17 @@ public int timeLeftToShoot() {
   return -1;
 }
 
+private String ShooterStateValue() {
+  return String.valueOf(m_shooter.getShooterState());
+  
+}
+
 @Override
   public void periodic() {
 hubEnabledTimer.setString(String.valueOf(timeLeftToShoot()));
 isHubActive.setBoolean(isHubActive());
 SmartDashboard.putNumber("Match Timer", DriverStation.getMatchTime());
+shooterState.setString(String.valueOf(m_shooter.getShooterState().name()));
+intakeState.setString(String.valueOf(m_intake.getIntakeState().name()));
 }
 }
