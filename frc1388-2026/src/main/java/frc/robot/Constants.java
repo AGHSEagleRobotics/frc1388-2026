@@ -33,8 +33,8 @@ public final class Constants {
     public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 40.0;
 
     public static final double bottomRollerIntakeSpeed = 0;
-    public static final double bottomRollerShootingSpeed = 8;
-    public static final double topRollerShootingSpeed = 10;
+    public static final double bottomRollerShootingSpeed = 12;
+    public static final double topRollerShootingSpeed = 12;
   }
 
   public static class DriveTrainConstants {
@@ -84,10 +84,10 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2500.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 2250.0/60.0;
       public static final double MANUAL_SHOOT_CLOSE_KICKER = 2000.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 2500.0/60.0;
+      public static final double MANUAL_SHOOT_FAR = 2250.0/60.0;
       public static final double MANUAL_SHOOT_FAR_KICKER = 2000.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 4.0/3.0;

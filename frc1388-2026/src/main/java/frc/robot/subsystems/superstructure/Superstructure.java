@@ -76,20 +76,23 @@ public class Superstructure extends SubsystemBase {
   public Command startShooting() {
     m_intakeState = m_intake.getIntakeState();
     return Commands.run(() -> {
-        if(!isRobotMoving()) {
+      if (!isRobotMoving()) {
         m_shooter.setShooterState(ShooterState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
-        }
-        else {
-          m_shooter.setShooterState(ShooterState.SOTM);
-          m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
-        }
         if (m_isAtSpeed) {
-        m_intake.setIntakeState(IntakeState.SHOOTING);
-      m_roller.setRollerState(RollerState.SHOOTING);
+          m_roller.setRollerState(RollerState.SHOOTING);
+          m_intake.setIntakeState(IntakeState.SHOOTING);
+        }
+      } else {
+        m_shooter.setShooterState(ShooterState.SOTM);
+        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
+        m_intake.setIntakeState(IntakeState.INTAKING);
+        if (m_isAtSpeed) {
+          m_roller.setRollerState(RollerState.SHOOTING);
+        }
       }
     },
-    m_roller, m_shooter, m_intake, m_shotCalculator);
+        m_roller, m_shooter, m_intake, m_shotCalculator);
   }
 
   public Command stopShooting() {
