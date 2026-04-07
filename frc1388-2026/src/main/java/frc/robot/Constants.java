@@ -84,9 +84,11 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2900.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 2500.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE_KICKER = 2000.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 2900.0/60.0;
+      public static final double MANUAL_SHOOT_FAR = 2500.0/60.0;
+      public static final double MANUAL_SHOOT_FAR_KICKER = 2000.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 4.0/3.0;
 
@@ -141,11 +143,11 @@ public final class Constants {
       public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 40.0;
       public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 40.0;
 
-      public static final double INTAKE_OFFSET = -0.765;
+      public static final double INTAKE_OFFSET = -0.805;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
       public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
 
-      public static final double POSITION_TOLERANCE = 0.404;
+      public static final double POSITION_TOLERANCE = 0.380;
       public static final double DOWN_POSITION = 0.62;
       public static final double UP_POSITION = 0.22;
       // public static final double HALF_WAY = 0.258;

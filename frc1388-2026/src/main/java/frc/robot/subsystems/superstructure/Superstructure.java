@@ -78,13 +78,14 @@ public class Superstructure extends SubsystemBase {
     return Commands.run(() -> {
         if(!isRobotMoving()) {
         m_shooter.setShooterState(ShooterState.SHOOTING);
+        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
         }
         else {
           m_shooter.setShooterState(ShooterState.SOTM);
           m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
         }
+        if (m_isAtSpeed) {
         m_intake.setIntakeState(IntakeState.SHOOTING);
-      if (m_isAtSpeed) {
       m_roller.setRollerState(RollerState.SHOOTING);
       }
     },
