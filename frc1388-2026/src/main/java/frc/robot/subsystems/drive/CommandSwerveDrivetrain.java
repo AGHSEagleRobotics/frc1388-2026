@@ -572,7 +572,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private PoseEstimate processVision(VisionAcceptor acceptor, String name) {
         PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
-        PoseEstimate estimate2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        // PoseEstimate estimate2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
         if (estimate == null)
             return null;
 
@@ -582,9 +582,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         if (accepted) {
             addVisionMeasurement(estimate.pose, (estimate.timestampSeconds));
-            if (acceptGyro(acceptor, estimate2)) {
-                resetRotation(estimate2.pose.getRotation());
-            }
+            // if (acceptGyro(acceptor, estimate2)) {
+            //     resetRotation(estimate2.pose.getRotation());
+            // }
         }
         return estimate;
     }

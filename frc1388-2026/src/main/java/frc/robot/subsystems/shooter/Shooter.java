@@ -91,11 +91,11 @@ public enum ShooterState {
     }
     else if (shooterState == ShooterState.MANUAL_CLOSE) {
       setShooterVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE);
-      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE_KICKER);
+      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO);
     }
     else if (shooterState == ShooterState.MANUAL_FAR) {
       setShooterVelocity(ShooterConstants.MANUAL_SHOOT_FAR);
-      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_FAR_KICKER);
+      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_FAR * ShooterConstants.KICKER_TO_SHOOTER_RATIO);
     }
 
   //Logging
@@ -161,16 +161,20 @@ public enum ShooterState {
 
   public boolean isAtSpeed(double toleranceRPS) {
     double targetRPS;
-    double targetRPSKicker = ShooterConstants.MANUAL_SHOOT_CLOSE_KICKER;;
+    double targetRPSKicker;
 
     if (shooterState == ShooterState.SHOOTING) {
       targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub);
+      targetRPSKicker = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub) * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else if (shooterState == ShooterState.SOTM) {
       targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM);
+      targetRPSKicker = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM) * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else if (shooterState == ShooterState.MANUAL_CLOSE) {
       targetRPS = ShooterConstants.MANUAL_SHOOT_CLOSE;
+      targetRPSKicker = ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else if (shooterState == ShooterState.MANUAL_FAR) {
       targetRPS = ShooterConstants.MANUAL_SHOOT_FAR;
+      targetRPSKicker = ShooterConstants.MANUAL_SHOOT_FAR * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else {
       return false; // IDLE or TESTING — not trying to hold a velocity
     }

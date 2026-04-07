@@ -84,26 +84,29 @@ public final class Constants {
 
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2250.0/60.0;
-      public static final double MANUAL_SHOOT_CLOSE_KICKER = 2000.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 3000.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE_KICKER = 2750.0/60.0;
 
-      public static final double MANUAL_SHOOT_FAR = 2250.0/60.0;
-      public static final double MANUAL_SHOOT_FAR_KICKER = 2000.0/60.0;
+      public static final double MANUAL_SHOOT_FAR = 3000.0/60.0;
+      public static final double MANUAL_SHOOT_FAR_KICKER = 2750.0/60.0;
 
-      public static final double KICKER_TO_SHOOTER_RATIO = 4.0/3.0;
+      public static final double KICKER_TO_SHOOTER_RATIO = 4.0/5.0;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_RPM.put(2.08, 2000.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(2.43, 2200.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(2.72, 2400.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(4.0, 3350.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.375, 2150.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.79, 2250.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(3.23, 2500.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(3.7, 2750.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(4.05, 3100.0/60.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_PASS_RPM.put(1.0, 1.0);
-        DISTANCE_TO_PASS_RPM.put(2.0, 2.0);
+        DISTANCE_TO_PASS_RPM.put(2.08, 1800.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(2.43, 2000.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(2.72, 2200.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(4.0, 3150.0/60.0);
       }
       
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
@@ -148,6 +151,10 @@ public final class Constants {
       public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
 
       public static final double POSITION_TOLERANCE = 0.380;
+      public static final double SHOOTING_POSITION_OUT = 0.55; 
+      public static final double SHOOTING_POSITION_IN = 0.35;
+      public static final double SHOOTING_FEED_DELAY_SECONDS = 0.4; 
+
       public static final double DOWN_POSITION = 0.62;
       public static final double UP_POSITION = 0.22;
       // public static final double HALF_WAY = 0.258;

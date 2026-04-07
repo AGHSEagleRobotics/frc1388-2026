@@ -11,6 +11,7 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +26,10 @@ public class Intake extends SubsystemBase {
   private final IntakeIO m_io;
 
   public IntakeState intakeState;
+
+  private final Timer shootingTimer = new Timer();
+  private boolean shootingTimerStarted = false;
+  private boolean shootingToggle = false;
 
   private final IntakeIOInputs inputs = new IntakeIOInputs();
 
@@ -88,12 +93,15 @@ public class Intake extends SubsystemBase {
       setPosition(IntakeConstants.DOWN_POSITION);
       setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
     } else if (intakeState == IntakeState.SHOOTING) {
-      if (getPosition() > IntakeConstants.POSITION_TOLERANCE) {
-        setDeployVolts(IntakeConstants.RAISE_INTAKE_SHOOTING_VOLTS);
-      } else if (getPosition() < IntakeConstants.POSITION_TOLERANCE) {
-        setDeployVolts(2);
+      if (!shootingTimerStarted) {
+        shootingTimer.restart();
+        shootingTimerStarted = true;
       }
-      setIntakingRollers(4);
+      if (shootingTimer.advanceIfElapsed(0.8)) {
+        shootingToggle = !shootingToggle;
+      }
+      setIntakingRollers(2);
+      setPosition(shootingToggle ? IntakeConstants.SHOOTING_POSITION_OUT : IntakeConstants.SHOOTING_POSITION_IN);
     } else if (intakeState == IntakeState.TESTINGROLLER) {
       setIntakingRollers(IntakeConstants.TESTING_VOLTS);
     } else if (intakeState == IntakeState.TESTINGDEPLOYDOWN) {
@@ -133,6 +141,11 @@ public class Intake extends SubsystemBase {
     }
 
     public void setIntakeState(IntakeState intakeState) {
+      if (intakeState != IntakeState.SHOOTING) {
+        shootingTimerStarted = false;
+        shootingToggle = false;
+        shootingTimer.stop();
+      }
       this.intakeState = intakeState;
     }
 

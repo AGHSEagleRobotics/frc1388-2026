@@ -258,6 +258,10 @@ public class RobotContainer {
                 }, drivetrain));
     }
 
-    public void resetGyro() {
+    public void resetGyro(String name) {
+        if(LimelightHelpers.getTV(name)) {
+        PoseEstimate estimate2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        drivetrain.resetRotation(estimate2.pose.getRotation());
+        }
     }
 }

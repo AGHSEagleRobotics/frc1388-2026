@@ -139,16 +139,15 @@ public class Superstructure extends SubsystemBase {
 
       if (m_shooter.getShooterState() == ShooterState.MANUAL_FAR) {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       } else {
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
       if (m_isAtSpeed) {
+        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_roller.setRollerState(RollerState.SHOOTING);
-        }
+      }
     },
     m_roller, m_shooter, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }

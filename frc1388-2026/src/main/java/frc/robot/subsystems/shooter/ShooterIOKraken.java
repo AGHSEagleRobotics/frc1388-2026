@@ -16,6 +16,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -202,6 +204,7 @@ public class ShooterIOKraken implements ShooterIO {
   }
   @Override
       public void setShooterVelocity(double shooterRPS) {
+        MathUtil.clamp(shooterRPS, 0, 3750);
         shootMotor1.setControl(velocityControl.withVelocity(shooterRPS));
       }
   @Override
@@ -215,6 +218,7 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
   public void setKickerVelocity(double kickerRPS) {
+     MathUtil.clamp(kickerRPS, 0, 3000);
     kickerMotor.setControl(velocityControl.withVelocity(kickerRPS));
   }
 
