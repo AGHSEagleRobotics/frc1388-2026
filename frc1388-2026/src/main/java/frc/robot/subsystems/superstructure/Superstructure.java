@@ -26,8 +26,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.Intake.IntakeState;
 import frc.robot.subsystems.rollers.Roller;
 import frc.robot.subsystems.rollers.Roller.RollerState;
-import frc.robot.subsystems.shooter.Hood;
-import frc.robot.subsystems.shooter.Hood.HoodState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.Shooter.ShooterState;
 
@@ -37,11 +35,9 @@ public class Superstructure extends SubsystemBase {
   public final Intake m_intake;
   public final Roller m_roller;
   public final Shooter m_shooter;
-  public final Hood m_hood;
   public ShotCalculator m_shotCalculator;
   public RollerState m_rollerState;
   public ShooterState m_shooterState;
-  public HoodState m_hoodState;
   public IntakeState m_intakeState;
   public boolean m_isAtSpeed;
 
@@ -49,12 +45,11 @@ public class Superstructure extends SubsystemBase {
 
   public static final PIDController rotationPID = new PIDController(0.075, 0, 0);
   /** Creates a new Superstructure. */
-  public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, Hood hood, ShotCalculator shotCalculator) {
+  public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
     m_intake = intake;
     m_roller = roller;
     m_shooter = shooter;
-    m_hood = hood;
     m_shotCalculator = shotCalculator;
 
     rotationPID.enableContinuousInput(-180, 180);
@@ -72,15 +67,12 @@ public class Superstructure extends SubsystemBase {
     
     if (m_shooter.getShooterState() == ShooterState.SHOOTING) {
       m_shooter.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
-      m_hood.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
     }
     if (m_shooter.getShooterState() == ShooterState.PASSING) {
       m_shooter.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
-      m_hood.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
     }
     if (m_shooter.getShooterState() == ShooterState.SOTM) {
       m_shooter.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
-      m_hood.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
     }
   }
 
@@ -88,28 +80,25 @@ public class Superstructure extends SubsystemBase {
     m_intakeState = m_intake.getIntakeState();
     return Commands.run(() -> {
         m_shooter.setShooterState(ShooterState.SHOOTING);
-        //m_hood.setHoodState(HoodState.SHOOTING);
-        m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       if (m_isAtSpeed) {
       m_roller.setRollerState(RollerState.SHOOTING);
       }
     },
-    m_roller, m_shooter, m_hood, m_intake, m_shotCalculator);
+    m_roller, m_shooter, m_intake, m_shotCalculator);
   }
 
   public Command stopShooting() {
     return Commands.runOnce(() -> {
       m_roller.setRollerState(RollerState.IDLE);
       m_shooter.setShooterState(ShooterState.IDLE);
-      m_hood.setHoodState(m_hoodState);
       m_intake.setIntakeState(IntakeState.INTAKING);
       m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       m_isAtSpeed = false;
 
     },
-    m_roller, m_shooter, m_hood, m_intake, m_shotCalculator);
+    m_roller, m_shooter, m_intake, m_shotCalculator);
   }
 
   public Command deployIntakingCommand() {
@@ -140,19 +129,14 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command shootManually() {
-    m_hoodState = m_hood.getHoodState();
     return Commands.run(() -> {
 
       if (m_shooter.getShooterState() == ShooterState.MANUAL_FAR) {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        //m_hood.setHoodState(HoodState.MANUAL_FAR);
-        m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       } else {
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        //m_hood.setHoodState(HoodState.MANUAL_CLOSE);
-        // m_hood.setHoodState(HoodState.IDLE);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
@@ -160,21 +144,9 @@ public class Superstructure extends SubsystemBase {
         m_roller.setRollerState(RollerState.SHOOTING);
         }
     },
-    m_roller, m_shooter, m_hood, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
+    m_roller, m_shooter, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }
 
-  public Command setHoodAngleClose() {
-    return this.runOnce(() -> 
-    //m_hood.setHoodState(HoodState.MANUAL_CLOSE));
-    m_hood.setHoodState(HoodState.IDLE));
-  }
-
-  public Command setHoodAngleFar() {
-    return this.runOnce(() -> 
-    //m_hood.setHoodState(HoodState.MANUAL_FAR));
-    m_hood.setHoodState(HoodState.IDLE));
-  }
-  
   public Command testIntakeDeployDown() {
     return this.runOnce(() -> 
     m_intake.setIntakeState(IntakeState.TESTINGDEPLOYDOWN));
@@ -208,16 +180,6 @@ public class Superstructure extends SubsystemBase {
   public Command testShooter() {
     return this.runOnce(() ->
     m_shooter.setShooterState(ShooterState.TESTING));
-  }
-
-  public Command testHood() {
-    return this.runOnce(() ->
-    //m_hood.setHoodState(HoodState.TESTING));
-    m_hood.setHoodState(HoodState.IDLE));
-  }
-
-  public Command stopHood() {
-    return this.runOnce(() -> m_hood.setHoodState(HoodState.IDLE));
   }
 
   public Command outTake() {
