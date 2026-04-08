@@ -21,6 +21,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
+import frc.robot.Constants.RollerConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOKraken implements ShooterIO {
@@ -216,6 +218,21 @@ public class ShooterIOKraken implements ShooterIO {
   @Override
   public void setKickerVelocity(double kickerRPS) {
     kickerMotor.setControl(velocityControl.withVelocity(kickerRPS));
+  }
+  @Override
+   public void setKickerOutPutVelocity(double mps) {
+        double ipstolps = (0.0254/60);
+        double linearInchesPerSecond = mps/ipstolps;
+
+        double kickerRPM = (linearInchesPerSecond - (((Constants.RollerConstants.topRollerShootingSpeed/12)*2000)*(1.375*Math.PI)/2)/3*Math.PI);
+        setKickerVelocity(kickerRPM/60);
+      } 
+  @Override
+  public void setShooterOutPutVelocity(double mps) {
+        double ipstolps = (0.0254/60);
+        double linearInchesPerSecond = mps/ipstolps;
+        double shooterRPM = (linearInchesPerSecond*(8/5))/(Math.PI*4);
+        setShooterVelocity(shooterRPM/60);
   }
 
   @Override

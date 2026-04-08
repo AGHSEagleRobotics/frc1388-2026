@@ -56,6 +56,10 @@ public interface ShooterIO {
   
   public void setKickerVelocity(double kickerRPS);
 
+  public void setKickerOutPutVelocity(double mps);
+
+  public void setShooterOutPutVelocity(double mps);
+
   public void stopShooter();
 
   public void setCoastMode(boolean coast);
