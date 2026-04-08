@@ -73,6 +73,13 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
+      public void setKickerOutPutVelocity(double mps) {
+        double ipstolps = (0.0254/60);
+        double linearInchesPerSecond = mps/ipstolps;
+
+        double kickerRPM = (linearInchesPerSecond - (((10/12)*2000)*(1.375*Math.PI)/2)/3*Math.PI);
+        double setKicker
+      } 
       public static final int SHOOT_MOTOR1_CANID = 36;
       public static final int SHOOT_MOTOR2_CANID = 37;
       public static final int KICKER_MOTOR_CANID = 42;
