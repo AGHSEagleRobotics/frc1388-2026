@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GoOverBumpLeft"
+                  "pathName": "PickupShootLeft"
                 }
               },
               {
@@ -21,12 +21,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupShootLeft"
           }
         },
         {
@@ -52,12 +46,6 @@
           "type": "named",
           "data": {
             "name": "stopShooting"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "GoOverBumpLeftx2"
           }
         },
         {
