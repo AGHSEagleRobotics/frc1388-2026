@@ -205,11 +205,6 @@ public int timeLeftToShoot() {
   return -1;
 }
 
-private String ShooterStateValue() {
-  return String.valueOf(m_shooter.getShooterState());
-  
-}
-
 @Override
   public void periodic() {
 hubEnabledTimer.setString(String.valueOf(timeLeftToShoot()));
@@ -219,3 +214,4 @@ shooterState.setString(String.valueOf(m_shooter.getShooterState().name()));
 intakeState.setString(String.valueOf(m_intake.getIntakeState().name()));
 }
 }
+

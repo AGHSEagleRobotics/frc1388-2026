@@ -92,7 +92,7 @@ public class Superstructure extends SubsystemBase {
   public Command stopShooting() {
     return Commands.runOnce(() -> {
       m_roller.setRollerState(RollerState.IDLE);
-      m_shooter.setShooterState(ShooterState.IDLE);
+      m_shooter.setShooterState(ShooterState.SLOW);
       m_intake.setIntakeState(IntakeState.INTAKING);
       m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       m_isAtSpeed = false;

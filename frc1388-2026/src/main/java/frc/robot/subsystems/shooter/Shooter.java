@@ -40,6 +40,7 @@ public enum ShooterState {
   IDLE,
   SHOOTING, 
   PASSING,
+  SLOW,
   SOTM,
   TESTING,
   MANUAL_CLOSE,
@@ -84,6 +85,10 @@ public enum ShooterState {
     else if (shooterState == ShooterState.PASSING) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass));
       setKickerVelocity(ShooterConstants.DISTANCE_TO_PASS_RPM.get(m_distanceFromPass) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
+    }
+    else if (shooterState == ShooterState.SLOW) {
+      setShooterVolts(ShooterConstants.SLOW_SHOOTER_VOLTS);
+      setKickerVolts(ShooterConstants.SLOW_KICKER_VOLTS);
     }
     else if (shooterState == ShooterState.SOTM) {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHubSOTM));
