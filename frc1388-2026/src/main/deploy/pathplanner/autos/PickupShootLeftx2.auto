@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "spinUpShooter"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -18,12 +24,6 @@
                 "type": "named",
                 "data": {
                   "name": "deployIntaking"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "spinUpShooter"
                 }
               }
             ]
