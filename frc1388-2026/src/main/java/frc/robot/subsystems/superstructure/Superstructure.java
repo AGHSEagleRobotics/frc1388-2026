@@ -12,12 +12,17 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.shotlib.ShotCalculator.ShotCalculatorState;
@@ -267,7 +272,7 @@ public boolean pointedAtTargetSOTM() {
 }
 
   public boolean isAtSpeed() {
-    return m_shooter.isAtSpeed(3);
+    return m_shooter.isAtSpeed(2);
   }
 
   public boolean isRobotMoving() {
@@ -286,4 +291,31 @@ public boolean pointedAtTargetSOTM() {
     }
     return false;
   }
+
+  public boolean isBlue() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+  }
+
+  public Command resetPositionOverBumpLeft() {
+    return this.runOnce(() -> {
+      if (isBlue()) {
+        m_driveTrain.resetPose(new Pose2d(6.204, 5.880, new Rotation2d()));
+      } else {
+        m_driveTrain
+            .resetPose(new Pose2d(FieldLayout.FIELD_LENGTH - 6.204, FieldLayout.FIELD_WIDTH - 5.880, new Rotation2d()));
+      }
+    });
+  }
+
+  public Command resetPositionOverBumpRight() {
+    return this.runOnce(() -> {
+      if (isBlue()) {
+        m_driveTrain.resetPose(new Pose2d(6.204, 2.189, new Rotation2d()));
+      } else {
+        m_driveTrain
+            .resetPose(new Pose2d(FieldLayout.FIELD_LENGTH - 6.204, FieldLayout.FIELD_WIDTH - 2.189, new Rotation2d()));
+      }
+    });
+  }
+
 }

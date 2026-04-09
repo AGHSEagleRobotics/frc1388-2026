@@ -86,6 +86,9 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("startShootingAuto", superstructure.startShootingAuto());
 
+        NamedCommands.registerCommand("resetLeftBump", superstructure.resetPositionOverBumpLeft());
+        NamedCommands.registerCommand("resetRightBump", superstructure.resetPositionOverBumpRight());
+
         // NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
         // NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
         
@@ -161,12 +164,12 @@ public class RobotContainer {
         joystick.leftTrigger().onTrue(superstructure.retractIntake());
 
         // sets hood angle for a close shot and far shot
-        joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
 
         joystick.a().whileTrue(superstructure.outTake());
         joystick.a().onFalse(superstructure.deployIntakingCommand());
 
-        joystick.back().onTrue(new InstantCommand(() -> drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d()))));
+        // joystick.back().onTrue(new InstantCommand(() -> drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d()))));
 
         // TESTING JOYSTICK
 

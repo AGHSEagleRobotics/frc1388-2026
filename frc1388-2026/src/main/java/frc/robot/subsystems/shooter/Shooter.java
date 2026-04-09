@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -178,6 +179,8 @@ public enum ShooterState {
     } else {
       return false; // IDLE or TESTING — not trying to hold a velocity
     }
+    targetRPS = MathUtil.clamp(targetRPS, 0, 3750.0/60.0);
+    targetRPSKicker = MathUtil.clamp(targetRPSKicker, 0, 3000.0/60.0);
     boolean isAtSpeedShooter = Math.abs(inputs.shootMotor1VelocityRPS - targetRPS) < toleranceRPS;
     boolean isAtSpeedKicker = Math.abs(inputs.kickerMotorVelocityRPS - targetRPSKicker) < toleranceRPS;
     SmartDashboard.putNumber("Shooter/TargetRPS", targetRPS);

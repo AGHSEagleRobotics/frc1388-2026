@@ -204,7 +204,7 @@ public class ShooterIOKraken implements ShooterIO {
   }
   @Override
       public void setShooterVelocity(double shooterRPS) {
-        MathUtil.clamp(shooterRPS, 0, 3750);
+        shooterRPS = MathUtil.clamp(shooterRPS, 0, 3750.0/60.0);
         shootMotor1.setControl(velocityControl.withVelocity(shooterRPS));
       }
   @Override
@@ -218,7 +218,7 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
   public void setKickerVelocity(double kickerRPS) {
-     MathUtil.clamp(kickerRPS, 0, 3000);
+     kickerRPS = MathUtil.clamp(kickerRPS, 0, 3000.0/60.0);
     kickerMotor.setControl(velocityControl.withVelocity(kickerRPS));
   }
 

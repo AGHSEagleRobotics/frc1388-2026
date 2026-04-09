@@ -85,34 +85,35 @@ public final class Constants {
       public static final double KICKER_SHOOTING_VELOCITY = 1200.0 / 60.0;
 
       public static final double MANUAL_SHOOT_CLOSE = 3000.0/60.0;
-      public static final double MANUAL_SHOOT_CLOSE_KICKER = 2750.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE_KICKER = 2000.0/60.0;
 
       public static final double MANUAL_SHOOT_FAR = 3000.0/60.0;
       public static final double MANUAL_SHOOT_FAR_KICKER = 2750.0/60.0;
 
-      public static final double KICKER_TO_SHOOTER_RATIO = 4.0/5.0;
+      public static final double KICKER_TO_SHOOTER_RATIO = 5.0/5.0;
 
-      public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, 0, Rotation3d.kZero);
+      public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, Units.inchesToMeters(18.93), Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_RPM.put(2.375, 2150.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(2.79, 2250.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(3.23, 2500.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(3.7, 2750.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(4.05, 3100.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.512, 2250.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.98, 2500.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(3.63, 2750.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(3.97, 3000.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(4.572, 3750.0/60.0);
       }
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_PASS_RPM = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_PASS_RPM.put(2.08, 1800.0/60.0);
-        DISTANCE_TO_PASS_RPM.put(2.43, 2000.0/60.0);
-        DISTANCE_TO_PASS_RPM.put(2.72, 2200.0/60.0);
-        DISTANCE_TO_PASS_RPM.put(4.0, 3150.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(2.375, 2000.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(2.79, 2100.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(3.23, 2350.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(3.7, 2600.0/60.0);
+        DISTANCE_TO_PASS_RPM.put(4.05, 2950.0/60.0);
       }
       
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_SPEED = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_SPEED.put(2.08, 3.0);
-        DISTANCE_TO_SHOT_SPEED.put(2.72, 6.0);
+        DISTANCE_TO_SHOT_SPEED.put(2.375, 6.108);
+        DISTANCE_TO_SHOT_SPEED.put(4.05, 6.452);
       }
     }
 
@@ -148,7 +149,7 @@ public final class Constants {
 
       public static final double INTAKE_OFFSET = -0.805;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
-      public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
+      public static final double INTAKING_ROLLER_STATE_VOLTS = 8;
 
       public static final double POSITION_TOLERANCE = 0.380;
       public static final double SHOOTING_POSITION_OUT = 0.55; 
@@ -160,6 +161,7 @@ public final class Constants {
       // public static final double HALF_WAY = 0.258;
       public static final double TESTING_VOLTS = 6;
       public static final double RAISE_INTAKE_SHOOTING_VOLTS = -1.5;
+      public static final double TIME_SCALE = 0.4;
     }
 
     public static class LimelightConstants {
