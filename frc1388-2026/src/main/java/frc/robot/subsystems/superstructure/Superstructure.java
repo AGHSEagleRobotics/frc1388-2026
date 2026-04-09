@@ -321,4 +321,10 @@ public boolean pointedAtTargetSOTM() {
     });
   }
 
+  public Command spinUpShooter() {
+    return this.runOnce(() -> {
+      m_shooter.setShooterState(ShooterState.SLOW);
+    });
+  }
+
 }

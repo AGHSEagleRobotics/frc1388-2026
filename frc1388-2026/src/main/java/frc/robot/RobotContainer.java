@@ -95,6 +95,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("resetLeftBump", superstructure.resetPositionOverBumpLeft());
         NamedCommands.registerCommand("resetRightBump", superstructure.resetPositionOverBumpRight());
+        NamedCommands.registerCommand("spinUpShooter", superstructure.spinUpShooter());
 
         // NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
         // NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
