@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.FieldLayout;
@@ -50,7 +51,7 @@ public class ShotCalculator extends SubsystemBase {
         Pose2d drivetrainPose = this.drivetrain.getPose();
 
         targetDistance = drivetrainPose.getTranslation().getDistance(getTargetLocation().toPose2d().getTranslation());
-        targetSpeedRps = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(targetDistance);
+        targetSpeedRps = ShooterConstants.DISTANCE_TO_SHOT_SPEED.get(targetDistance);
 
         Pose3d shooterPose = new Pose3d(drivetrainPose).plus(ShooterConstants.BALL_TRANSFORM_CENTER);
 
@@ -86,10 +87,13 @@ public class ShotCalculator extends SubsystemBase {
     public boolean inAllianceZone() {
         Pose2d pose = drivetrain.getPose();
         boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
-        return isBlue && pose.getMeasureX().lt(Meters.of(FieldLayout.BLUE_ALLIANCE_ZONE).plus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)))
-                || !isBlue
-                        && pose.getMeasureX()
-                                .gt(Meters.of(FieldLayout.RED_ALLIANCE_ZONE).plus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)));
+        return isBlue
+                && pose.getMeasureX()
+                        .lt(Meters.of(FieldLayout.BLUE_ALLIANCE_ZONE)
+                                .plus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)))
+                || !isBlue && pose.getMeasureX()
+                        .gt(Meters.of(FieldLayout.RED_ALLIANCE_ZONE)
+                                .minus(Meters.of(DriveTrainConstants.ROBOT_DIMENSIONS).div(2)));
     }
 
     public Pose3d getTargetLocation() {
@@ -129,8 +133,7 @@ public class ShotCalculator extends SubsystemBase {
         double rY = this.drivetrain.getPose().getY();
 
         return Math.toDegrees(
-                Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()))
-                + 180;
+                Math.atan2(rY - currentEffectiveTargetPose.getY(), rX - currentEffectiveTargetPose.getX()));
     }
 
     public double getAbsouluteDistanceFromTargetSOTM() {
@@ -141,7 +144,7 @@ public class ShotCalculator extends SubsystemBase {
         // tX = currentEffectiveTargetPose.getX();
 
         // double adjacent = rX - tX;
-        double distanceFromTarget = Math.hypot(rX - getTargetLocation().getX(), rY - getTargetLocation().getY()); // hypotenuse = adjacent /
+        double distanceFromTarget = Math.hypot(rX - currentEffectiveTargetPose.getX(), rY - currentEffectiveTargetPose.getY()); // hypotenuse = adjacent /
                                                                                      // cos(angle)
 
         return distanceFromTarget;

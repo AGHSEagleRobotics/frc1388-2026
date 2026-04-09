@@ -16,6 +16,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -72,20 +74,20 @@ public class ShooterIOKraken implements ShooterIO {
     kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_CANID);
 
     //PIDS config
-    controllerConfig.kP = 0.034064;
+    controllerConfig.kP = 0.050536;
     controllerConfig.kI = 0.0;
     controllerConfig.kD = 0.0;
-    controllerConfig.kS = 0.26106;
-    controllerConfig.kV = 0.13068;
-    controllerConfig.kA = 0.019043;
+    controllerConfig.kS = 0.15618;
+    controllerConfig.kV = 0.12011;
+    controllerConfig.kA = 0;
 
     // PIDS config
-    kickerController.kP = 0.033557;
+    kickerController.kP = 0.015564;
     kickerController.kI = 0.0;
     kickerController.kD = 0.0;
-    kickerController.kS = 0.15273;
-    kickerController.kV = 0.11886;
-    kickerController.kA = 0.027404;
+    kickerController.kS = 0.20948;
+    kickerController.kV = 0.11259;
+    kickerController.kA = 0;
     
     // General config
     TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
@@ -202,6 +204,7 @@ public class ShooterIOKraken implements ShooterIO {
   }
   @Override
       public void setShooterVelocity(double shooterRPS) {
+        shooterRPS = MathUtil.clamp(shooterRPS, 0, 3750.0/60.0);
         shootMotor1.setControl(velocityControl.withVelocity(shooterRPS));
       }
   @Override
@@ -215,6 +218,7 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
   public void setKickerVelocity(double kickerRPS) {
+     kickerRPS = MathUtil.clamp(kickerRPS, 0, 3000.0/60.0);
     kickerMotor.setControl(velocityControl.withVelocity(kickerRPS));
   }
 

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.LimelightConstants;
 
 
 
@@ -59,7 +60,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        // m_robotContainer.resetGyro();
+        m_robotContainer.resetGyro(LimelightConstants.LEFT_LIMELIGHT);
+        m_robotContainer.resetGyro(LimelightConstants.SHOOTER_LIMELIGHT);
     }
 
     @Override

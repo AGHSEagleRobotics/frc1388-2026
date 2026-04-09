@@ -93,6 +93,9 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("startShootingAuto", superstructure.startShootingAuto());
 
+        NamedCommands.registerCommand("resetLeftBump", superstructure.resetPositionOverBumpLeft());
+        NamedCommands.registerCommand("resetRightBump", superstructure.resetPositionOverBumpRight());
+
         // NamedCommands.registerCommand("stopIntakeRollers", superstructure.stopIntakeRollers());
         // NamedCommands.registerCommand("stopRollers", superstructure.stopRollers());
         
@@ -167,12 +170,12 @@ public class RobotContainer {
         // retracts intake
         joystick.leftTrigger().onTrue(superstructure.retractIntake());
 
-        joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
 
         joystick.a().whileTrue(superstructure.outTake());
         joystick.a().onFalse(superstructure.deployIntakingCommand());
 
-        joystick.back().onTrue(new InstantCommand(() -> drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d()))));
+        // joystick.back().onTrue(new InstantCommand(() -> drivetrain.resetPose(new Pose2d(0, 0, new Rotation2d()))));
 
         // TESTING JOYSTICK
 
@@ -224,8 +227,11 @@ public class RobotContainer {
     public double calculateRotationalVelocity() {
         double omega = 0;
         if (joystick.rightTrigger().getAsBoolean()) {
-            if (!superstructure.pointedAtTarget()) {
+            if (!superstructure.pointedAtTarget() && !superstructure.isRobotMoving()) {
                 omega = superstructure.turnToTargetSpeed();
+            }
+            else if (!superstructure.pointedAtTargetSOTM() && superstructure.isRobotMoving()) {
+                omega = superstructure.turnToTargetSpeedSOTM();
             }
         } else {
             double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.05);
@@ -257,6 +263,10 @@ public class RobotContainer {
                 }, drivetrain));
     }
 
-    public void resetGyro() {
+    public void resetGyro(String name) {
+        if(LimelightHelpers.getTV(name)) {
+        PoseEstimate estimate2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
+        drivetrain.resetRotation(estimate2.pose.getRotation());
+        }
     }
 }

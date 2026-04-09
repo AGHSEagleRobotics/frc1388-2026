@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GoOverBumpLeft"
+                  "pathName": "PickupShootLeft"
                 }
               },
               {
@@ -19,14 +19,14 @@
                 "data": {
                   "name": "deployIntaking"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "spinUpShooter"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "PickupShootLeft"
           }
         },
         {
@@ -36,7 +36,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.5
+                  "waitTime": 3.0
                 }
               },
               {
@@ -57,12 +57,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GoOverBumpLeftx2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "GoBackPickupShootLeft"
           }
         },
@@ -73,7 +67,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 3.0
                 }
               },
               {

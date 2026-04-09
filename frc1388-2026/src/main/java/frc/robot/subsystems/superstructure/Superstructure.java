@@ -12,12 +12,17 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.shotlib.ShotCalculator;
 import frc.robot.shotlib.ShotCalculator.ShotCalculatorState;
@@ -68,22 +73,29 @@ public class Superstructure extends SubsystemBase {
     if (m_shooter.getShooterState() == ShooterState.SHOOTING) {
       m_shooter.setDistanceFromHub(m_driveTrain.getAbsouluteDistanceFromHub());
     }
-    if (m_shooter.getShooterState() == ShooterState.PASSING) {
-      m_shooter.setDistanceFromPass(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
-    }
     if (m_shooter.getShooterState() == ShooterState.SOTM) {
-      m_shooter.setDistanceFromHubSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
+      m_shooter.setDistanceFromTargetSOTM(m_shotCalculator.getAbsouluteDistanceFromTargetSOTM());
     }
   }
 
   public Command startShooting() {
     m_intakeState = m_intake.getIntakeState();
     return Commands.run(() -> {
+      if (!isRobotMoving()) {
         m_shooter.setShooterState(ShooterState.SHOOTING);
         m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
-      if (m_isAtSpeed) {
-      m_roller.setRollerState(RollerState.SHOOTING);
+        if (m_isAtSpeed) {
+          m_roller.setRollerState(RollerState.SHOOTING);
+          m_intake.setIntakeState(IntakeState.SHOOTING);
+        }
+      } else {
+        m_shooter.setShooterState(ShooterState.SOTM);
+        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
+        m_intake.setIntakeState(IntakeState.INTAKING);
+        if (m_isAtSpeed) {
+          m_roller.setRollerState(RollerState.SHOOTING);
+        }
       }
     },
     m_roller, m_shooter, m_intake, m_shotCalculator);
@@ -141,8 +153,9 @@ public class Superstructure extends SubsystemBase {
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
       if (m_isAtSpeed) {
+        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_roller.setRollerState(RollerState.SHOOTING);
-        }
+      }
     },
     m_roller, m_shooter, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }
@@ -246,8 +259,23 @@ public class Superstructure extends SubsystemBase {
     return Math.abs(rz - angleFromTarget) < 4;
   }
 
+  public double turnToTargetSpeedSOTM() {
+    double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
+    angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
+    double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
+    double speed = rotationPID.calculate(rz, angleFromTarget);
+    return MathUtil.clamp(speed, -DriveTrainConstants.MAX_ANGULAR_RATE, DriveTrainConstants.MAX_ANGULAR_RATE);
+}
+
+public boolean pointedAtTargetSOTM() {
+    double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
+    angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
+    double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
+    return Math.abs(rz - angleFromTarget) < 4;
+}
+
   public boolean isAtSpeed() {
-    return m_shooter.isAtSpeed(3);
+    return m_shooter.isAtSpeed(2);
   }
 
   public boolean isRobotMoving() {
@@ -266,4 +294,31 @@ public class Superstructure extends SubsystemBase {
     }
     return false;
   }
+
+  public boolean isBlue() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+  }
+
+  public Command resetPositionOverBumpLeft() {
+    return this.runOnce(() -> {
+      if (isBlue()) {
+        m_driveTrain.resetPose(new Pose2d(6.204, 5.880, new Rotation2d()));
+      } else {
+        m_driveTrain
+            .resetPose(new Pose2d(FieldLayout.FIELD_LENGTH - 6.204, FieldLayout.FIELD_WIDTH - 5.880, new Rotation2d()));
+      }
+    });
+  }
+
+  public Command resetPositionOverBumpRight() {
+    return this.runOnce(() -> {
+      if (isBlue()) {
+        m_driveTrain.resetPose(new Pose2d(6.204, 2.189, new Rotation2d()));
+      } else {
+        m_driveTrain
+            .resetPose(new Pose2d(FieldLayout.FIELD_LENGTH - 6.204, FieldLayout.FIELD_WIDTH - 2.189, new Rotation2d()));
+      }
+    });
+  }
+
 }
