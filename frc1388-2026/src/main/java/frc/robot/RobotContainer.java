@@ -49,6 +49,7 @@ public class RobotContainer {
     public final Shooter shooter;
     public final Superstructure superstructure;
     public final ShotCalculator shotcalculator;
+    // public final Dashboard dashboard;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -74,6 +75,7 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOKraken());
         shotcalculator = new ShotCalculator(drivetrain);
         superstructure = new Superstructure(drivetrain, intake, roller, shooter, shotcalculator);
+        // dashboard = new Dashboard();
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
 
