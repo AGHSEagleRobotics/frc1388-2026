@@ -78,6 +78,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private ChassisSpeeds m_prevFieldRelVelocities = new ChassisSpeeds();
     private ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds();
+    private ChassisAccelerations m_cachedFieldRelAccel = new ChassisAccelerations(0, 0, 0);
 
     private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
 
@@ -378,6 +379,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
+
+        // Compute field-relative speeds and acceleration ONCE per tick
+        if (getState() != null && getState().Pose != null) {
+            ChassisSpeeds currentFieldRel = ChassisSpeeds.fromRobotRelativeSpeeds(
+                    getState().Speeds, getState().Pose.getRotation());
+            m_cachedFieldRelAccel = new ChassisAccelerations(currentFieldRel, m_prevFieldRelVelocities, 0.020);
+            m_prevFieldRelVelocities = fieldRelativeSpeeds;
+            fieldRelativeSpeeds = currentFieldRel;
+        }
         
         // =====================================================
         // Add this back in after match66
@@ -518,8 +528,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getAngle() {
-        double angle = ((getState().Pose.getRotation().getDegrees()));
         if (getState().Pose != null) {
+            double angle = getState().Pose.getRotation().getDegrees();
             if (angle < 0) {
                 angle += 360;
             }
@@ -536,19 +546,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public ChassisSpeeds getFieldRelativeSpeeds() {
-        if (getState() != null) {
-        m_prevFieldRelVelocities = fieldRelativeSpeeds;
-        fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
-         return fieldRelativeSpeeds;
-        }
-        return new ChassisSpeeds(0, 0, 0);
+        return fieldRelativeSpeeds;
     }
 
     public ChassisAccelerations getFieldRelativeAccelerations() {
-        if (getState() != null) {
-        return new ChassisAccelerations(getFieldRelativeSpeeds(), m_prevFieldRelVelocities, 0.020);
-        }
-        return new ChassisAccelerations(new ChassisSpeeds(0, 0, 0), new ChassisSpeeds(0,0,0), 0);
+        return m_cachedFieldRelAccel;
     }
 
 

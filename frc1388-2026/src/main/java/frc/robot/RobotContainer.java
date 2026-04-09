@@ -267,7 +267,9 @@ public class RobotContainer {
     public void resetGyro(String name) {
         if(LimelightHelpers.getTV(name)) {
         PoseEstimate estimate2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(name);
-        drivetrain.resetRotation(estimate2.pose.getRotation());
+        if (estimate2 != null) {
+            drivetrain.resetRotation(estimate2.pose.getRotation());
+        }
         }
     }
 }

@@ -61,13 +61,13 @@ m_intake = intake;
        shooterState = AutoTab
           .add("Shooter State", "Default")
           .withWidget(BuiltInWidgets.kTextView)
-          .withPosition(4, 0)
+          .withPosition(6, 0)
           .getEntry();
 
        intakeState = AutoTab
           .add("Intake State", "Default")
           .withWidget(BuiltInWidgets.kTextView)
-          .withPosition(4, 0)
+          .withPosition(8, 0)
           .getEntry();
 
 
@@ -214,4 +214,3 @@ shooterState.setString(String.valueOf(m_shooter.getShooterState().name()));
 intakeState.setString(String.valueOf(m_intake.getIntakeState().name()));
 }
 }
-
