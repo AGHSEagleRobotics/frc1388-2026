@@ -159,7 +159,7 @@ public class RobotContainer {
 
         // sets robot shoot on/off while right trigger is held
 
-        (joystick.rightTrigger().and(superstructure::pointedAtTarget))
+        (joystick.rightTrigger().and(superstructure::readyToShoot))
                 .whileTrue(shootingCommand());
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
         // manual shooting

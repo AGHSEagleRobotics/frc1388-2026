@@ -265,14 +265,14 @@ public class Superstructure extends SubsystemBase {
     double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
     double speed = rotationPID.calculate(rz, angleFromTarget);
     return MathUtil.clamp(speed, -DriveTrainConstants.MAX_ANGULAR_RATE, DriveTrainConstants.MAX_ANGULAR_RATE);
-}
+  }
 
-public boolean pointedAtTargetSOTM() {
-    double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
-    angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
-    double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
-    return Math.abs(rz - angleFromTarget) < 4;
-}
+  public boolean pointedAtTargetSOTM() {
+  double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
+  angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
+  double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
+  return Math.abs(rz - angleFromTarget) < 4;
+  }
 
   public boolean isAtSpeed() {
     return m_shooter.isAtSpeed(2);
@@ -326,5 +326,12 @@ public boolean pointedAtTargetSOTM() {
       m_shooter.setShooterState(ShooterState.SLOW);
     });
   }
-
+  
+  public boolean readyToShoot() {
+    if (isRobotMoving()) {
+        return pointedAtTargetSOTM();
+    } else {
+        return pointedAtTarget();
+    }
+  }
 }
