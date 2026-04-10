@@ -145,6 +145,8 @@ public class RollerIOKraken implements RollerIO {
 
       bottomrollerConfig.CurrentLimits.SupplyCurrentLimit = RollerConstants.SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER;
       bottomrollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+      bottomrollerConfig.CurrentLimits.StatorCurrentLimit = RollerConstants.STATOR_CURRENT_LIMIT_BOTTOM_ROLLER;
+      bottomrollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
       bottomrollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -172,6 +174,9 @@ public class RollerIOKraken implements RollerIO {
 
       topRollerConfig.CurrentLimits.SupplyCurrentLimit = RollerConstants.SUPPLY_CURRENT_LIMIT_TOP_ROLLER;
       topRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+      topRollerConfig.CurrentLimits.StatorCurrentLimit = RollerConstants.STATOR_CURRENT_LIMIT_TOP_ROLLER;
+      topRollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
 
       topRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       // TODO: CORRECT LATER

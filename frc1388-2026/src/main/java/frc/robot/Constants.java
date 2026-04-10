@@ -29,8 +29,11 @@ public final class Constants {
 
   public static class RollerConstants {
 
-    public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 40.0;
+    public static final double STATOR_CURRENT_LIMIT_TOP_ROLLER = 60.0;
     public static final double SUPPLY_CURRENT_LIMIT_TOP_ROLLER = 40.0;
+    
+    public static final double STATOR_CURRENT_LIMIT_BOTTOM_ROLLER = 60.0;
+    public static final double SUPPLY_CURRENT_LIMIT_BOTTOM_ROLLER = 40.0;
 
     public static final double bottomRollerIntakeSpeed = 0;
     public static final double bottomRollerShootingSpeed = 12;
@@ -77,8 +80,11 @@ public final class Constants {
       public static final int SHOOT_MOTOR2_CANID = 37;
       public static final int KICKER_MOTOR_CANID = 42;
 
-      public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 40.0;
+      public static final double STATOR_CURRENT_LIMIT_KICKER = 100.0;
       public static final double SUPPLY_CURRENT_LIMIT_KICKER = 40.0;
+      
+      public static final double STATOR_CURRENT_LIMIT_SHOOTER = 100.0;
+      public static final double SUPPLY_CURRENT_LIMIT_SHOOTER = 40.0;
 
       public static final double TESTING_STATE_VOLTS = 4.0;
 
@@ -146,7 +152,10 @@ public final class Constants {
 
     public static class IntakeConstants {
       
+      public static final double STATOR_CURRENT_LIMIT_ROLLER = 60.0;
       public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 40.0;
+      
+      public static final double STATOR_CURRENT_LIMIT_DEPLOY = 60.0;
       public static final double SUPPLY_CURRENT_LIMIT_DEPLOY = 40.0;
 
       public static final double INTAKE_OFFSET = -0.805;

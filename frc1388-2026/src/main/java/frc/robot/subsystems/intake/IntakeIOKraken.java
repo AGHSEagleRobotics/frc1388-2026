@@ -196,6 +196,9 @@ public class IntakeIOKraken implements IntakeIO {
 
     deployMotorConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT_DEPLOY;
     deployMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    
+    deployMotorConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT_DEPLOY;
+    deployMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     deployMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 36.0;
     deployMotorConfig.MotionMagic.MotionMagicAcceleration = 16.0;
@@ -235,6 +238,9 @@ public class IntakeIOKraken implements IntakeIO {
 
     rollerMotorConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.SUPPLY_CURRENT_LIMIT_ROLLER;
     rollerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    rollerMotorConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.STATOR_CURRENT_LIMIT_ROLLER;
+    rollerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     rollerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // TODO: CORRECT LATER
