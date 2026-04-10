@@ -81,23 +81,27 @@ public class Superstructure extends SubsystemBase {
   public Command startShooting() {
     m_intakeState = m_intake.getIntakeState();
     return Commands.run(() -> {
-      if (!isRobotMoving()) {
-        m_shooter.setShooterState(ShooterState.SHOOTING);
-        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
-        if (m_isAtSpeed) {
-          m_roller.setRollerState(RollerState.SHOOTING);
-          m_intake.setIntakeState(IntakeState.SHOOTING);
-        }
-      } else {
-        m_shooter.setShooterState(ShooterState.SOTM);
-        m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
-        if (m_isAtSpeed) {
-          m_roller.setRollerState(RollerState.SHOOTING);
-          m_intake.setIntakeState(IntakeState.SHOOTING);
-        }
+      m_shooter.setShooterState(ShooterState.SHOOTING);
+      m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
+      if (m_isAtSpeed) {
+        m_roller.setRollerState(RollerState.SHOOTING);
+        m_intake.setIntakeState(IntakeState.SHOOTING);
       }
     },
-    m_roller, m_shooter, m_intake, m_shotCalculator);
+        m_roller, m_shooter, m_intake, m_shotCalculator);
+  }
+
+  public Command startShootingSOTM() {
+    m_intakeState = m_intake.getIntakeState();
+    return Commands.run(() -> {
+      m_shooter.setShooterState(ShooterState.SOTM);
+      m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
+      if (m_isAtSpeed) {
+        m_roller.setRollerState(RollerState.SHOOTING);
+        m_intake.setIntakeState(IntakeState.SHOOTING);
+      }
+    },
+        m_roller, m_shooter, m_intake, m_shotCalculator);
   }
 
   public Command stopShooting() {
@@ -278,7 +282,7 @@ public class Superstructure extends SubsystemBase {
   public boolean isRobotMoving() {
     ChassisSpeeds speeds = m_driveTrain.getFieldRelativeSpeeds();
     double linearSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-    return linearSpeed > 0.1;
+    return linearSpeed > 0.3;
   }
 
   public boolean isInShooterState() {

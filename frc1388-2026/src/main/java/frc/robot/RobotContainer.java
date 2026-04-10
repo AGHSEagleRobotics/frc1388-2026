@@ -162,9 +162,15 @@ public class RobotContainer {
         (joystick.rightTrigger().and(superstructure::readyToShoot))
                 .whileTrue(shootingCommand());
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
-        // manual shooting
-        joystick.rightBumper().whileTrue(superstructure.shootManually());
+
+        //SOTM
+        (joystick.rightBumper().and(superstructure::readyToShoot))
+                .whileTrue(shootingCommand());
         joystick.rightBumper().onFalse(superstructure.stopShooting());
+
+        // manual shooting
+        joystick.x().whileTrue(superstructure.shootManually());
+        joystick.x().onFalse(superstructure.stopShooting());
 
         // sets intake on/off on toggle default = on
         joystick.leftBumper().onTrue(superstructure.deployIntakingCommand());
@@ -228,10 +234,11 @@ public class RobotContainer {
     public double calculateRotationalVelocity() {
         double omega = 0;
         if (joystick.rightTrigger().getAsBoolean()) {
-            if (!superstructure.pointedAtTarget() && !superstructure.isRobotMoving()) {
+            if (!superstructure.pointedAtTarget()) {
                 omega = superstructure.turnToTargetSpeed();
-            }
-            else if (!superstructure.pointedAtTargetSOTM() && superstructure.isRobotMoving()) {
+            } 
+         } else if (joystick.rightBumper().getAsBoolean()) {
+             if (!superstructure.pointedAtTargetSOTM()) {
                 omega = superstructure.turnToTargetSpeedSOTM();
             }
         } else {

@@ -398,10 +398,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         
         if (getState().Pose != null) {
             // Fetch ONCE, use the result for both accept and update
-
-            PoseEstimate shooterEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.SHOOTER_LIMELIGHT);
-            PoseEstimate lefEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LEFT_LIMELIGHT);
-            
             processVision(visionAcceptorShooter, LimelightConstants.SHOOTER_LIMELIGHT);
             processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
         // ===========================================================
