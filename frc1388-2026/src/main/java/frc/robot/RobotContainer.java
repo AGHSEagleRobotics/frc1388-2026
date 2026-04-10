@@ -164,7 +164,7 @@ public class RobotContainer {
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
 
         //SOTM
-        (joystick.rightBumper().and(superstructure::readyToShoot))
+        (joystick.rightBumper().and(superstructure::readyToShootSOTM))
                 .whileTrue(superstructure.startShootingSOTM());
         joystick.rightBumper().onFalse(superstructure.stopShooting());
 

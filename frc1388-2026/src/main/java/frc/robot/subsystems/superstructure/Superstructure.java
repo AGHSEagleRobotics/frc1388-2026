@@ -49,6 +49,7 @@ public class Superstructure extends SubsystemBase {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
   public static final PIDController rotationPID = new PIDController(0.075, 0, 0);
+  public static final PIDController rotationPIDsotm = new PIDController(0.085, 0, 0);
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
@@ -257,14 +258,14 @@ public class Superstructure extends SubsystemBase {
     double angleFromTarget = m_driveTrain.getAbsoluteAngleFromHub();
     angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
     double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
-    return Math.abs(rz - angleFromTarget) < 4;
+    return Math.abs(rz - angleFromTarget) < 3.5;
   }
 
   public double turnToTargetSpeedSOTM() {
     double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
     angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
     double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
-    double speed = rotationPID.calculate(rz, angleFromTarget);
+    double speed = rotationPIDsotm.calculate(rz, angleFromTarget);
     return MathUtil.clamp(speed, -DriveTrainConstants.MAX_ANGULAR_RATE, DriveTrainConstants.MAX_ANGULAR_RATE);
   }
 
@@ -272,7 +273,7 @@ public class Superstructure extends SubsystemBase {
   double angleFromTarget = m_shotCalculator.getAbsoluteAngleFromTargetSOTM();
   angleFromTarget = MathUtil.inputModulus(angleFromTarget, -180, 180);
   double rz = m_driveTrain.getState().Pose.getRotation().getDegrees();
-  return Math.abs(rz - angleFromTarget) < 4;
+  return Math.abs(rz - angleFromTarget) < 3;
   }
 
   public boolean isAtSpeed() {
@@ -328,11 +329,10 @@ public class Superstructure extends SubsystemBase {
     });
   }
   
-  public boolean readyToShoot() {
-    if (isRobotMoving()) {
+  public boolean readyToShootSOTM() {
         return pointedAtTargetSOTM();
-    } else {
+  }
+  public boolean readyToShoot() {
         return pointedAtTarget();
-    }
   }
 }
