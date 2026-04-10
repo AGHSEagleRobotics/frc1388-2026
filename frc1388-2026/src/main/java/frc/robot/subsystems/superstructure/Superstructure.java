@@ -83,7 +83,6 @@ public class Superstructure extends SubsystemBase {
     return Commands.run(() -> {
       if (!isRobotMoving()) {
         m_shooter.setShooterState(ShooterState.SHOOTING);
-        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
         if (m_isAtSpeed) {
           m_roller.setRollerState(RollerState.SHOOTING);
@@ -92,9 +91,9 @@ public class Superstructure extends SubsystemBase {
       } else {
         m_shooter.setShooterState(ShooterState.SOTM);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.SOTM);
-        m_intake.setIntakeState(IntakeState.INTAKING);
         if (m_isAtSpeed) {
           m_roller.setRollerState(RollerState.SHOOTING);
+          m_intake.setIntakeState(IntakeState.SHOOTING);
         }
       }
     },
@@ -145,11 +144,9 @@ public class Superstructure extends SubsystemBase {
 
       if (m_shooter.getShooterState() == ShooterState.MANUAL_FAR) {
         m_shooter.setShooterState(ShooterState.MANUAL_FAR);
-        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       } else {
         m_shooter.setShooterState(ShooterState.MANUAL_CLOSE);
-        m_intake.setIntakeState(IntakeState.SHOOTING);
         m_shotCalculator.setShotCalculatorState(ShotCalculatorState.IDLE);
       }
       if (m_isAtSpeed) {

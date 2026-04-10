@@ -151,7 +151,7 @@ public final class Constants {
 
       public static final double INTAKE_OFFSET = -0.805;
       public static final double IDLE_STATE_ROLLER_VOLTS = 0;
-      public static final double INTAKING_ROLLER_STATE_VOLTS = 8;
+      public static final double INTAKING_ROLLER_STATE_VOLTS = 12;
 
       public static final double POSITION_TOLERANCE = 0.380;
       public static final double SHOOTING_POSITION_OUT = 0.55; 
