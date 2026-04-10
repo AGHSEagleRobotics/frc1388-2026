@@ -406,10 +406,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             processVision(visionAcceptorLeft, LimelightConstants.LEFT_LIMELIGHT);
         // ===========================================================
 
-        // DogLog.log("Drive/OdometryPose", getState().Pose);
-        // DogLog.log("Drive/TargetStates", getState().ModuleTargets);
-        // DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
-        // DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
+        DogLog.log("Drive/OdometryPose", getState().Pose);
+        DogLog.log("Drive/TargetStates", getState().ModuleTargets);
+        DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
+        DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
 
         
         DogLog.log("pose/distancefromhub", getAbsouluteDistanceFromHub());

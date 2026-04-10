@@ -278,7 +278,7 @@ public class Superstructure extends SubsystemBase {
   public boolean isRobotMoving() {
     ChassisSpeeds speeds = m_driveTrain.getFieldRelativeSpeeds();
     double linearSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-    return linearSpeed > 0.05;
+    return linearSpeed > 0.1;
   }
 
   public boolean isInShooterState() {
