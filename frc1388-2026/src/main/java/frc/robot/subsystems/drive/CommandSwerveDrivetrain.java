@@ -408,11 +408,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
 
         
-        DogLog.log("pose/distancefromhub", getAbsouluteDistanceFromHub());
-        DogLog.log("pose/anglefromhub", getAbsoluteAngleFromHub());
-        DogLog.log("pose/X", getState().Pose.getX());
-        DogLog.log("pose/Y", getState().Pose.getY());
-        DogLog.log("pose/Rotation", getState().Pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("pose/distancefromhub", getAbsouluteDistanceFromHub());
+        SmartDashboard.putNumber("pose/anglefromhub", getAbsoluteAngleFromHub());
+        SmartDashboard.putNumber("pose/X", getState().Pose.getX());
+        SmartDashboard.putNumber("pose/Y", getState().Pose.getY());
+        SmartDashboard.putNumber("pose/Rotation", getState().Pose.getRotation().getDegrees());
         }
     }
         // if(mapleSimSwerveDrivetrain != null) {

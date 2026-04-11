@@ -103,8 +103,8 @@ public final class Constants {
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, Units.inchesToMeters(18.93), Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();
       static {
-        DISTANCE_TO_SHOT_RPM.put(2.512, 2200.0/60.0);
-        DISTANCE_TO_SHOT_RPM.put(2.98, 2500.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.512, 2150.0/60.0);
+        DISTANCE_TO_SHOT_RPM.put(2.98, 2450.0/60.0);
         DISTANCE_TO_SHOT_RPM.put(3.63, 2750.0/60.0);
         DISTANCE_TO_SHOT_RPM.put(3.97, 3000.0/60.0);
         DISTANCE_TO_SHOT_RPM.put(4.572, 3750.0/60.0);

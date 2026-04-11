@@ -10,6 +10,7 @@ import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -67,6 +68,8 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+
     if(isInShooterState()) {
     m_isAtSpeed = isAtSpeed();
     }
@@ -333,6 +336,8 @@ public class Superstructure extends SubsystemBase {
         return pointedAtTargetSOTM();
   }
   public boolean readyToShoot() {
-        return pointedAtTarget();
+    boolean rts = pointedAtTarget();
+    DogLog.log("Shooter/ready to shoot", rts); 
+        return rts;
   }
 }
