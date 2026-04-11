@@ -50,7 +50,7 @@ public class Superstructure extends SubsystemBase {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
   public static final PIDController rotationPID = new PIDController(0.075, 0, 0);
-  public static final PIDController rotationPIDsotm = new PIDController(0.085, 0, 0);
+  public static final PIDController rotationPIDsotm = new PIDController(0.075, 0, 0);
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;

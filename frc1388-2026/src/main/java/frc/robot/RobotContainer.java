@@ -171,8 +171,7 @@ public class RobotContainer {
         joystick.rightTrigger().onFalse(superstructure.stopShooting());
 
         //SOTM
-        (joystick.x().and(superstructure::readyToShootSOTM))
-                .whileTrue(superstructure.startShootingSOTM());
+        joystick.x().whileTrue(superstructure.startShootingSOTM());
         joystick.x().onFalse(superstructure.stopShooting());
 
         // manual shooting
@@ -245,9 +244,7 @@ public class RobotContainer {
                 omega = superstructure.turnToTargetSpeed();
             } 
          } else if (joystick.x().getAsBoolean()) {
-             if (!superstructure.pointedAtTargetSOTM()) {
                 omega = superstructure.turnToTargetSpeedSOTM();
-            }
         } else {
             double rightX = MathUtil.applyDeadband(joystick.getRightX(), 0.05);
             omega = -DriveTrainConstants.MAX_ANGULAR_RATE * scale(rightX, 2.5);
