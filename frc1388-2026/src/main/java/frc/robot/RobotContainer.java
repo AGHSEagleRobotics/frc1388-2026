@@ -163,6 +163,8 @@ public class RobotContainer {
         //         .whileTrue(shootingCommand());
 
         (joystick.y()).whileTrue(shootingCommand());
+         joystick.y().onFalse(superstructure.stopShooting());
+
 
         (joystick.rightTrigger().and(superstructure::readyToShoot))
                 .whileTrue(shootingCommand());
