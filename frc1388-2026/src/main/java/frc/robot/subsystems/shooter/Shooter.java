@@ -19,11 +19,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterInputs;
 
 public class Shooter extends SubsystemBase {
 private final ShooterIO io;
 private final ShooterInputs inputs = new ShooterInputs();
+private Dashboard m_dashboard;
 
 public ShooterState shooterState;
 public double m_distanceFromHub;
@@ -92,12 +94,23 @@ public enum ShooterState {
       setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
     else if (shooterState == ShooterState.TESTING) {
-      setShooterVolts(ShooterConstants.TESTING_STATE_VOLTS);
-      setKickerVolts(ShooterConstants.TESTING_STATE_VOLTS);
+      if (m_dashboard != null) {
+        double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
+        double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
+        setShooterVelocity(shooterRPM / 60.0);
+        setKickerVelocity(kickerRPM / 60.0);
+      }
     }
     else if (shooterState == ShooterState.MANUAL_CLOSE) {
-      setShooterVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE);
-      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO);
+      if (m_dashboard != null) {
+        double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
+        double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
+        setShooterVelocity(shooterRPM / 60.0);
+        setKickerVelocity(kickerRPM / 60.0);
+      }
+      // setShooterVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE);
+      // setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE_KICKER);
+      // setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO);
     }
     else if (shooterState == ShooterState.MANUAL_FAR) {
       setShooterVelocity(ShooterConstants.MANUAL_SHOOT_FAR);
@@ -150,6 +163,10 @@ public enum ShooterState {
 
   public void setShooterState(ShooterState shooterState) {
     this.shooterState = shooterState;
+  }
+
+  public void setDashboard(Dashboard dashboard) {
+    m_dashboard = dashboard;
   }
 
   public void setDistanceFromHub(double distanceFromHub) {

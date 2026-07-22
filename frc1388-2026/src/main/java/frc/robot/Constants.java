@@ -93,7 +93,8 @@ public final class Constants {
       public static final double SLOW_SHOOTER_VOLTS = 2;
       public static final double SLOW_KICKER_VOLTS = 2.5;
 
-      public static final double MANUAL_SHOOT_CLOSE = 2900.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE = 2100.0/60.0;
+      public static final double MANUAL_SHOOT_CLOSE_KICKER = 2000.0/60.0;
 
       public static final double MANUAL_SHOOT_FAR = 3000.0/60.0;
       public static final double MANUAL_SHOOT_FAR_KICKER = 2750.0/60.0;

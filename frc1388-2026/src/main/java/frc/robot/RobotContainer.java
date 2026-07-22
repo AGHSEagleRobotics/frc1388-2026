@@ -81,6 +81,7 @@ public class RobotContainer {
         superstructure = new Superstructure(drivetrain, intake, roller, shooter, shotcalculator);
         // dashboard = new Dashboard();
         dashboard = new Dashboard(shooter, intake);
+        shooter.setDashboard(dashboard);
 
         NamedCommands.registerCommand("startShooting", superstructure.startShooting());
 

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
 import java.util.Optional;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -27,6 +28,8 @@ public class Dashboard extends SubsystemBase {
     private final GenericEntry hubEnabledTimer;
     private final GenericEntry shooterState;
     private final GenericEntry intakeState;
+    private final GenericEntry testingShooterRPM;
+    private final GenericEntry testingKickerRPM;
     private final Shooter m_shooter;
     private final Intake m_intake;
 
@@ -70,6 +73,22 @@ m_intake = intake;
           .withPosition(8, 0)
           .getEntry();
 
+       testingShooterRPM = AutoTab
+          .add("Testing Shooter RPM", 0.0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 0, "max", 6500))
+          .withSize(4, 1)
+          .withPosition(0, 2)
+          .getEntry();
+
+       testingKickerRPM = AutoTab
+          .add("Testing Kicker RPM", 0.0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 0, "max", 6500))
+          .withSize(4, 1)
+          .withPosition(4, 2)
+          .getEntry();
+
 
 
    
@@ -83,6 +102,14 @@ m_intake = intake;
 
         
  
+  }
+
+  public double getTestingShooterRPM() {
+    return testingShooterRPM.getDouble(0.0);
+  }
+
+  public double getTestingKickerRPM() {
+    return testingKickerRPM.getDouble(0.0);
   }
 
   public boolean isHubActive() {
