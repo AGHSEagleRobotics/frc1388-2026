@@ -182,8 +182,8 @@ public enum ShooterState {
   }
 
   public boolean isAtSpeed(double toleranceRPS) {
-    double targetRPS;
-    double targetRPSKicker;
+    double targetRPS = 0;
+    double targetRPSKicker = 0;
 
     if (shooterState == ShooterState.SHOOTING) {
       targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromHub);
@@ -192,16 +192,24 @@ public enum ShooterState {
       targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM);
       targetRPSKicker = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM) * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else if (shooterState == ShooterState.MANUAL_CLOSE) {
-      targetRPS = ShooterConstants.MANUAL_SHOOT_CLOSE;
-      targetRPSKicker = ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
+        if (m_dashboard != null) {
+        double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
+        double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
+        targetRPS = (shooterRPM / 60.0);
+        targetRPSKicker = (kickerRPM / 60.0);
+      }
+      // targetRPS = ShooterConstants.MANUAL_SHOOT_CLOSE;
+      // targetRPSKicker = ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else if (shooterState == ShooterState.MANUAL_FAR) {
       targetRPS = ShooterConstants.MANUAL_SHOOT_FAR;
       targetRPSKicker = ShooterConstants.MANUAL_SHOOT_FAR * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else {
       return false; // IDLE or TESTING — not trying to hold a velocity
     }
-    targetRPS = MathUtil.clamp(targetRPS, 0, 3750.0/60.0);
-    targetRPSKicker = MathUtil.clamp(targetRPSKicker, 0, 3000.0/60.0);
+    targetRPS = MathUtil.clamp(targetRPS, 0, 5000.0/60.0);
+    targetRPSKicker = MathUtil.clamp(targetRPSKicker, 0, 5000.0/60.0);
+    // targetRPS = MathUtil.clamp(targetRPS, 0, 3750.0/60.0);
+    // targetRPSKicker = MathUtil.clamp(targetRPSKicker, 0, 3000.0/60.0);
     boolean isAtSpeedShooter = Math.abs(inputs.shootMotor1VelocityRPS - targetRPS) < toleranceRPS;
     boolean isAtSpeedKicker = Math.abs(inputs.kickerMotorVelocityRPS - targetRPSKicker) < toleranceRPS;
     DogLog.log("Shooter/TargetRPS", targetRPS);
