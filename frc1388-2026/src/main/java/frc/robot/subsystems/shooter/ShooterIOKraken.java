@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOKraken implements ShooterIO {
@@ -210,7 +211,7 @@ public class ShooterIOKraken implements ShooterIO {
   }
   @Override
       public void setShooterVelocity(double shooterRPS) {
-        shooterRPS = MathUtil.clamp(shooterRPS, 0, 3750.0/60.0);
+        shooterRPS = MathUtil.clamp(shooterRPS, 0, Constants.ShooterConstants.SHOOTER_MAX_RPM/60.0); //changed maxrpm on 7/28 to 5000, was 3750 before
         shootMotor1.setControl(velocityControl.withVelocity(shooterRPS));
       }
   @Override
@@ -224,7 +225,7 @@ public class ShooterIOKraken implements ShooterIO {
 
   @Override
   public void setKickerVelocity(double kickerRPS) {
-     kickerRPS = MathUtil.clamp(kickerRPS, 0, 3000.0/60.0);
+     kickerRPS = MathUtil.clamp(kickerRPS, 0, Constants.ShooterConstants.KICKER_MAX_RPM/60.0); //changed maxrpm on 7/28 to 5000, was 3000 before
     kickerMotor.setControl(velocityControl.withVelocity(kickerRPS));
   }
 

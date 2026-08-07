@@ -53,6 +53,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldLayout;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Robot;
@@ -90,6 +91,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+
+    private final Optional<Alliance> alliance = DriverStation.getAlliance();
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -649,4 +652,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         return distanceFromHub;
     }
+    private double calculateDistance(Pose2d distance) {
+        return Math.hypot(distance.getX() - getPose().getX(), distance.getY() - getPose().getY());
+    }
+
+
+    public Pose2d getClosestTargetPose() {
+        Pose2d[] SETPOINTS = new Pose2d[6]; 
+        Pose2d closestSetpoint = SETPOINTS[0];
+        double closestDistance = calculateDistance(SETPOINTS[0]);
+        if (alliance.get() == Alliance.Blue) {
+            SETPOINTS = AutoConstants.BLUE_SETPOINTS;
+
+        } else {
+            SETPOINTS = AutoConstants.RED_SETPOINTS;
+        }
+        for (int i = 1; i <= 5; i++) {
+            if (calculateDistance(SETPOINTS[i]) < closestDistance) {
+                closestDistance = calculateDistance(SETPOINTS[i]);
+                closestSetpoint = SETPOINTS[i];
+            }
+        }
+        return closestSetpoint;
+    } 
 }

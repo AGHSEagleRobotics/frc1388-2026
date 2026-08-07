@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -47,6 +48,44 @@ public final class Constants {
     public static final double DISTANCE_PER_TICK = ROBOT_MAX_SPEED * DT_SECONDS; // 20ms per tick
 
     public static final double ROBOT_DIMENSIONS = Units.inchesToMeters(31.25);
+  }
+
+  public static class AutoConstants {
+    public static final Pose2d RED_LEFT_TRENCH = new Pose2d(); 
+    public static final Pose2d RED_RIGHT_TRENCH = new Pose2d();
+    public static final Pose2d RED_RIGHT_LADDER = new Pose2d();
+    public static final Pose2d RED_LEFT_LADDER = new Pose2d();
+    public static final Pose2d RED_LEFT_BUMP = new Pose2d();
+    public static final Pose2d RED_RIGHT_BUMP = new Pose2d();
+    
+    public static final Pose2d BLUE_LEFT_TRENCH = new Pose2d(); 
+    public static final Pose2d BLUE_RIGHT_TRENCH = new Pose2d();
+    public static final Pose2d BLUE_RIGHT_LADDER = new Pose2d();
+    public static final Pose2d BLUE_LEFT_LADDER = new Pose2d();
+    public static final Pose2d BLUE_LEFT_BUMP = new Pose2d();
+    public static final Pose2d BLUE_RIGHT_BUMP = new Pose2d();
+
+    public static final Pose2d[] RED_SETPOINTS = new Pose2d[6];
+
+    static {
+      RED_SETPOINTS[0] = RED_LEFT_TRENCH;
+      RED_SETPOINTS[1] = RED_RIGHT_TRENCH;
+      RED_SETPOINTS[2] = RED_RIGHT_LADDER;
+      RED_SETPOINTS[3] = RED_LEFT_LADDER;
+      RED_SETPOINTS[4] = RED_LEFT_BUMP;
+      RED_SETPOINTS[5] = RED_RIGHT_BUMP;
+    }
+
+    public static final Pose2d[] BLUE_SETPOINTS = new Pose2d[6];
+
+    static {
+      BLUE_SETPOINTS[0] = BLUE_LEFT_TRENCH;
+      BLUE_SETPOINTS[1] = BLUE_RIGHT_TRENCH;
+      BLUE_SETPOINTS[2] = BLUE_RIGHT_LADDER;
+      BLUE_SETPOINTS[3] = BLUE_LEFT_LADDER;
+      BLUE_SETPOINTS[4] = BLUE_LEFT_BUMP;
+      BLUE_SETPOINTS[5] = BLUE_RIGHT_BUMP;
+    }
   }
 
    public static class FieldLayout {
@@ -100,6 +139,9 @@ public final class Constants {
       public static final double MANUAL_SHOOT_FAR_KICKER = 2750.0/60.0;
 
       public static final double KICKER_TO_SHOOTER_RATIO = 5.0/5.0;
+      
+      public static final double KICKER_MAX_RPM = 5000;
+      public static final double SHOOTER_MAX_RPM = 5000;
 
       public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(0, 0, Units.inchesToMeters(18.93), Rotation3d.kZero);
       public static final InterpolatingDoubleTreeMap DISTANCE_TO_SHOT_RPM = new InterpolatingDoubleTreeMap();

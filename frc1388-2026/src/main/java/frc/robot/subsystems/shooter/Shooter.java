@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterInputs;
@@ -135,6 +136,9 @@ public enum ShooterState {
   //  DogLog.log("Shooter/Motor2/SupplyCurrentAmps", inputs.shootMotor2SupplyCurrentAmps);
   //  DogLog.log("Shooter/Motor2/TempCelsius", inputs.shootMotor2TempCelsius);
    DogLog.log("Shooter/Kicker/Velocity", inputs.kickerMotorVelocityRPS);
+   DogLog.log("Shooter/Kicker/VelocityRPM", (inputs.kickerMotorVelocityRPS *60));
+   DogLog.log("Shooter/Motor1/VelocityRPM", (inputs.shootMotor1VelocityRPS *60));
+   DogLog.log("Shooter/Motor2/VelocityRPM", (inputs.shootMotor2VelocityRPS *60));
   }
 
   public void setShooterVelocity(double shootRPS) {
@@ -206,8 +210,8 @@ public enum ShooterState {
     } else {
       return false; // IDLE or TESTING — not trying to hold a velocity
     }
-    targetRPS = MathUtil.clamp(targetRPS, 0, 5000.0/60.0);
-    targetRPSKicker = MathUtil.clamp(targetRPSKicker, 0, 5000.0/60.0);
+    targetRPS = MathUtil.clamp(targetRPS, 0, Constants.ShooterConstants.SHOOTER_MAX_RPM/60.0);
+    targetRPSKicker = MathUtil.clamp(targetRPSKicker, 0, Constants.ShooterConstants.KICKER_MAX_RPM/60.0);
     // targetRPS = MathUtil.clamp(targetRPS, 0, 3750.0/60.0);
     // targetRPSKicker = MathUtil.clamp(targetRPSKicker, 0, 3000.0/60.0);
     boolean isAtSpeedShooter = Math.abs(inputs.shootMotor1VelocityRPS - targetRPS) < toleranceRPS;

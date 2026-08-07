@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import dev.doglog.DogLog;
@@ -51,6 +52,15 @@ public class Superstructure extends SubsystemBase {
 
   public static final PIDController rotationPID = new PIDController(0.075, 0, 0);
   public static final PIDController rotationPIDsotm = new PIDController(0.075, 0, 0);
+  public static final PIDController x_PID = new PIDController(0, 0, 0);
+  public static final PIDController y_PID = new PIDController(0, 0, 0);
+
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+  .withDeadband(0)
+  .withRotationalDeadband(0)
+  .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+  
   /** Creates a new Superstructure. */
   public Superstructure(CommandSwerveDrivetrain driveTrain, Intake intake, Roller roller, Shooter shooter, ShotCalculator shotCalculator) {
     m_driveTrain = driveTrain;
@@ -164,6 +174,19 @@ public class Superstructure extends SubsystemBase {
     },
     m_roller, m_shooter, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }
+
+  // public Command goToPoint() {
+  //   return Commands.run(() -> {
+  //     m_driveTrain.applyRequest(() -> )
+  //   }
+  // }
+
+  // public Command goToPointAndShoot() {
+  //   Pose2d targetSetpoint = m_driveTrain.getClosestTargetPose();
+  //   return Commands.run(() -> {
+
+  //   })
+  // }
 
   public Command testIntakeDeployDown() {
     return this.runOnce(() -> 
