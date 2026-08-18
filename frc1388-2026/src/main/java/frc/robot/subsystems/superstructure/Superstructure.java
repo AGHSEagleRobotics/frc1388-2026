@@ -6,8 +6,6 @@ package frc.robot.subsystems.superstructure;
 
 import java.util.Set;
 
-import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -19,7 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -69,8 +66,11 @@ public class Superstructure extends SubsystemBase {
     m_shooter = shooter;
     m_shotCalculator = shotCalculator;
 
-    rotationPID.enableContinuousInput(-180, 180);
+    // rotationPID.enableContinuousInput(-180, 180);
+    rotationPID.enableContinuousInput(0, 360);
     rotationPID.setTolerance(4);
+    x_PID.setTolerance(3);
+    y_PID.setTolerance(3);
     // rotationPID.setIZone(2);
     // rotationPID.setIntegratorRange(-0.36, 0.36);
   }
@@ -157,6 +157,8 @@ public class Superstructure extends SubsystemBase {
     m_roller, m_intake);
   }
 
+  
+
   public Command shootManually() {
     return Commands.run(() -> {
 
@@ -175,18 +177,23 @@ public class Superstructure extends SubsystemBase {
     m_roller, m_shooter, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }
 
-  // public Command goToPoint() {
-  //   return Commands.run(() -> {
-  //     m_driveTrain.applyRequest(() -> )
-  //   }
-  // }
+  public Command goToPoint(Pose2d targetSetpoint) {
+    return Commands.run(() -> {
+      m_driveTrain.setControl(new SwerveRequest.FieldCentric()
+          .withVelocityX(x_PID.calculate(m_driveTrain.getPose().getX() - targetSetpoint.getX()))
+          .withVelocityY(y_PID.calculate(m_driveTrain.getPose().getY() - targetSetpoint.getY()))
+          .withRotationalRate(rotationPID.calculate(m_driveTrain.getAngle() - targetSetpoint.getRotation().getDegrees())));
+    }).until(() -> x_PID.atSetpoint() && y_PID.atSetpoint() && rotationPID.atSetpoint());
 
-  // public Command goToPointAndShoot() {
-  //   Pose2d targetSetpoint = m_driveTrain.getClosestTargetPose();
-  //   return Commands.run(() -> {
+  }
 
-  //   })
-  // }
+  public Command goToPointAndShoot() {
+    Pose2d targetSetpoint = m_driveTrain.getClosestTargetPose();
+
+    return goToPoint(targetSetpoint).andThen(m_driveTrain.applyRequest(() -> brake)).alongWith(startShootingSOTM());
+
+  
+  }
 
   public Command testIntakeDeployDown() {
     return this.runOnce(() -> 
