@@ -41,6 +41,7 @@ public class Intake extends SubsystemBase {
   public enum IntakeState {
     RETRACT,
     EXTENDED,
+    EXTENDEDIDLE,
     INTAKING,
     SHOOTING,
     TESTINGROLLER,
@@ -89,8 +90,14 @@ public class Intake extends SubsystemBase {
     } else if (intakeState == IntakeState.EXTENDED) {
       setPosition(IntakeConstants.DOWN_POSITION);
       setIntakingRollers(0);
+      //New addition for Executive Order #1 from Bo
+    } else if (intakeState == IntakeState.EXTENDEDIDLE){
+      setPosition(IntakeConstants.DOWN_POSITION);
+      setIntakingRollers(0);
+      //New addition ends here
     } else if (intakeState == IntakeState.INTAKING) {
       setPosition(IntakeConstants.DOWN_POSITION);
+      //We need to change this so that intake can be extended without intaking
       setIntakingRollers(IntakeConstants.INTAKING_ROLLER_STATE_VOLTS);
     } else if (intakeState == IntakeState.SHOOTING) {
       if (!shootingTimerStarted) {
@@ -106,6 +113,10 @@ public class Intake extends SubsystemBase {
       setIntakingRollers(IntakeConstants.TESTING_VOLTS);
     } else if (intakeState == IntakeState.TESTINGDEPLOYDOWN) {
       setDeployVolts(1);
+      //New addition starts here
+    } else if (intakeState == IntakeState.EXTENDEDIDLE) {
+      setDeployVolts(0);
+      //New addition ends here
     } else if (intakeState == IntakeState.TESTINGDEPLOYUP) {
       setDeployVolts(-2);
     } else if (intakeState == IntakeState.STOP) {

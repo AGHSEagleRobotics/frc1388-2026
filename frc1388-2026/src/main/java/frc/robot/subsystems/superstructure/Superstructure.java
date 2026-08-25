@@ -139,6 +139,21 @@ public class Superstructure extends SubsystemBase {
     
   }
 
+public Command deployIdleCommand() {
+    m_intakeState = m_intake.getIntakeState();
+    return Commands.defer(() ->
+      Commands.run(() -> {
+        m_intake.setIntakeState(IntakeState.EXTENDEDIDLE);
+        m_roller.setRollerState(RollerState.IDLE);
+       },
+      m_roller,
+      m_intake).until(() -> m_intake.getIntakeState() == IntakeState.INTAKING)
+    , Set.of(m_roller, m_intake)
+    
+    );
+    
+  }
+
   public Command retractIntake() {
     return Commands.runOnce(() -> {
       m_intake.setIntakeState(IntakeState.RETRACT);
