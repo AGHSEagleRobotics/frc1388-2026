@@ -154,6 +154,7 @@ public final class Constants {
     public static class IntakeConstants {
       
       public static final double STATOR_CURRENT_LIMIT_ROLLER = 60.0;
+      
       public static final double SUPPLY_CURRENT_LIMIT_ROLLER = 40.0;
       
       public static final double STATOR_CURRENT_LIMIT_DEPLOY = 60.0;
