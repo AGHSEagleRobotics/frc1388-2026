@@ -74,7 +74,7 @@ m_intake = intake;
           .getEntry();
 
        testingShooterRPM = AutoTab
-          .add("Testing Shooter RPM", 2100)
+          .add("Testing Shooter RPM", 2542.10513)
           .withWidget(BuiltInWidgets.kTextView)
           .withProperties(Map.of("min", 0, "max", 6500))
           .withSize(4, 1)
@@ -82,7 +82,7 @@ m_intake = intake;
           .getEntry();
 
        testingKickerRPM = AutoTab
-          .add("Testing Kicker RPM", 1900)
+          .add("Testing Kicker RPM", 2300)
           .withWidget(BuiltInWidgets.kTextView)
           .withProperties(Map.of("min", 0, "max", 6500))
           .withSize(4, 1)

@@ -89,6 +89,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("deployIntaking", superstructure.deployIntakingCommand());
 
+
         // NamedCommands.registerCommand("retractIntake", superstructure.retractIntake());
         NamedCommands.registerCommand("shootManually", superstructure.shootManually());
 
@@ -183,6 +184,7 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(superstructure.deployIntakingCommand());
         // retracts intake
         joystick.leftTrigger().onTrue(superstructure.retractIntake());
+        joystick.a().onTrue(superstructure.deployIdleCommand());
 
         // joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
 
