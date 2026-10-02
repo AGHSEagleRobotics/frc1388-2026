@@ -30,6 +30,7 @@ public class Dashboard extends SubsystemBase {
     private final GenericEntry intakeState;
     private final GenericEntry testingShooterRPM;
     private final GenericEntry testingKickerRPM;
+    private final GenericEntry efficiencyModeState; 
     private final Shooter m_shooter;
     private final Intake m_intake;
 
@@ -110,6 +111,10 @@ m_intake = intake;
 
   public double getTestingKickerRPM() {
     return testingKickerRPM.getDouble(0.0);
+  }
+
+  public boolean effficiencyModeState(){
+
   }
 
   public boolean isHubActive() {

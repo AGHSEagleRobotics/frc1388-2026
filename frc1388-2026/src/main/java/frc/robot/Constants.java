@@ -41,7 +41,7 @@ public final class Constants {
   }
 
   public static class DriveTrainConstants {
-    public static final double ROBOT_MAX_SPEED = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    public static final double ROBOT_MAX_SPEED = 0.65 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     public static final double MAX_ANGULAR_RATE = RotationsPerSecond.of(1).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     public static final double DT_SECONDS = 0.02; // 20ms per tick
     public static final double DISTANCE_PER_TICK = ROBOT_MAX_SPEED * DT_SECONDS; // 20ms per tick
