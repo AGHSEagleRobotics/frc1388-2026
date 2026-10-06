@@ -104,13 +104,13 @@ m_intake = intake;
  
   }
 
-  public double getTestingShooterRPM() {
-    return testingShooterRPM.getDouble(0.0);
-  }
+  // public double getTestingShooterRPM() {
+  //   return testingShooterRPM.getDouble(0.0);
+  // }
 
-  public double getTestingKickerRPM() {
-    return testingKickerRPM.getDouble(0.0);
-  }
+  // public double getTestingKickerRPM() {
+  //   return testingKickerRPM.getDouble(0.0);
+  // }
 
   public boolean isHubActive() {
   Optional<Alliance> alliance = DriverStation.getAlliance();

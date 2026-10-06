@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.MutAngle;
@@ -94,24 +96,24 @@ public enum ShooterState {
       setShooterVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM));
       setKickerVelocity(ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM) * (ShooterConstants.KICKER_TO_SHOOTER_RATIO));
     }
-    else if (shooterState == ShooterState.TESTING) {
-      if (m_dashboard != null) {
-        double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
-        double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
-        setShooterVelocity(shooterRPM / 60.0);
-        setKickerVelocity(kickerRPM / 60.0);
-      }
-    }
+    // else if (shooterState == ShooterState.TESTING) {
+    //   if (m_dashboard != null) {
+    //     double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
+    //     double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
+    //     setShooterVelocity(shooterRPM / 60.0);
+    //     setKickerVelocity(kickerRPM / 60.0);
+    //   }
+    // }
     else if (shooterState == ShooterState.MANUAL_CLOSE) {
-      if (m_dashboard != null) {
-        double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
-        double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
-        setShooterVelocity(shooterRPM / 60.0);
-        setKickerVelocity(kickerRPM / 60.0);
-      }
-      // setShooterVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE);
-      // setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE_KICKER);
-      // setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO);
+      setShooterVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE);
+      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE_KICKER);
+      setKickerVelocity(ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO);
+      // if (m_dashboard != null) {
+        // double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
+        // double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
+        // setShooterVelocity(shooterRPM / 60.0);
+        // setKickerVelocity(kickerRPM / 60.0);
+      // }
     }
     else if (shooterState == ShooterState.MANUAL_FAR) {
       setShooterVelocity(ShooterConstants.MANUAL_SHOOT_FAR);
@@ -196,14 +198,14 @@ public enum ShooterState {
       targetRPS = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM);
       targetRPSKicker = ShooterConstants.DISTANCE_TO_SHOT_RPM.get(m_distanceFromTargetSOTM) * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else if (shooterState == ShooterState.MANUAL_CLOSE) {
-        if (m_dashboard != null) {
-        double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
-        double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
-        targetRPS = (shooterRPM / 60.0);
-        targetRPSKicker = (kickerRPM / 60.0);
-      }
-      // targetRPS = ShooterConstants.MANUAL_SHOOT_CLOSE;
-      // targetRPSKicker = ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
+      //   if (m_dashboard != null) {
+      //   double shooterRPM = MathUtil.clamp(m_dashboard.getTestingShooterRPM(), 0, 6500);
+      //   double kickerRPM = MathUtil.clamp(m_dashboard.getTestingKickerRPM(), 0, 6500);
+      //   targetRPS = (shooterRPM / 60.0);
+      //   targetRPSKicker = (kickerRPM / 60.0);
+      // }
+      targetRPS = ShooterConstants.MANUAL_SHOOT_CLOSE;
+      targetRPSKicker = ShooterConstants.MANUAL_SHOOT_CLOSE * ShooterConstants.KICKER_TO_SHOOTER_RATIO;
     } else if (shooterState == ShooterState.MANUAL_FAR) {
       targetRPS = ShooterConstants.MANUAL_SHOOT_FAR;
       targetRPSKicker = ShooterConstants.MANUAL_SHOOT_FAR * ShooterConstants.KICKER_TO_SHOOTER_RATIO;

@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -51,6 +52,7 @@ public final class Constants {
   }
 
   public static class AutoConstants {
+    //all poses in meters
     public static final Pose2d RED_LEFT_TRENCH = new Pose2d(); 
     public static final Pose2d RED_RIGHT_TRENCH = new Pose2d();
     public static final Pose2d RED_RIGHT_LADDER = new Pose2d();
@@ -59,11 +61,11 @@ public final class Constants {
     public static final Pose2d RED_RIGHT_BUMP = new Pose2d();
     
     public static final Pose2d BLUE_LEFT_TRENCH = new Pose2d(); 
-    public static final Pose2d BLUE_RIGHT_TRENCH = new Pose2d();
-    public static final Pose2d BLUE_RIGHT_LADDER = new Pose2d();
+    public static final Pose2d BLUE_RIGHT_TRENCH = new Pose2d(3.966, 7.333, null); 
+    public static final Pose2d BLUE_RIGHT_LADDER = new Pose2d(0.749, 5.143, null); //change from magic numbers to constants later after testing
     public static final Pose2d BLUE_LEFT_LADDER = new Pose2d();
     public static final Pose2d BLUE_LEFT_BUMP = new Pose2d();
-    public static final Pose2d BLUE_RIGHT_BUMP = new Pose2d();
+    public static final Pose2d BLUE_RIGHT_BUMP = new Pose2d(2.492, 5.375, null); //unsure of where this is actually supposed to be but im guessing in the middle?
 
     public static final Pose2d[] RED_SETPOINTS = new Pose2d[6];
 
@@ -73,7 +75,7 @@ public final class Constants {
       RED_SETPOINTS[2] = RED_RIGHT_LADDER;
       RED_SETPOINTS[3] = RED_LEFT_LADDER;
       RED_SETPOINTS[4] = RED_LEFT_BUMP;
-      RED_SETPOINTS[5] = RED_RIGHT_BUMP;
+      RED_SETPOINTS[5] = RED_RIGHT_BUMP; 
     }
 
     public static final Pose2d[] BLUE_SETPOINTS = new Pose2d[6];

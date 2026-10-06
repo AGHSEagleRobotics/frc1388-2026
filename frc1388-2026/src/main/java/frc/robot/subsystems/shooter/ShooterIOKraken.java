@@ -74,6 +74,7 @@ public class ShooterIOKraken implements ShooterIO {
     shootMotor2 = new TalonFX(ShooterConstants.SHOOT_MOTOR2_CANID);
     kickerMotor = new TalonFX(ShooterConstants.KICKER_MOTOR_CANID);
 
+
     //PIDS config
     controllerConfig.kP = 0.050536;
     controllerConfig.kI = 0.0;
@@ -106,7 +107,7 @@ public class ShooterIOKraken implements ShooterIO {
     kickerConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.STATOR_CURRENT_LIMIT_KICKER;
     kickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-    kickerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    kickerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     kickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     //applying configs

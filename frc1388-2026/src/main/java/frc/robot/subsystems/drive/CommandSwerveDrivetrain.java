@@ -657,22 +657,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
 
-    public Pose2d getClosestTargetPose() {
-        Pose2d[] SETPOINTS = new Pose2d[6]; 
-        Pose2d closestSetpoint = SETPOINTS[0];
-        double closestDistance = calculateDistance(SETPOINTS[0]);
-        if (alliance.get() == Alliance.Blue) {
-            SETPOINTS = AutoConstants.BLUE_SETPOINTS;
+    // public Pose2d getClosestTargetPose() {
+    //     Pose2d[] SETPOINTS = new Pose2d[6]; 
+    //     Pose2d closestSetpoint = SETPOINTS[0];
+    //     double closestDistance = calculateDistance(SETPOINTS[0]);
+    //     if (alliance.get() == Alliance.Blue) {
+    //         SETPOINTS = AutoConstants.BLUE_SETPOINTS;
 
-        } else {
-            SETPOINTS = AutoConstants.RED_SETPOINTS;
-        }
-        for (int i = 1; i <= 5; i++) {
-            if (calculateDistance(SETPOINTS[i]) < closestDistance) {
-                closestDistance = calculateDistance(SETPOINTS[i]);
-                closestSetpoint = SETPOINTS[i];
-            }
-        }
-        return closestSetpoint;
-    } 
+    //     } else {
+    //         SETPOINTS = AutoConstants.RED_SETPOINTS;
+    //     }
+    //     for (int i = 1; i <= 5; i++) { // TODO change 5 from magic number
+    //         if (calculateDistance(SETPOINTS[i]) < closestDistance) {
+    //             closestDistance = calculateDistance(SETPOINTS[i]);
+    //             closestSetpoint = SETPOINTS[i];
+    //         }
+    //     }
+    //     return closestSetpoint;
+    // } 
 }

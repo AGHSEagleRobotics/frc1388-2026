@@ -20,7 +20,7 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.RollerConstants;
 
 public class RollerIOKraken implements RollerIO {
-  private TalonFX m_bottomRollerMotor;
+  private TalonFX m_bottomRollerMotor; 
   private TalonFX m_topRollerMotor;
 
   private VoltageOut bottomRollerVoltageSet;

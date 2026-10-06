@@ -184,6 +184,9 @@ public class RobotContainer {
         // retracts intake
         joystick.leftTrigger().onTrue(superstructure.retractIntake());
 
+        // robot moves to nearest effective shooting point
+        // joystick.b().whileTrue(superstructure.goToPointAndShoot());
+
         // joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
 
         joystick.a().whileTrue(superstructure.outTake());

@@ -177,23 +177,23 @@ public class Superstructure extends SubsystemBase {
     m_roller, m_shooter, m_intake, m_shotCalculator).until(() -> m_roller.getRollerState() == RollerState.SHOOTING);
   }
 
-  public Command goToPoint(Pose2d targetSetpoint) {
-    return Commands.run(() -> {
-      m_driveTrain.setControl(new SwerveRequest.FieldCentric()
-          .withVelocityX(x_PID.calculate(m_driveTrain.getPose().getX() - targetSetpoint.getX()))
-          .withVelocityY(y_PID.calculate(m_driveTrain.getPose().getY() - targetSetpoint.getY()))
-          .withRotationalRate(rotationPID.calculate(m_driveTrain.getAngle() - targetSetpoint.getRotation().getDegrees())));
-    }).until(() -> x_PID.atSetpoint() && y_PID.atSetpoint() && rotationPID.atSetpoint());
+  // public Command goToPoint(Pose2d targetSetpoint) {
+  //   return Commands.run(() -> {
+  //     m_driveTrain.setControl(new SwerveRequest.FieldCentric()
+  //         .withVelocityX(x_PID.calculate(m_driveTrain.getPose().getX() - targetSetpoint.getX()))
+  //         .withVelocityY(y_PID.calculate(m_driveTrain.getPose().getY() - targetSetpoint.getY()))
+  //         .withRotationalRate(rotationPID.calculate(m_driveTrain.getAngle() - targetSetpoint.getRotation().getDegrees())));
+  //   }).until(() -> x_PID.atSetpoint() && y_PID.atSetpoint() && rotationPID.atSetpoint());
 
-  }
+  // }
 
-  public Command goToPointAndShoot() {
-    Pose2d targetSetpoint = m_driveTrain.getClosestTargetPose();
+  // public Command goToPointAndShoot() {
+  //   Pose2d targetSetpoint = m_driveTrain.getClosestTargetPose();
 
-    return goToPoint(targetSetpoint).andThen(m_driveTrain.applyRequest(() -> brake)).alongWith(startShootingSOTM());
+  //   return goToPoint(targetSetpoint).andThen(m_driveTrain.applyRequest(() -> brake)).alongWith(startShootingSOTM());
 
   
-  }
+  // }
 
   public Command testIntakeDeployDown() {
     return this.runOnce(() -> 
