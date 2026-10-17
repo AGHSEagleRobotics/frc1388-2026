@@ -183,7 +183,7 @@ public class RobotContainer {
         // sets intake on/off on toggle default = on
         joystick.leftBumper().onTrue(superstructure.deployIntakingCommand());
         // retracts intake
-        joystick.leftTrigger().onTrue(superstructure.retractIntake());
+        joystick.leftTrigger().onTrue(superstructure.deployIdleCommand());
 
         // joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
 
